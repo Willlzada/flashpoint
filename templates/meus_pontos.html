@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Pontos | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Le mie ore</h1>
+
+    <div class="card form-card">
+
+        <form method="POST" class="filter-form">
+
+            <div class="filter-group">
+                <label>Filtra per data specifica</label>
+                <input type="date" name="filtro_data" value="{{ filtro_data }}">
+            </div>
+
+            <div class="filter-group">
+                <label>Filtra per mese</label>
+                <input type="month" name="filtro_mes" value="{{ filtro_mes }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="primary">Filtra</button>
+                <a href="/meus_pontos" class="btn-secondary">Cancella</a>
+            </div>
+
+        </form>
+
+    </div>
+
+    {% if pontos %}
+
+    <div class="card table-card">
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Locale</th>
+                    <th>Ore</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ponto in pontos %}
+                <tr>
+                    <td>{{ ponto.data_formatada }}</td>
+                    <td>{{ ponto.local }}</td>
+                    <td>{{ ponto.horas_hhmm }}</td>
+                    <td>{{ ponto.notas }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="table-footer">
+            <strong>Totale ore:</strong> {{ total_horas }}
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="card empty-state">
+        <p>Nessuna presenza registrata con questi filtri.</p>
+    </div>
+
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="/home" class="btn-secondary">Indietro</a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,524 @@
+/* RESET BÁSICO */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =====================
+   TOPBAR
+===================== */
+.topbar {
+    width: 100%;
+    height: 60px;
+    background: #041955;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-img {
+    height: 50px;   /* 🔹 AQUI aumentamos a imagem do topbar */
+    width: auto;
+}
+
+.logo-text {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* =====================
+   LOGIN
+===================== */
+.login-wrapper {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f6fa;
+}
+
+.login-box {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.login-logo img {
+    max-width: 350px; /* 🔹 Logo grande acima do formulário */
+    margin-bottom: 20px;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #041955;
+}
+
+.login-box label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.login-box button.primary {
+    width: 100%;
+    padding: 12px;
+    background: #3450a1;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-box button.primary:hover {
+    background: #041955;
+}
+
+.login-footer {
+    margin-top: 15px;
+}
+
+.login-footer a {
+    color: #3450a1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: red;
+    margin-bottom: 15px;
+}
+
+
+/* =====================
+   FOOTER
+===================== */
+.footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background: #f4f6fa;
+    color: #555;
+    font-size: 14px;
+
+}
+
+/* =====================
+   HOME / PAINEL
+===================== */
+
+.page-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    margin-bottom: 25px;
+    color: #041955;
+}
+
+.card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.user-card h2 {
+    margin-bottom: 15px;
+}
+
+.user-info p {
+    margin: 6px 0;
+    color: #333;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.action-card {
+    background: #f4f6fa;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #041955;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.action-card span {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.action-card:hover {
+    background: #3450a1;
+    color: #fff;
+}
+
+.action-card.admin {
+    background: #eb06ff22;
+    color: #7a007f;
+}
+
+.action-card.admin:hover {
+    background: #eb06ff;
+    color: #fff;
+}
+
+.action-card.logout {
+    background: #ffecec;
+    color: #b30000;
+}
+
+.action-card.logout:hover {
+    background: #b30000;
+    color: #fff;
+}
+
+/* =====================
+   FORMULÁRIOS
+===================== */
+
+.form-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #041955;
+}
+
+.form-group small {
+    display: block;
+    margin-bottom: 6px;
+    color: #666;
+    font-size: 13px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3450a1;
+    box-shadow: 0 0 0 2px rgba(52, 80, 161, 0.15);
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+button.primary {
+    background: #041955;
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button.primary:hover {
+    background: #041955;
+}
+
+.btn-secondary {
+    padding: 12px 18px;
+    border-radius: 6px;
+    background: #d9dadd;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.btn-secondary:hover {
+    background: #ddd;
+}
+select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.alert {
+    background: #e8f4ff;
+    color: #041955;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3450a1;
+}
+/* =====================
+   FILTROS
+===================== */
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 220px;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+/* =====================
+   TABELA
+===================== */
+
+.table-card {
+    margin-top: 30px;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.styled-table thead {
+    background: #041955;
+    color: #fff;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table tr:hover {
+    background: #d1d3d8;
+}
+
+.table-footer {
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+/* =====================
+   ESTADO VAZIO
+===================== */
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    margin-top: 30px;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-top: 25px;
+    text-decoration: none;
+    color: #3450a1;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+/* =====================
+   ADMIN
+===================== */
+
+.admin-title {
+    color: #041955;
+}
+
+/* Coluna de ações */
+.acoes-col {
+    white-space: nowrap;
+}
+
+/* Botões */
+.btn-link {
+    color: #3450a1;
+    text-decoration: none;
+    margin-right: 8px;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.btn-danger {
+    background: #d93025;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-danger:hover {
+    background: #b3261e;
+}
+
+/* Notas */
+.nota-col {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* =====================
+   MODAL NOTAS
+===================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #041955;
+}
+
+.modal-content p {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Botão Ver */
+.btn-ver-nota {
+    background: transparent;
+    border: none;
+    color: #3450a1;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 6px;
+}
+
+.btn-ver-nota:hover {
+    text-decoration: underline;
+}
+.modal-nota {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-nota-content {
+    background: #fff;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    border-radius: 8px;
+}
+
+.modal-close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+.btn-edit {
+    background-color: #041955; /* verde */
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 5px;
+}
+
+.btn-edit:hover {
+    background-color: #234299;
+}

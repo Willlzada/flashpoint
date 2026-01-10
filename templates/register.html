@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Criar Conta | FlashPoint{% endblock %}
+
+{% block content %}
+
+<header class="topbar">
+    <div class="topbar-left">
+        <img src="{{ url_for('static', filename='img/logo-mini.png') }}" class="logo-img">
+        <span class="logo-text">FlashPoint</span>
+    </div>
+</header>
+
+<div class="login-wrapper">
+    <div class="login-box">
+
+        <div class="login-logo">
+            <img src="{{ url_for('static', filename='img/logo-login.png') }}">
+        </div>
+
+        <h2>Crea un account</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success">{{ success }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <label>Nome</label>
+            <input type="text" name="nome"  required>
+
+            <label>Sobrenome</label>
+            <input type="text" name="sobrenome"  required>
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="esempio@email.com" required>
+
+            <label>Senha</label>
+            <input type="password" name="password" placeholder="Minimo 6 caratteri" required>
+
+            <button type="submit" class="primary">Registra</button>
+        </form>
+
+        <div class="login-footer">
+            <a href="/">Torna al login</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

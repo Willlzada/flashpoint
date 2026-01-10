@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Home | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Area Personale</h1>
+
+    <div class="card user-card">
+        <div class="login-logo">
+            <img src="{{ url_for('static', filename='img/logo-login.png') }}">
+        </div>
+        <h2>Benvenuto, {{ usuario.nome }}!</h2>
+        
+    </div>
+
+    <div class="actions-grid">
+
+        <a href="/meus_pontos" class="action-card">
+            <span>📊</span>
+            <strong>Le mie ore</strong>
+        </a>
+
+        <a href="/registrar_ponto" class="action-card">
+            <span>⏱️</span>
+            <strong>Segna le ore</strong>
+        </a>
+
+        <a href="/perfil" class="action-card">
+            <span>👤</span>
+            <strong>Profilo</strong>
+        </a>
+
+        {% if usuario.tipo == 'admin' %}
+        <a href="/admin_pontos" class="action-card admin">
+            <span>🖥️​</span>
+            <strong>Area Amministrativa</strong>
+        </a>
+        {% endif %}
+
+        <a href="/logout" class="action-card logout">
+            <span>⬅️​</span>
+            <strong>Esci</strong>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Ponto | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Registra Presenza</h1>
+
+    <div class="card form-card">
+
+        {% if mensagem %}
+            <div class="alert">
+                {{ mensagem }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label>Locale</label>
+                <small>Seleziona il luogo in cui è stata svolta l’attività</small>
+                <select name="local" required>
+                    {% for l in locais %}
+                        <option value="{{ l }}">{{ l }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Data</label>
+                <input type="date" name="data" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ore lavorate</label>
+                <small>
+                    Usa valori decimali<br>
+                    • 0.25 = 15 Minuti<br>
+                    • 1.50 = 1 Ora 30 Minuti <br>
+                    • 5.25 = 5 Ore 15 Minuti
+                </small>
+                <input type="number" name="horas" step="0.25" required>
+            </div>
+
+            <div class="form-group">
+                <label>Note</label>
+                <small>Osservazioni aggiuntive (facoltativo)</small>
+                <textarea name="notas" rows="3" placeholder="Alguma observação..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="primary">Registra</button>
+                <a href="/home" class="btn-secondary">Indietro</a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Admin • Pontos | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title admin-title">Controllo delle ore generele</h1>
+
+    <!-- FILTROS -->
+    <div class="card form-card">
+        <form method="POST" class="filter-form">
+            <div class="filter-group">
+                <label>Seleziona il dipendente di cui vuoi controllare le ore</label>
+                <select name="filtro_usuario">
+                    <option value="">Tutti</option>
+                    {% for u in usuarios %}
+                        <option value="{{ u.uid }}" {% if filtro_usuario == u.uid %}selected{% endif %}>
+                            {{ u.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Mese</label>
+                <input type="month" name="filtro_mes" value="{{ filtro_mes }}">
+            </div>
+
+            <div class="filter-actions">
+                <button 
+                type="submit" 
+                class="primary">
+                Filtra
+                </button>
+                <a href="/admin_pontos" class="btn-secondary">Cancella</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- TABELA -->
+    <div class="card table-card">
+        <table class="styled-table admin-table">
+            <thead>
+                <tr>
+                    <th>Dipendente</th>
+                    <th>Email</th>
+                    <th>Locale</th>
+                    <th>Data</th>
+                    <th>Ore</th>
+                    <th>Note</th>
+                    <th>Opzioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pontos %}
+                <tr>
+                    <td>{{ p.usuario_nome }}</td>
+                    <td>{{ p.usuario_email }}</td>
+                    <td>{{ p.local }}</td>
+                    <td>{{ p.data_formatada }}</td>
+                    <td>{{ p.horas_formatadas }}</td>
+
+                    <!-- NOTAS COMPLETAS NO MODAL -->
+                    <td class="nota-col">
+                        {% if p.notas %}
+                            <a href="javascript:void(0)"
+                               class="btn-link"
+                               onclick="abrirNota(`{{ p.notas | escape }}`)">
+                               Visualizza nota
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td class="acoes-col">
+
+                        <form action="{{ url_for('editar_ponto_admin', id=p.id) }}" method="GET" style="display:inline;">
+                            <button type="submit" 
+                                    class="btn-edit">
+                                Modifica
+                            </button>
+                        </form>
+
+                        <form action="{{ url_for('excluir_ponto', id=p.id) }}" method="POST" style="display:inline;">
+                            <button type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Tem certeza que deseja excluir este ponto?');">
+                                Elimina
+                            </button>
+                        </form>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions">
+        <a href="/home" class="btn-secondary">Indietro</a>
+    </div>
+
+</div>
+
+<!-- MODAL DE NOTAS (SIMPLES E LIMPO) -->
+<div id="modalNota" class="modal-nota">
+    <div class="modal-nota-content">
+        <span class="modal-close"         
+        onclick="fecharNota()">❌​
+        </span>
+
+        <h3>Nota completa</h3>
+        <p id="textoNota"></p>
+    </div>
+</div>
+
+<script>
+function abrirNota(texto) {
+    document.getElementById("textoNota").innerText = texto;
+    document.getElementById("modalNota").style.display = "flex";
+}
+
+function fecharNota() {
+    document.getElementById("modalNota").style.display = "none";
+}
+</script>
+
+{% endblock %}

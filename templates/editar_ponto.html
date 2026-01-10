@@ -1,0 +1,23 @@
+<h2>Editar Ponto</h2>
+
+<form method="POST">
+    <label>Data:</label><br>
+    <input type="date" name="data" required><br><br>
+
+    <label>Local:</label><br>
+    <select name="local" required>
+        {% for l in locais %}
+            <option value="{{ l }}" {% if l==ponto.local %}selected{% endif %}>{{ l }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Horas:</label><br>
+    <input type="number" name="horas" step="0.25" value="{{ ponto.horas }}" required><br><br>
+
+    <label>Notas:</label><br>
+    <textarea name="notas" rows="3">{{ ponto.notas }}</textarea><br><br>
+
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<br><a href="/admin_pontos">Voltar</a>
