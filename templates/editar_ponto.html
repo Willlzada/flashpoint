@@ -1,23 +1,59 @@
-<h2>Editar Ponto</h2>
+{% extends "base.html" %}
 
-<form method="POST">
-    <label>Data:</label><br>
-    <input type="date" name="data" required><br><br>
+{% block title %}Admin • Modifica Punto | FlashPoint{% endblock %}
 
-    <label>Local:</label><br>
-    <select name="local" required>
-        {% for l in locais %}
-            <option value="{{ l }}" {% if l==ponto.local %}selected{% endif %}>{{ l }}</option>
-        {% endfor %}
-    </select><br><br>
+{% block content %}
 
-    <label>Horas:</label><br>
-    <input type="number" name="horas" step="0.25" value="{{ ponto.horas }}" required><br><br>
+<div class="page-wrapper">
 
-    <label>Notas:</label><br>
-    <textarea name="notas" rows="3">{{ ponto.notas }}</textarea><br><br>
+    <h1 class="page-title admin-title">Modifica Ore</h1>
 
-    <button type="submit">Salvar Alterações</button>
-</form>
+    <!-- FORMULÁRIO -->
+    <div class="card form-card">
+        <form method="POST" class="filter-form">
 
-<br><a href="/admin_pontos">Voltar</a>
+            <div class="filter-group">
+                <label>Data</label>
+                <input type="date" name="data" value="{{ ponto.data }}" required>
+            </div>
+
+            <div class="filter-group">
+                <label>Locale</label>
+                <select name="local" required>
+                    {% for l in locais %}
+                        <option value="{{ l }}" {% if l == ponto.local %}selected{% endif %}>
+                            {{ l }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Ore</label>
+                <input type="number"
+                       name="horas"
+                       step="0.25"
+                       value="{{ ponto.horas }}"
+                       required>
+            </div>
+
+            <div class="filter-group">
+                <label>Note</label>
+                <textarea name="notas" rows="4">{{ ponto.notas }}</textarea>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="primary">
+                    Salva modifiche
+                </button>
+                <a href="/admin_pontos" class="btn-secondary">
+                    Annulla
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

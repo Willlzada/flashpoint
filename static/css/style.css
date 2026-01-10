@@ -188,17 +188,17 @@
 
 .action-card:hover {
     background: #3450a1;
-    color: #fff;
+    color: #f4f6fa;
 }
 
 .action-card.admin {
-    background: #eb06ff22;
-    color: #7a007f;
+    background: #ecffef;
+    color: #041955;
 }
 
 .action-card.admin:hover {
-    background: #eb06ff;
-    color: #fff;
+    background: #175c05;
+    color: #ffffff;
 }
 
 .action-card.logout {

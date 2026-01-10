@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, flash, render_template, request, redirect, session, url_for
 import pyrebase
 import firebase_admin
 import json
@@ -32,19 +32,33 @@ auth = firebase.auth()
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
 # =========================
 firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
-
 if not firebase_json:
     raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
 
 cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
 cred = credentials.Certificate(cred_dict)
 firebase_admin.initialize_app(cred)
-
 db = firestore.client()
+# =========================
+# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
+# =========================
+#cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
+#firebase_admin.initialize_app(cred)
+#db = firestore.client()
 
 # =========================
 # FUNÇÕES AUXILIARES
 # =========================
+
+# Função para verificar se o usuário é ADM
+def is_admin():
+    user_email = session.get("user")
+    if not user_email:
+        return False
+    user_doc = db.collection("usuarios").document(user_email).get()
+    if user_doc.exists and user_doc.to_dict().get("role") == "ADM":
+        return True
+    return False
 
 def get_usuario_logado():
     """Retorna o dicionário do usuário logado pelo UID da sessão"""
@@ -114,7 +128,7 @@ def register_usuario():
                 "pais": "",
                 "tipo": "usuario"  # padrão: usuário comum
             })
-            success = "Usuário criado com sucesso! Faça login."
+            success = "Utente creato con successo! Effettua il login."
         except Exception as e:
             error = str(e)
     return render_template("register.html", error=error, success=success)
@@ -125,17 +139,23 @@ def register_usuario():
 def home():
     if "uid" not in session:
         return redirect("/")
+
     uid = session["uid"]
     usuario_doc = db.collection("usuarios").document(uid).get()
+    
     if usuario_doc.exists:
         usuario = usuario_doc.to_dict()
     else:
-        usuario = {"nome": "Não cadastrado", "sobrenome": "", "tipo": "usuario", "email": "Não disponível"}
+        usuario = {"nome": "Non registrato", "sobrenome": "Non registrato", "tipo": "usuario", "email": "Non registrato"}
 
     # Garantir que email do Firestore esteja disponível
-    usuario["email"] = usuario.get("email", "Não disponível")
+    usuario["email"] = usuario.get("email", "Non disponibile")
 
-    return render_template("home.html", usuario=usuario)
+    # Verifica se o usuário é ADM
+    is_admin = usuario.get("role") == "ADM"  # ou "tipo" == "admin" se seu Firestore usa esse campo
+
+    return render_template("home.html", usuario=usuario, is_admin=is_admin)
+
 
 
 # PERFIL
@@ -162,17 +182,23 @@ def perfil_usuario():
 def registrar_ponto_usuario():
     if "uid" not in session:
         return redirect("/")
+
     uid = session["uid"]
     usuario_doc = db.collection("usuarios").document(uid).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {"nome": "Desconhecido"}
-    locais = ["-", "ART SYSTEM - FOTOVOLTAICO", "ART SYSTEM - LAMERI", "MARGOR", "OMAV", "COMETAL", "NIOX", "ALTRO"]
+
+    # Buscar locais do Firestore
+    locais_docs = db.collection("locais").stream()
+    locais = ["-"] + [doc.to_dict()["nome"] for doc in locais_docs]  # adiciona "-" como opção padrão
+
     mensagem = None
     if request.method == "POST":
         data_ponto = request.form.get("data")
+
         # Verificar duplicidade
         pontos_existentes = db.collection("pontos").where("uid", "==", uid).where("data", "==", data_ponto).stream()
         if any(pontos_existentes):
-            mensagem = f"Você já registrou um ponto para {data_ponto}!"
+            mensagem = f"Hai già registrato una presenza per {data_ponto}!"
         else:
             ponto_data = {
                 "uid": uid,
@@ -183,8 +209,10 @@ def registrar_ponto_usuario():
                 "notas": request.form.get("notas")
             }
             db.collection("pontos").add(ponto_data)
-            mensagem = "Ponto registrado com sucesso!"
+            mensagem = "Ora registrata con successo!"
+
     return render_template("registrar_ponto.html", locais=locais, mensagem=mensagem)
+
 
 # MEUS PONTOS
 @app.route("/meus_pontos", methods=["GET", "POST"])
@@ -211,6 +239,12 @@ def meus_pontos_usuario():
         ponto["horas_hhmm"] = decimal_para_hhmm(float(ponto.get("horas", 0)))
         ponto["data_formatada"] = formatar_data(ponto.get("data", "-"))
 
+    # 🔽 ORDENA POR DATA (YYYY-MM-DD)
+    pontos_list.sort(
+        key=lambda p: p.get("data", ""),
+        reverse=True
+    )
+
     # Total de horas
     total_decimal = sum(float(p.get("horas",0)) for p in pontos_list)
     total_hhmm = decimal_para_hhmm(total_decimal)
@@ -224,7 +258,7 @@ def admin_pontos():
     if not usuario:
         return redirect("/")
     if usuario.get("tipo") != "admin":
-        return "Acesso negado!"
+        return "Accesso negato!"
 
     # Pega filtros do formulário
     filtro_usuario = request.form.get("filtro_usuario") if request.method == "POST" else None
@@ -260,7 +294,6 @@ def admin_pontos():
         pontos_list.append({
             "id": ponto.id,
             "usuario_nome": f"{dono.get('nome','')} {dono.get('sobrenome','')}".strip(),
-            "usuario_email": dono.get("email","-"),
             "uid": uid_dono,
             "local": dados.get("local","-"),
             "data_formatada": data_formatada,
@@ -291,27 +324,54 @@ def admin_pontos():
 
 
 # EDITAR PONTO (ADMIN)
-@app.route("/editar_ponto/<id>", methods=["GET","POST"])
+@app.route("/editar_ponto/<id>", methods=["GET", "POST"])
 def editar_ponto_admin(id):
     if "uid" not in session:
         return redirect("/")
+
     uid = session["uid"]
     usuario_doc = db.collection("usuarios").document(uid).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+
     if usuario.get("tipo") != "admin":
         return "Acesso negado!"
-    ponto_doc = db.collection("pontos").document(id)
-    ponto = ponto_doc.get().to_dict()
+
+    ponto_ref = db.collection("pontos").document(id)
+    ponto_doc = ponto_ref.get()
+
+    if not ponto_doc.exists:
+        return "Ponto não encontrado"
+
+    ponto = ponto_doc.to_dict()
+
     if request.method == "POST":
-        ponto_doc.update({
+        ponto_ref.update({
             "data": request.form.get("data"),
             "local": request.form.get("local"),
             "horas": float(request.form.get("horas")),
             "notas": request.form.get("notas")
         })
         return redirect("/admin_pontos")
-    locais = ["-", "ART SYSTEM - FOTOVOLTAICO", "ART SYSTEM - LAMERI", "MARGOR", "OMAV", "COMETAL", "NIOX", "ALTRO"]
-    return render_template("editar_ponto.html", ponto=ponto, locais=locais)
+
+    # 🔥 BUSCA LOCAIS DINAMICAMENTE NO FIRESTORE
+    locais_ref = db.collection("locais").stream()
+    locais = []
+
+    for l in locais_ref:
+        l_data = l.to_dict()
+        if l_data and l_data.get("nome"):
+            locais.append(l_data["nome"])
+
+    # Opcional: garante "-" no início se você usa como padrão
+    if "-" not in locais:
+        locais.insert(0, "-")
+
+    return render_template(
+        "editar_ponto.html",
+        ponto=ponto,
+        locais=locais
+    )
+
 
 @app.route("/excluir_ponto/<id>", methods=["POST"])
 def excluir_ponto(id):
@@ -332,6 +392,42 @@ def excluir_ponto(id):
         ponto_doc.delete()
 
     return redirect("/admin_pontos")
+
+# Página para gerenciar locais (ADM)
+@app.route("/adm_locais", methods=["GET", "POST"])
+def gerenciar_locais():
+    usuario = get_usuario_logado()
+    if not usuario:
+        return redirect("/")
+    if usuario.get("tipo") != "admin":   # verifica tipo igual ao admin_pontos
+        return "Accesso negato!"         # retorna string simples
+
+    if request.method == "POST":
+        novo_local = request.form.get("novo_local", "").strip()
+        if novo_local:
+            db.collection("locais").add({"nome": novo_local})
+            return redirect(url_for("gerenciar_locais"))
+
+    locais_docs = db.collection("locais").stream()
+    locais = [doc.to_dict().get("nome","-") for doc in locais_docs]
+
+    return render_template("admin_locais.html", locais=locais)
+
+
+@app.route("/excluir_local", methods=["POST"])
+def excluir_local():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return "Accesso negato!"
+
+    nome = request.form.get("nome")
+    if nome:
+        locais_ref = db.collection("locais").where("nome", "==", nome).stream()
+        for doc in locais_ref:
+            db.collection("locais").document(doc.id).delete()
+    return redirect(url_for("gerenciar_locais"))
+
+
 
 # LOGOUT
 @app.route("/logout")

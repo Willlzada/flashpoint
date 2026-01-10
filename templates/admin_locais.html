@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Admin • Locais | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title admin-title">Gestione dei Locali</h1>
+
+    <!-- FORMULÁRIO PARA ADICIONAR NOVO LOCAL -->
+    <div class="card form-card">
+        <form method="POST" class="filter-form">
+            <div class="filter-group">
+                <label>Nuovo locale</label>
+                <input type="text" name="novo_local" placeholder="Nome del nuovo locale" required>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="primary">Aggiungi</button>
+                <a href="{{ url_for('gerenciar_locais') }}" class="btn-secondary">Cancella</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- TABELA DE LOCAIS -->
+    <div class="card table-card">
+        <table class="styled-table admin-table">
+            <thead>
+                <tr>
+                    <th>Locale</th>
+                    <th>Opzioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for local in locais %}
+                <tr>
+                    <td>{{ local }}</td>
+                    <td class="acoes-col">
+                        <!-- Botão Excluir com confirmação -->
+                        <form method="POST" action="{{ url_for('excluir_local') }}" style="display:inline;">
+                            <input type="hidden" name="nome" value="{{ local }}">
+                            <button type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Tem certeza que deseja excluir o local {{ local }}?');">
+                                Elimina
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2">Nessun locale registrato.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ url_for('home') }}" class="btn-secondary">Indietro</a>
+    </div>
+
+</div>
+
+{% endblock %}

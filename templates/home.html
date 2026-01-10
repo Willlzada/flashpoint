@@ -19,12 +19,12 @@
     <div class="actions-grid">
 
         <a href="/meus_pontos" class="action-card">
-            <span>📊</span>
+            <span>📆</span>
             <strong>Le mie ore</strong>
         </a>
 
         <a href="/registrar_ponto" class="action-card">
-            <span>⏱️</span>
+            <span>📝​</span>
             <strong>Segna le ore</strong>
         </a>
 
@@ -35,13 +35,20 @@
 
         {% if usuario.tipo == 'admin' %}
         <a href="/admin_pontos" class="action-card admin">
-            <span>🖥️​</span>
-            <strong>Area Amministrativa</strong>
+            <span>🕧​</span>
+            <strong>Gestione delle ore</strong>
+        </a>
+        {% endif %}
+
+        {% if usuario.tipo == 'admin' %}
+        <a href="/adm_locais" class="action-card admin">
+            <span>🏗️​</span>
+            <strong>Gestione dei luoghi</strong>
         </a>
         {% endif %}
 
         <a href="/logout" class="action-card logout">
-            <span>⬅️​</span>
+            <span>❌​</span>
             <strong>Esci</strong>
         </a>
 

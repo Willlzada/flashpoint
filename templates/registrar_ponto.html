@@ -22,8 +22,8 @@
                 <label>Locale</label>
                 <small>Seleziona il luogo in cui è stata svolta l’attività</small>
                 <select name="local" required>
-                    {% for l in locais %}
-                        <option value="{{ l }}">{{ l }}</option>
+                    {% for local in locais %}
+                        <option value="{{ local }}">{{ local }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -47,7 +47,7 @@
             <div class="form-group">
                 <label>Note</label>
                 <small>Osservazioni aggiuntive (facoltativo)</small>
-                <textarea name="notas" rows="3" placeholder="Alguma observação..."></textarea>
+                <textarea name="notas" rows="3" placeholder="Qualche osservazione…"></textarea>
             </div>
 
             <div class="form-actions">
