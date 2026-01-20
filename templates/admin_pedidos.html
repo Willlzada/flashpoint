@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Pedidos | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Ordini degli utenti</h1>
+
+    {% if pedidos %}
+        {% for p in pedidos %}
+        <div class="card table-card pedido-admin-card">
+
+            <!-- Cabeçalho do pedido -->
+            <div class="pedido-header">
+                <div>
+                    <p class="pedido-user">{{ p.nome }}</p>
+                    <p class="pedido-tipo">{{ p.tipo }}</p>
+                </div>
+
+                <div class="pedido-status">
+                    {% if p.status == "in sospeso" %}
+                        <span class="status-badge status-pendente">In sospeso</span>
+                    {% elif p.status == "approvato" %}
+                        <span class="status-badge status-aprovado">Approvato</span>
+                    {% elif p.status == "rifiutato" %}
+                        <span class="status-badge status-recusado">Rifiutato</span>
+                    {% elif p.status == "evaso" %}
+                        <span class="status-badge status-atendido">Evaso</span>
+                    {% else %}
+                        <span class="status-badge">{{ p.status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mensagem -->
+            <div class="pedido-mensagem">
+                <p>{{ p.mensagem }}</p>
+            </div>
+
+            <!-- Informações -->
+            <div class="pedido-info">
+                <span><strong>Creato il:</strong> {{ formatar_data_pedido(p.criado_em) }}</span>
+                <span>
+                    <strong>Evaso:</strong>
+                    {% if p.atendido %}
+                        <span class="text-success">Si</span>
+                    {% else %}
+                        <span class="text-muted">Non</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Ações -->
+            <form method="post" class="pedido-actions">
+                <input type="hidden" name="pedido_id" value="{{ p.id }}">
+
+                <button type="submit" name="acao" value="aprovar" class="btn-secondary">
+                    Approva
+                </button>
+
+                <button type="submit" name="acao" value="recusar" class="btn-secondary">
+                    Rifiuta
+                </button>
+
+                <button type="submit" name="acao" value="atendido" class="btn-secondary">
+                    Evaso
+                </button>
+
+                <button type="submit" name="acao" value="excluir" class="btn-secondary-danger">
+                    Elimina
+                </button>
+            </form>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card empty-state">
+            <p>Nessun ordine registrato.</p>
+        </div>
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="{{ url_for('home') }}" class="btn-secondary">Indietro</a>
+    </div>
+
+</div>
+
+{% endblock %}

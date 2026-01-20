@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Cartão de Reconhecimento</title>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+    }
+
+    .cartao {
+        width: 253px;
+        height: 374px;
+        background: #fff;
+        border-radius: 12px;
+
+        /* 👇 BORDA REAL DO CARTÃO */
+        border: 2px solid #000;
+
+        /* sombra só para tela */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+        padding: 22px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .topo {
+        display: block;
+    }
+
+
+    .foto {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #085e08;
+        display: block;
+        margin: 0 auto 10px auto;  /* 👈 centralização real */
+    }
+
+
+    .info h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        text-align: center;
+    }
+
+    .info p {
+        font-size: 14px;
+        margin: 2px 0;
+        color: #333;
+    }
+
+    .info2 p {
+        font-size: 16px;
+        margin-top: 10px;
+        
+    }
+
+    .logo {
+        width: 200px;
+        margin: 6px auto;
+        display: block;
+    }
+
+    .detalhes {
+        font-size: 11px;
+        text-align: center;
+        color: #333;
+    }
+
+    .acoes {
+        margin-top: 25px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 12px 18px;
+        border-radius: 6px;
+        background: #d9dadd;
+        color: #333;
+        text-decoration: none;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+    }
+
+    @media print {
+        body {
+            background: #fff;
+            padding: 0;
+        }
+
+        .acoes {
+            display: none;
+        }
+
+        .cartao {
+            box-shadow: none;          /* remove sombra */
+            border: 2px solid #000;    /* mantém a borda */
+            border-radius: 12px;
+            margin: auto;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+<div>
+
+    <div class="cartao">
+
+        <div class="topo">
+            
+
+            <div class="info">
+                {% if user.foto_url %}
+                <img src="{{ user.foto_url }}" class="foto">
+                {% else %}
+                <img src="{{ url_for('static', filename='img/PERFIL.png') }}" class="foto">
+                {% endif %}
+                <h2>{{ user.sobrenome }} {{ user.nome }}</h2>
+
+                <p>Nato: <strong>{{ user.data_nascimento }}</strong> a <strong>{{ user.pais }}</strong></p>
+                <p>Data Assunzione: <strong>{{ user.data_assuncao }}</strong></p>
+
+                <p>Ruolo / Mansione:</p>
+                <p><strong>{{ user.cargo }}</strong></p>
+
+                <div class="info2">
+                    <p>Distaccato Presso:</p>
+                </div>
+
+                <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo">
+
+                <div class="detalhes">
+                    <p>Sede: Via Corfù, 66 - 25124 BRESCIA (BS)</p>
+                    <p>Partita IVA: IT04447670987</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="acoes">
+        <button onclick="window.print()" class="btn">Esporta PDF</button>
+        <a href="/home" class="btn">Indietro</a>
+    </div>
+
+</div>
+
+</body>
+</html>

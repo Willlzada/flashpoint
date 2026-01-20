@@ -3,7 +3,7 @@ import pyrebase
 import firebase_admin
 import json
 import os
-from firebase_admin import credentials, firestore, initialize_app
+from firebase_admin import credentials, firestore, storage, initialize_app
 from datetime import datetime
 
 # =========================
@@ -71,6 +71,23 @@ def get_usuario_logado():
         return u.to_dict()
     return None
 
+def get_all_users():
+    usuarios = []
+    for u in db.collection("usuarios").stream():
+        data = u.to_dict()
+        data["uid"] = u.id
+        usuarios.append(data)
+    return usuarios
+
+def get_user_by_id(uid):
+    doc = db.collection("usuarios").document(uid).get()
+    if doc.exists:
+        user = doc.to_dict()
+        user["uid"] = doc.id
+        return user
+    return None
+
+
 def decimal_para_hhmm(horas_decimal):
     """Converte decimal para hh:mm"""
     h = int(horas_decimal)
@@ -84,6 +101,52 @@ def formatar_data(data_str):
         return dt.strftime("%d/%m/%Y")
     except:
         return data_str
+    
+
+def formatar_data_pedido(data_str):
+    """
+    Converte string do Firestore como:
+    "19 de janeiro de 2026 às 21:35:39 UTC+1"
+    para "19/01/2026 21:35"
+    """
+    try:
+        # separar data e hora
+        if " às " in data_str:
+            data_part, hora_part = data_str.split(" às ")
+            hora_part = hora_part.split(" ")[0]  # remove UTC+1
+        else:
+            data_part = data_str
+            hora_part = "00:00:00"
+
+        # mapear meses em português para número
+        meses = {
+            "janeiro": "01",
+            "fevereiro": "02",
+            "março": "03",
+            "abril": "04",
+            "maio": "05",
+            "junho": "06",
+            "julho": "07",
+            "agosto": "08",
+            "setembro": "09",
+            "outubro": "10",
+            "novembro": "11",
+            "dezembro": "12"
+        }
+
+        # separar dia, mês por extenso e ano
+        partes = data_part.strip().split(" de ")
+        dia = partes[0].zfill(2)
+        mes = meses[partes[1].lower()]
+        ano = partes[2]
+
+        # formar datetime
+        dt = datetime.strptime(f"{dia}/{mes}/{ano} {hora_part}", "%d/%m/%Y %H:%M:%S")
+        return dt.strftime("%d/%m/%Y %H:%M")
+    except Exception as e:
+        print("Erro ao formatar data:", e)
+        return data_str
+
 
 # =========================
 # ROTAS
@@ -167,15 +230,22 @@ def perfil_usuario():
     usuario_ref = db.collection("usuarios").document(uid)
     usuario_doc = usuario_ref.get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+
     if request.method == "POST":
+        # Atualiza todos os campos, incluindo os novos
         usuario_ref.update({
             "nome": request.form.get("nome"),
             "sobrenome": request.form.get("sobrenome"),
             "data_nascimento": request.form.get("data_nascimento"),
-            "pais": request.form.get("pais")
+            "pais": request.form.get("pais"),
+            "data_assuncao": request.form.get("data_assuncao"),
+            "cargo": request.form.get("cargo"),
+            "foto_url": request.form.get("foto_url")  # opcional
         })
         return redirect("/home")
+
     return render_template("perfil.html", usuario=usuario)
+
 
 # REGISTRAR PONTO
 @app.route("/registrar_ponto", methods=["GET", "POST"])
@@ -219,37 +289,50 @@ def registrar_ponto_usuario():
 def meus_pontos_usuario():
     if "uid" not in session:
         return redirect("/")
+
     uid = session["uid"]
-    pontos_query = db.collection("pontos").where("uid", "==", uid)
+    pontos_ref = db.collection("pontos").where("uid", "==", uid)
 
-    filtro_data = request.form.get("filtro_data") if request.method=="POST" else None
-    filtro_mes = request.form.get("filtro_mes") if request.method=="POST" else None
+    filtro_data = request.form.get("filtro_data") if request.method == "POST" else None
+    filtro_mes = request.form.get("filtro_mes") if request.method == "POST" else None
 
-    if filtro_data:
-        pontos_query = pontos_query.where("data", "==", filtro_data).stream()
-        pontos_list = [p.to_dict() for p in pontos_query]
-    else:
-        pontos_query = pontos_query.stream()
-        pontos_list = [p.to_dict() for p in pontos_query]
-        if filtro_mes:
-            pontos_list = [p for p in pontos_list if p["data"].startswith(filtro_mes)]
+    pontos_list = []
 
-    # Formata horas e datas
-    for ponto in pontos_list:
-        ponto["horas_hhmm"] = decimal_para_hhmm(float(ponto.get("horas", 0)))
-        ponto["data_formatada"] = formatar_data(ponto.get("data", "-"))
+    for p in pontos_ref.stream():
+        dados = p.to_dict()
+        if not dados:
+            continue
 
-    # 🔽 ORDENA POR DATA (YYYY-MM-DD)
+        # Filtro por data
+        if filtro_data and dados.get("data") != filtro_data:
+            continue
+
+        # Filtro por mês
+        if filtro_mes and not dados.get("data", "").startswith(filtro_mes):
+            continue
+
+        dados["id"] = p.id
+        dados["horas_hhmm"] = decimal_para_hhmm(float(dados.get("horas", 0)))
+        dados["data_formatada"] = formatar_data(dados.get("data", "-"))
+
+        pontos_list.append(dados)
+
+    # Ordena por data (mais recente primeiro)
     pontos_list.sort(
         key=lambda p: p.get("data", ""),
         reverse=True
     )
 
-    # Total de horas
-    total_decimal = sum(float(p.get("horas",0)) for p in pontos_list)
+    total_decimal = sum(float(p.get("horas", 0)) for p in pontos_list)
     total_hhmm = decimal_para_hhmm(total_decimal)
 
-    return render_template("meus_pontos.html", pontos=pontos_list, filtro_data=filtro_data, filtro_mes=filtro_mes, total_horas=total_hhmm)
+    return render_template(
+        "meus_pontos.html",
+        pontos=pontos_list,
+        filtro_data=filtro_data,
+        filtro_mes=filtro_mes,
+        total_horas=total_hhmm
+    )
 
 # ADMIN PONTOS
 @app.route("/admin_pontos", methods=["GET", "POST"])
@@ -260,67 +343,74 @@ def admin_pontos():
     if usuario.get("tipo") != "admin":
         return "Accesso negato!"
 
-    # Pega filtros do formulário
+    # Filtros
     filtro_usuario = request.form.get("filtro_usuario") if request.method == "POST" else None
     filtro_mes = request.form.get("filtro_mes") if request.method == "POST" else None
 
-    # Lista todos os pontos
     pontos_ref = db.collection("pontos").stream()
     pontos_list = []
+    total_horas = 0.0  # 👈 TOTAL DE HORAS
 
     for ponto in pontos_ref:
         dados = ponto.to_dict()
         if not dados:
             continue
+
         uid_dono = dados.get("uid")
         if not uid_dono:
             continue
-        # Busca usuário dono do ponto
+
         dono_doc = db.collection("usuarios").document(uid_dono).get()
         if not dono_doc.exists:
             continue
         dono = dono_doc.to_dict()
 
-        # Aplica filtro de usuário
+        # Filtro usuário
         if filtro_usuario and filtro_usuario != uid_dono:
             continue
-        # Aplica filtro de mês
-        if filtro_mes and not dados.get("data","").startswith(filtro_mes):
+
+        # Filtro mês
+        if filtro_mes and not dados.get("data", "").startswith(filtro_mes):
             continue
 
-        data_formatada = formatar_data(dados.get("data","-"))
-        horas_formatadas = decimal_para_hhmm(float(dados.get("horas",0)))
+        horas = float(dados.get("horas", 0))
+        total_horas += horas  # 👈 SOMA AQUI
 
         pontos_list.append({
             "id": ponto.id,
             "usuario_nome": f"{dono.get('nome','')} {dono.get('sobrenome','')}".strip(),
             "uid": uid_dono,
-            "local": dados.get("local","-"),
-            "data_formatada": data_formatada,
-            "horas_formatadas": horas_formatadas,
-            "notas": dados.get("notas","-")
+            "local": dados.get("local", "-"),
+            "data_formatada": formatar_data(dados.get("data", "-")),
+            "horas_formatadas": decimal_para_hhmm(horas),
+            "notas": dados.get("notas", "-")
         })
 
-    # Ordena por data mais recente
+    # Ordena por data (mais recente)
     pontos_list.sort(
-        key=lambda x: datetime.strptime(x['data_formatada'], "%d/%m/%Y") if x['data_formatada'] != '-' else datetime.min,
+        key=lambda x: datetime.strptime(x['data_formatada'], "%d/%m/%Y")
+        if x['data_formatada'] != '-' else datetime.min,
         reverse=True
     )
 
-    # Lista de usuários para filtro
-    usuarios_ref = db.collection("usuarios").stream()
+    # Lista usuários para filtro
     usuarios_list = []
-    for u in usuarios_ref:
+    for u in db.collection("usuarios").stream():
         u_data = u.to_dict()
-        usuarios_list.append({"uid": u.id, "nome": f"{u_data.get('nome','')} {u_data.get('sobrenome','')}"})
+        usuarios_list.append({
+            "uid": u.id,
+            "nome": f"{u_data.get('nome','')} {u_data.get('sobrenome','')}"
+        })
 
     return render_template(
         "admin_pontos.html",
         pontos=pontos_list,
         usuarios=usuarios_list,
         filtro_usuario=filtro_usuario,
-        filtro_mes=filtro_mes
+        filtro_mes=filtro_mes,
+        total_horas=decimal_para_hhmm(total_horas)  # 👈 ENVIA TOTAL
     )
+
 
 
 # EDITAR PONTO (ADMIN)
@@ -330,12 +420,15 @@ def editar_ponto_admin(id):
         return redirect("/")
 
     uid = session["uid"]
+
+    # Busca usuário logado
     usuario_doc = db.collection("usuarios").document(uid).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
 
-    if usuario.get("tipo") != "admin":
-        return "Acesso negado!"
+    if not usuario:
+        return redirect("/")
 
+    # Busca ponto
     ponto_ref = db.collection("pontos").document(id)
     ponto_doc = ponto_ref.get()
 
@@ -344,6 +437,13 @@ def editar_ponto_admin(id):
 
     ponto = ponto_doc.to_dict()
 
+    # 🔐 SEGURANÇA
+    # Se NÃO for admin, só pode editar ponto próprio
+    if usuario.get("tipo") != "admin":
+        if ponto.get("uid") != uid:
+            return "Acesso negado!"
+
+    # POST → salva edição
     if request.method == "POST":
         ponto_ref.update({
             "data": request.form.get("data"),
@@ -351,7 +451,12 @@ def editar_ponto_admin(id):
             "horas": float(request.form.get("horas")),
             "notas": request.form.get("notas")
         })
-        return redirect("/admin_pontos")
+
+        # Redireciona corretamente
+        if usuario.get("tipo") == "admin":
+            return redirect("/admin_pontos")
+        else:
+            return redirect("/meus_pontos")
 
     # 🔥 BUSCA LOCAIS DINAMICAMENTE NO FIRESTORE
     locais_ref = db.collection("locais").stream()
@@ -362,7 +467,6 @@ def editar_ponto_admin(id):
         if l_data and l_data.get("nome"):
             locais.append(l_data["nome"])
 
-    # Opcional: garante "-" no início se você usa como padrão
     if "-" not in locais:
         locais.insert(0, "-")
 
@@ -371,6 +475,7 @@ def editar_ponto_admin(id):
         ponto=ponto,
         locais=locais
     )
+
 
 
 @app.route("/excluir_ponto/<id>", methods=["POST"])
@@ -426,6 +531,209 @@ def excluir_local():
         for doc in locais_ref:
             db.collection("locais").document(doc.id).delete()
     return redirect(url_for("gerenciar_locais"))
+
+# =========================
+# LISTAR USUÁRIOS PARA CARTÃO (ADMIN)
+# =========================
+@app.route("/admin/cartoes", methods=["GET"])
+def admin_cartoes():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return "Acesso negado!"
+
+    usuarios = get_all_users()
+    return render_template("admin_cartoes.html", usuarios=usuarios)
+
+
+# =========================
+# GERAR CARTÃO (ADMIN)
+# =========================
+@app.route("/admin/cartoes/gerar/<uid>", methods=["GET"])
+def gerar_cartao(uid):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+        return "Acesso negado!"
+
+    usuario = get_user_by_id(uid)
+    if not usuario:
+        return "Usuário não encontrado"
+
+    # Valida campos obrigatórios
+    campos_obrigatorios = ["nome", "sobrenome", "data_nascimento", "pais", "data_assuncao", "cargo"]
+    if not all(usuario.get(campo) for campo in campos_obrigatorios):
+        return "Perfil incompleto. Não é possível gerar o cartão."
+
+    return render_template("cartao_reconhecimento.html", user=usuario)
+
+# =========================
+# GERAR CARTÃO (USUÁRIO LOGADO)
+# =========================
+@app.route("/perfil/cartao", methods=["GET"])
+def gerar_cartao_perfil():
+    usuario = get_usuario_logado()
+    if not usuario:
+        return redirect("/")
+
+    # Campos obrigatórios para gerar o cartão
+    campos_obrigatorios = [
+        "nome",
+        "sobrenome",
+        "data_nascimento",
+        "pais",
+        "data_assuncao",
+        "cargo"
+    ]
+
+    # Verifica se todos os campos obrigatórios estão preenchidos
+    if not all(usuario.get(campo) for campo in campos_obrigatorios):
+        # Redireciona para perfil com aviso de perfil incompleto
+        return redirect(url_for("perfil_usuario", incompleto=1))
+
+    return render_template(
+        "cartao_reconhecimento.html",
+        user=usuario
+    )
+
+
+
+from datetime import datetime
+from google.cloud import firestore
+
+@app.route("/pedido/novo", methods=["GET", "POST"])
+def novo_pedido():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+
+    # 🔹 Busca o usuário no Firestore
+    usuario_doc = db.collection("usuarios").document(uid).get()
+    usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+
+    pedidos_ref = db.collection("pedidos")
+    
+    # Envio do pedido
+    if request.method == "POST":
+        pedido = {
+            "user_id": uid,
+            "nome": f"{usuario.get('nome','')} {usuario.get('sobrenome','')}",
+            "tipo": request.form["tipo"],
+            "mensagem": request.form["mensagem"],
+            "status": "pendente",
+            "atendido": False,
+            "criado_em": firestore.SERVER_TIMESTAMP
+        }
+        pedidos_ref.add(pedido)
+        return redirect(url_for("novo_pedido"))
+
+    # 🔹 Busca todos os pedidos do usuário atual
+    pedidos_docs = pedidos_ref.where("user_id", "==", uid).order_by("criado_em", direction=firestore.Query.DESCENDING).stream()
+    pedidos = []
+    for doc in pedidos_docs:
+        data = doc.to_dict()
+        data["id"] = doc.id
+        pedidos.append(data)
+
+    return render_template(
+        "pedido_novo.html",
+        pedidos=pedidos,
+        formatar_data_pedido=formatar_data_pedido
+    )
+
+
+
+from datetime import datetime
+
+def formatar_data_pedido(timestamp):
+    """Formata timestamp do Firebase para dd/mm/aaaa HH:MM"""
+    try:
+        # Firebase retorna timestamp como objeto datetime
+        if isinstance(timestamp, datetime):
+            return timestamp.strftime("%d/%m/%Y %H:%M")
+        # Caso seja string, tenta converter
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d/%m/%Y %H:%M")
+    except:
+        return str(timestamp)
+
+@app.route("/admin/pedidos", methods=["GET", "POST"])
+def admin_pedidos():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return "Accesso negato!"
+
+    pedidos_ref = db.collection("pedidos")
+    
+    # Atualização via POST
+    if request.method == "POST":
+        pedido_id = request.form.get("pedido_id")
+        acao = request.form.get("acao")
+
+        if pedido_id and acao:
+            pedido_doc = pedidos_ref.document(pedido_id).get()
+            if pedido_doc.exists:
+                pedido_ref = pedidos_ref.document(pedido_id)
+                if acao == "aprovar":
+                    pedido_ref.update({"status": "aprovado"})
+                elif acao == "recusar":
+                    pedido_ref.update({"status": "recusado"})
+                elif acao == "atendido":
+                    pedido_ref.update({"atendido": True})
+                elif acao == "excluir":
+                    pedido_ref.delete()
+        # após a ação, recarrega os pedidos
+        return redirect(url_for("admin_pedidos"))
+
+    # Recupera todos os pedidos
+    pedidos_docs = pedidos_ref.stream()
+    pedidos = []
+    for doc in pedidos_docs:
+        data = doc.to_dict()
+        data["id"] = doc.id
+        pedidos.append(data)
+
+    return render_template(
+        "admin_pedidos.html",
+        pedidos=pedidos,
+        formatar_data_pedido=formatar_data_pedido
+    )
+
+
+    # GET → lista de pedidos
+    pedidos_docs = db.collection("pedidos").stream()
+    pedidos = []
+    for doc in pedidos_docs:
+        d = doc.to_dict()
+        d["id"] = doc.id
+        pedidos.append(d)
+
+    pedidos.sort(key=lambda x: x.get("data_pedido", ""), reverse=True)
+
+    return render_template("admin_pedidos.html", pedidos=pedidos)
+
+
+@app.route("/admin/pedidos/decidir/<id>", methods=["POST"])
+def decidir_pedido(id):
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return "Accesso negato!"
+
+    acao = request.form.get("acao")  # aprovar, recusar, atendido
+    if not acao:
+        return redirect(url_for("admin_pedidos"))
+
+    pedido_ref = db.collection("pedidos").document(id)
+    pedido_doc = pedido_ref.get()
+    if pedido_doc.exists:
+        if acao == "aprovar":
+            pedido_ref.update({"status": "aprovado"})
+        elif acao == "recusar":
+            pedido_ref.update({"status": "recusado"})
+        elif acao == "atendido":
+            pedido_ref.update({"status": "atendido"})
+
+    return redirect(url_for("admin_pedidos"))
+
 
 
 

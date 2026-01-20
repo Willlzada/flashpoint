@@ -27,11 +27,23 @@
             <span>📝​</span>
             <strong>Segna le ore</strong>
         </a>
+        
+
+        <a href="{{ url_for('novo_pedido') }}" class="action-card">
+            <span>📦​​​</span>
+            <strong>Richiesta</strong>
+        </a>
 
         <a href="/perfil" class="action-card">
             <span>👤</span>
             <strong>Profilo</strong>
         </a>
+
+        <a href="{{ url_for('gerar_cartao_perfil') }}" class="action-card">
+            <span>🪪​</span>
+            <strong>Tersserino</strong>
+        </a>
+
 
         {% if usuario.tipo == 'admin' %}
         <a href="/admin_pontos" class="action-card admin">
@@ -45,7 +57,24 @@
             <span>🏗️​</span>
             <strong>Gestione dei luoghi</strong>
         </a>
+        
         {% endif %}
+
+        {% if usuario.tipo == 'admin' %}
+        <a href="{{ url_for('admin_cartoes') }}" class="action-card admin">
+            <span>🪪</span>
+            <strong>Gerar Cartão de Reconhecimento</strong>
+        </a>
+        
+        {% endif %}
+
+        {% if usuario.tipo == 'admin' %}
+        <a href="{{ url_for('admin_pedidos') }}" class="action-card admin">
+            <span>📦</span>
+            <strong>Pedidos dos Usuários</strong>
+        </a>
+        {% endif %}
+                
 
         <a href="/logout" class="action-card logout">
             <span>❌​</span>

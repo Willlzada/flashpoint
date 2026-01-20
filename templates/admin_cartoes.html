@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Cartões de Reconhecimento | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Tesserino di riconoscimento</h1>
+
+    {% if usuarios %}
+    <div class="card table-card">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Utente</th>
+                    <th>Stato del profilo</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.nome }} {{ u.sobrenome }}</td>
+
+                    {% set campos = [u.nome, u.sobrenome, u.data_nascimento, u.pais, u.data_assuncao, u.cargo] %}
+                    {% if campos | select('string') | list | length == 6 %}
+                        <td class="text-success">Completo</td>
+                        <td>
+                            <a href="{{ url_for('gerar_cartao', uid=u.uid) }}" class="btn btn-success">Genera tesserino</a>
+                        </td>
+                    {% else %}
+                        <td class="text-danger">Incompleto</td>
+                        <td>
+                            <button class="btn btn-secondary" disabled>Profilo incompleto</button>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card empty-state">
+        <p>Nessun utente registrato.</p>
+    </div>
+    {% endif %}
+
+    <div class="form-actions" style="margin-top:20px;">
+        <a href="/home" class="btn-secondary">Indietro</a>
+    </div>
+
+</div>
+
+<style>
+/* Cards e tabela */
+.page-wrapper { max-width: 900px; margin: auto; }
+.card.table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.styled-table { width: 100%; border-collapse: collapse; }
+.styled-table th, .styled-table td { padding: 12px 15px; text-align: left; }
+.styled-table th { background-color: #041955; color: #fff; }
+.styled-table tbody tr { border-bottom: 1px solid #ddd; transition: background 0.3s; }
+.styled-table tbody tr:hover { background-color: #f1f1f1; }
+
+/* Status colorido */
+.text-success { color: #28a745; font-weight: bold; }
+.text-danger { color: #dc3545; font-weight: bold; }
+
+/* Botões */
+.btn { padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-block; transition: 0.2s; border: none; cursor: pointer; }
+.btn-success { background-color: #3450a1; color: #fff; }
+.btn-success:hover { background-color: #041955; }
+.btn-secondary { background-color: #ccc; color: #333; cursor: not-allowed; }
+
+/* Form Actions */
+.form-actions { text-align: right; }
+</style>
+
+{% endblock %}

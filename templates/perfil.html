@@ -8,50 +8,98 @@
 
     <h1 class="page-title">Il tuo profilo</h1>
 
-    <div class="card form-card">
+    <!-- Mensagem de perfil incompleto -->
+    {% if request.args.get('incompleto') %}
+    <div class="card empty-state" style="border-left:4px solid rgb(255, 0, 0); padding:15px; margin-bottom:20px;">
+        <p><strong>Attenzione:</strong> Il tuo profilo è incompleto. Per generare la tessera di riconoscimento, ti preghiamo di compilare tutti i campi obbligatori.</p>
+        <div style="margin-top:10px; display:flex; gap:12px;">            
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card form-card" id="form-perfil">
 
         <form method="POST">
 
+            <!-- Nome -->
             <div class="form-group">
                 <label>Nome</label>
                 <input type="text"
                        name="nome"
                        placeholder="Ex.: João"
-                       value="{{ usuario.nome }}"
+                       value="{{ usuario.nome or '' }}"
                        required>
             </div>
 
+            <!-- Sobrenome -->
             <div class="form-group">
                 <label>Cognome</label>
                 <input type="text"
                        name="sobrenome"
                        placeholder="Ex.: Silva"
-                       value="{{ usuario.sobrenome }}"
+                       value="{{ usuario.sobrenome or '' }}"
                        required>
             </div>
 
+            <!-- Data de nascimento -->
             <div class="form-group">
                 <label>Data di nascita</label>
                 <small>Utilizzata solo per la registrazione interna.</small>
                 <input type="date"
                        name="data_nascimento"
-                       value="{{ usuario.data_nascimento }}">
+                       value="{{ usuario.data_nascimento or '' }}">
             </div>
 
+            <!-- País -->
             <div class="form-group">
                 <label>Paese di origine</label>
                 <input type="text"
                        name="pais"
                        placeholder="Ex.: Brasil"
-                       value="{{ usuario.pais }}">
+                       value="{{ usuario.pais or '' }}">
             </div>
 
+            <!-- Data de Assunção -->
+            <div class="form-group">
+                <label>Data di assunzione</label>
+                <small>In caso di dubbio, chiedi all’amministrazione.</small>
+                <input type="date"
+                       name="data_assuncao"
+                       value="{{ usuario.data_assuncao or '' }}">
+            </div>
+
+            <!-- Cargo -->
+            <div class="form-group">
+                <label>Ruolo</label>
+                <input type="text"
+                       name="cargo"
+                       placeholder="Ex.: Desenvolvedor"
+                       value="{{ usuario.cargo or '' }}">
+            </div>
+
+            <!-- Foto -->
+            <div class="form-group">
+                <label>Foto (URL)</label>
+                <small>In caso di dubbio, chiedi all’amministrazione.</small>
+                <input type="text"
+                       name="foto_url"
+                       placeholder="Ex.: https://link-da-foto.com/foto.jpg"
+                       value="{{ usuario.foto_url or '' }}">
+            </div>
+
+            <!-- Ações -->
             <div class="form-actions">
-                <button type="submit" class="primary">Salva modifiche</button>
-                <a href="/home" class="btn-secondary">Indietro</a>
+                <button type="submit" class="primary">
+                    Salva modifiche
+                </button>
+                <a href="{{ url_for('home') }}" class="btn-secondary">
+                    Indietro
+                </a>
             </div>
 
         </form>
+
+
 
     </div>
 
