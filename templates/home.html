@@ -1,88 +1,116 @@
 {% extends "base.html" %}
 
-{% block title %}Home | FlashPoint{% endblock %}
+{% block title %}Dashboard | FlashPoint{% endblock %}
 
 {% block content %}
 
-<div class="page-wrapper">
+<div class="row">
+  <div class="col-md-12">
 
-    <h1 class="page-title">Area Personale</h1>
+    <!-- TÍTULO -->
+    
 
-    <div class="card user-card">
-        <div class="login-logo">
-            <img src="{{ url_for('static', filename='img/logo-login.png') }}">
+    <div class="clearfix"></div>
+
+    <!-- 🔹 RESUMO DE HORAS -->
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Riepilogo ore</h2>
+        <div class="clearfix"></div>
+      </div>
+
+      <div class="x_content">
+        <div class="row text-center">
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="tile-stats">
+              <div class="icon"><i class="fa fa-clock-o"></i></div>
+              <div class="count">{{ horas_mes_atual }}</div>
+              <h3>Ore mese attuale</h3>
+              <p>Totale registrato</p>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="tile-stats">
+              <div class="icon"><i class="fa fa-calendar"></i></div>
+              <div class="count">{{ horas_mes_anterior }}</div>
+              <h3>Mese precedente</h3>
+              <p>Confronto</p>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="tile-stats">
+              <div class="icon"><i class="fa fa-calendar-check-o"></i></div>
+              <div class="count">{{ horas_ano }}</div>
+                <h3>Totale ore anno</h3>
+                <p>Anno corrente</p>
+
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="tile-stats">
+              <div class="icon"><i class="fa fa-trophy"></i></div>
+              <div class="count">#{{ posicao }}</div>
+              <h3>Classifica</h3>
+              <p>Posizione attuale</p>
+            </div>
+          </div>
+
         </div>
-        <h2>Benvenuto, {{ usuario.nome }}!</h2>
-        
+      </div>
     </div>
 
-    <div class="actions-grid">
+    <!-- 🔹 RANKING -->
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Classifica ore mensili</h2>
+        <div class="clearfix"></div>
+      </div>
 
-        <a href="/meus_pontos" class="action-card">
-            <span>📆</span>
-            <strong>Le mie ore</strong>
-        </a>
+      <div class="x_content">
 
-        <a href="/registrar_ponto" class="action-card">
-            <span>📝​</span>
-            <strong>Segna le ore</strong>
-        </a>
-        
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th style="width:80px;">#</th>
+              <th>Nome</th>
+              <th style="width:150px;">Ore totali</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in ranking %}
+            <tr>
+              <td class="text-center">
+                {% if loop.index == 1 %}
+                  🥇
+                {% elif loop.index == 2 %}
+                  🥈
+                {% elif loop.index == 3 %}
+                  🥉
+                {% else %}
+                  {{ loop.index }}
+                {% endif %}
+              </td>
+              <td>{{ r.nome }}</td>
+              <td class="text-center fw-bold">{{ r.horas }} h</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="3" class="text-center text-muted">
+                Nessun dato disponibile per questo mese.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-        <a href="{{ url_for('novo_pedido') }}" class="action-card">
-            <span>📦​​​</span>
-            <strong>Richiesta</strong>
-        </a>
-
-        <a href="/perfil" class="action-card">
-            <span>👤</span>
-            <strong>Profilo</strong>
-        </a>
-
-        <a href="{{ url_for('gerar_cartao_perfil') }}" class="action-card">
-            <span>🪪​</span>
-            <strong>Tersserino</strong>
-        </a>
-
-
-        {% if usuario.tipo == 'admin' %}
-        <a href="/admin_pontos" class="action-card admin">
-            <span>🕧​</span>
-            <strong>Gestione delle ore</strong>
-        </a>
-        {% endif %}
-
-        {% if usuario.tipo == 'admin' %}
-        <a href="/adm_locais" class="action-card admin">
-            <span>🏗️​</span>
-            <strong>Gestione dei luoghi</strong>
-        </a>
-        
-        {% endif %}
-
-        {% if usuario.tipo == 'admin' %}
-        <a href="{{ url_for('admin_cartoes') }}" class="action-card admin">
-            <span>🪪</span>
-            <strong>Gerar Cartão de Reconhecimento</strong>
-        </a>
-        
-        {% endif %}
-
-        {% if usuario.tipo == 'admin' %}
-        <a href="{{ url_for('admin_pedidos') }}" class="action-card admin">
-            <span>📦</span>
-            <strong>Pedidos dos Usuários</strong>
-        </a>
-        {% endif %}
-                
-
-        <a href="/logout" class="action-card logout">
-            <span>❌​</span>
-            <strong>Esci</strong>
-        </a>
-
+      </div>
     </div>
 
+  </div>
 </div>
 
 {% endblock %}

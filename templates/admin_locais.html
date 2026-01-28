@@ -4,63 +4,110 @@
 
 {% block content %}
 
-<div class="page-wrapper">
+<div class="row">
+    <div class="col-md-12">
 
-    <h1 class="page-title admin-title">Gestione dei Locali</h1>
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Gestione dei Locali</h3>
+            </div>
+        </div>
 
-    <!-- FORMULÁRIO PARA ADICIONAR NOVO LOCAL -->
-    <div class="card form-card">
-        <form method="POST" class="filter-form">
-            <div class="filter-group">
-                <label>Nuovo locale</label>
-                <input type="text" name="novo_local" placeholder="Nome del nuovo locale" required>
+        <!-- FORMULÁRIO NOVO LOCAL -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Aggiungi nuovo locale</h2>
+                <div class="clearfix"></div>
             </div>
 
-            <div class="filter-actions">
-                <button type="submit" class="primary">Aggiungi</button>
-                <a href="{{ url_for('gerenciar_locais') }}" class="btn-secondary">Cancella</a>
-            </div>
-        </form>
-    </div>
+            <div class="x_content">
+                <form method="POST" class="form-horizontal">
 
-    <!-- TABELA DE LOCAIS -->
-    <div class="card table-card">
-        <table class="styled-table admin-table">
-            <thead>
-                <tr>
-                    <th>Locale</th>
-                    <th>Opzioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for local in locais %}
-                <tr>
-                    <td>{{ local }}</td>
-                    <td class="acoes-col">
-                        <!-- Botão Excluir com confirmação -->
-                        <form method="POST" action="{{ url_for('excluir_local') }}" style="display:inline;">
-                            <input type="hidden" name="nome" value="{{ local }}">
-                            <button type="submit"
-                                    class="btn-danger"
-                                    onclick="return confirm('Tem certeza que deseja excluir o local {{ local }}?');">
-                                Elimina
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Nome del locale
+                        </label>
+                        <div class="col-md-6 col-sm-6">
+                            <input type="text"
+                                   name="novo_local"
+                                   class="form-control"
+                                   placeholder="Es: Ufficio Centrale"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+
+                    <div class="form-group row">
+                        <div class="col-md-6 col-sm-6 offset-md-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-plus"></i> Aggiungi
                             </button>
-                        </form>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="2">Nessun locale registrato.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                            <a href="{{ url_for('gerenciar_locais') }}"
+                               class="btn btn-secondary">
+                                Cancella
+                            </a>
+                        </div>
+                    </div>
 
-    <div class="form-actions">
-        <a href="{{ url_for('home') }}" class="btn-secondary">Indietro</a>
-    </div>
+                </form>
+            </div>
+        </div>
 
+        <!-- TABELA DE LOCAIS -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Locali registrati</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Locale</th>
+                            <th style="width:120px;">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for local in locais %}
+                        <tr>
+                            <td>{{ local }}</td>
+                            <td class="text-center">
+                                <form method="POST"
+                                      action="{{ url_for('excluir_local') }}"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
+                                    <input type="hidden" name="nome" value="{{ local }}">
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">
+                                Nessun locale registrato.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <!-- VOLTAR -->
+        <div class="text-end">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                Indietro
+            </a>
+        </div>
+
+    </div>
 </div>
 
 {% endblock %}

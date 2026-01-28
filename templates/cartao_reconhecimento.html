@@ -15,7 +15,7 @@
 
     .cartao {
         width: 253px;
-        height: 374px;
+        height: 390px;
         background: #fff;
         border-radius: 12px;
 
@@ -64,6 +64,13 @@
     .info2 p {
         font-size: 16px;
         margin-top: 10px;
+        
+    }
+
+    .nome_card p {
+        font-size: 20px;
+        margin-top: 10px;
+        text-align: center;
         
     }
 
@@ -128,11 +135,15 @@
 
             <div class="info">
                 {% if user.foto_url %}
-                <img src="{{ user.foto_url }}" class="foto">
+                    <img src="{{ url_for('static', filename='img/perfis/' ~ user.foto_url) }}" class="foto">
                 {% else %}
-                <img src="{{ url_for('static', filename='img/PERFIL.png') }}" class="foto">
+                    <img src="{{ url_for('static', filename='img/perfis/default.png') }}" class="foto">
                 {% endif %}
-                <h2>{{ user.sobrenome }} {{ user.nome }}</h2>
+
+                <div class="nome_card">
+                <p><strong>{{ user.sobrenome }} {{ user.nome }}</strong></p>
+                </div>
+
 
                 <p>Nato: <strong>{{ user.data_nascimento }}</strong> a <strong>{{ user.pais }}</strong></p>
                 <p>Data Assunzione: <strong>{{ user.data_assuncao }}</strong></p>

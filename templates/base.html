@@ -3,15 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}FlashPoint{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Gentelella -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.4.0/css/custom.min.css">
+
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Topbar JS -->
+    <script src="{{ url_for('static', filename='js/topbar.js') }}"></script>
+
+
 </head>
-<body>
 
-    {% block content %}{% endblock %}
+<body class="nav-md">
+<div class="container body">
+<div class="main_container">
 
-    <footer class="footer">
-        <p>FlashPoint &copy; 2026</p>
+    <!-- SIDEBAR -->
+    <div class="col-md-3 left_col">
+        <div class="left_col scroll-view">
+
+            <div class="navbar nav_title" style="border:0; left: 0;" >
+                <a href="/home" class="site_title" style="border:0; left: 0;">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                    <img src="{{ url_for('static', filename='img/italtecnology-home.png') }}" 
+                    alt="FlashPoint" 
+                    style="width: 200px;">
+                </div> 
+                </a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="profile clearfix">
+                <div class="profile_pic">
+                    <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" 
+                        alt="User profile photo" 
+                        class="img-circle profile_img" 
+                        loading="lazy"
+                    >
+                </div>
+                <div class="profile_info">
+                    <span>Benvenuto,</span>
+                    <h2>{{ usuario.sobrenome }} {{ usuario.nome }}!</h2>
+                </div>
+            </div>
+            
+            <br />
+
+            <div class="menu_section">
+                <h3>General</h3>                           
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <ul class="nav side-menu">
+
+                            <!-- Menu Items -->
+                            <li><a href="/home"><i class="fa fa-home"></i> Home</a></li>
+
+                            <li><a href="/registrar_ponto"><i 
+                                class="fa fa-plus-square"></i> Segna le Ore</a>
+                            </li>
+
+                            <li><a href="/meus_pontos">
+                                <i class="fa fa-file-text">                                    
+                                </i> Le mie Ore</a>
+                            </li>
+
+                            <li><a href="{{ url_for('novo_pedido') }}">
+                                <i class="fa fa-folder-open">                                    
+                                </i> Le mie richieste</a>
+                            </li>
+
+                            <li><a href="{{ url_for('gerar_cartao_perfil') }}"><i class="fa fa-id-badge"></i> Tesserino</a></li>
+                            
+                            <li><a href="/perfil"><i class="fa fa-user"></i> Profilo</a></li>
+                            
+
+                            <!-- Admin Menu -->
+                            {% if usuario.tipo == 'admin' %}
+                            <li>
+                                <a>
+                                    <i class="fa fa-laptop">                                        
+                                    </i> Admin <span class="fa fa-angle-down"></span></a>
+                                <ul class="nav child_menu">
+                                <li><a href="/admin_pontos"><i class="fa fa-users"></i>Gestione delle ore</a></li>
+                                <li><a href="/adm_locais"><i class="fa fa-institution"></i>Gestione dei luoghi</a></li>
+                                <li><a href="{{ url_for('admin_cartoes') }}"><i class="fa fa-id-card"></i>Tesserine</a></li>
+                                <li><a href="{{ url_for('admin_pedidos') }}"><i class="fa fa-inbox"></i>Richieste degli utenti</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="sidebar-footer hidden-small">
+                <a href="https://italtecnologypower.it/"><i class="fa fa-google"></i></a>
+                <a href="https://api.whatsapp.com/send?phone=393518971691&text=Ciao%2C%20ho%20bisogno%20di%20aiuto!%20%F0%9F%98%81"><i class="fa fa-whatsapp"></i></a>
+                <a href="/home"><i class="fa fa-cog"></i></a>
+                <a href="/logout"><i class="fa fa-power-off"></i></a>          
+            </div>
+
+        </div>
+    </div>
+    <!-- /SIDEBAR -->
+
+    <!-- TOP BAR -->
+    <div class="top_nav">
+
+        <div class="nav_menu d-flex align-items-center ">
+
+            <div class="nav toggle">
+
+                <a id="menu_toggle"><i class="fa fa-angle-left"></i></a>
+
+            </div>  
+
+        </div>
+
+    </div>
+    <!-- /TOP BAR -->
+
+
+
+    <!-- CONTENT -->
+    <div class="right_col" role="main">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- /CONTENT -->
+
+</div>
+    <footer>
+        <div class="p">
+            © FlashPoint 2026 All Rights Reserved.
+        </div>
+        <div class="clearfix"></div>
     </footer>
+</div>
+
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gentelella/1.4.0/js/custom.min.js"></script>
+
+
+
+
 
 </body>
 </html>

@@ -4,94 +4,123 @@
 
 {% block content %}
 
-<div class="page-wrapper">
+<div class="row">
+    <div class="col-md-12">
 
-    <h1 class="page-title">Nuovo ordine</h1>
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Nuovo richiesta</h3>
+            </div>
+        </div>
 
-    <!-- FORMULÁRIO -->
-    <div class="card form-card">
-
-        <form method="post" class="styled-form">
-
-            <div class="form-group">
-                <label>Tipo di ordine</label>
-                <input type="text" name="tipo" required>
+        <!-- FORMULÁRIO NOVO PEDIDO -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Invia nuova richiesta</h2>
+                <div class="clearfix"></div>
             </div>
 
-            <div class="form-group">
-                <label>Messaggio</label>
-                <textarea name="mensagem" required rows="4"></textarea>
+            <div class="x_content">
+                <form method="POST" class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo di ordine</label>
+                        <input type="text"
+                               name="tipo"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Messaggio</label>
+                        <textarea name="mensagem"
+                            rows="4"
+                            class="form-control"
+                            required></textarea>
+                    </div>
+                        
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-paper-plane"></i> Invia ordine
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- MEUS PEDIDOS -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>I miei ordini</h2>
+                <div class="clearfix"></div>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-secondary">
-                    Invia ordine
-                </button>
-            </div>
+            <div class="x_content">
 
-        </form>
+                {% if pedidos %}
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Messaggio</th>
+                            <th>Stato</th>
+                            <th>Creato il</th>
+                            <th>Evaso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pedidos %}
+                        <tr>
+                            <td>{{ p.tipo }}</td>
+                            <td>{{ p.mensagem }}</td>
+
+                            <td>
+                                {% if p.status == "in sospeso" %}
+                                    <span class="badge bg-warning">In sospeso</span>
+                                {% elif p.status == "approvato" %}
+                                    <span class="badge bg-success">Approvato</span>
+                                {% elif p.status == "rifiutato" %}
+                                    <span class="badge bg-danger">Rifiutato</span>
+                                {% elif p.status == "evaso" %}
+                                    <span class="badge bg-info">Evaso</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ p.status }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ formatar_data_pedido(p.criado_em) }}</td>
+
+                            <td>
+                                {% if p.atendido %}
+                                    <span class="text-success"><strong>Si</strong></span>
+                                {% else %}
+                                    <span class="text-muted">Non</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% else %}
+                <div class="text-center text-muted">
+                    <p>Non hai ancora effettuato alcun ordine.</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- VOLTAR -->
+        <div class="text-end">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                Indietro
+            </a>
+        </div>
 
     </div>
-
-    <!-- MEUS PEDIDOS -->
-    <h2 class="section-title">I miei ordini</h2>
-
-    {% if pedidos %}
-        {% for p in pedidos %}
-        <div class="card table-card pedido-user-card">
-
-            <div class="pedido-header">
-                <div>
-                    <p class="pedido-tipo">{{ p.tipo }}</p>
-                </div>
-
-                <div>
-                    {% if p.status == "in sospeso" %}
-                        <span class="status-badge status-pendente">In sospeso</span>
-                    {% elif p.status == "approvato" %}
-                        <span class="status-badge status-aprovado">Approvato</span>
-                    {% elif p.status == "rifiutato" %}
-                        <span class="status-badge status-recusado">Rifiutato</span>
-                    {% elif p.status == "evaso" %}
-                        <span class="status-badge status-atendido">Evaso</span>
-                    {% else %}
-                        <span class="status-badge">{{ p.status }}</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="pedido-mensagem">
-                <p>{{ p.mensagem }}</p>
-            </div>
-
-            <div class="pedido-info">
-                <span>
-                    <strong>Creato il:</strong>
-                    {{ formatar_data_pedido(p.criado_em) }}
-                </span>
-
-                <span>
-                    <strong>Evaso:</strong>
-                    {% if p.atendido %}
-                        <span class="text-success">Si</span>
-                    {% else %}
-                        <span class="text-muted">Non</span>
-                    {% endif %}
-                </span>
-            </div>
-
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="card empty-state">
-            <p>Non hai ancora effettuato alcun ordine.</p>
-        </div>
-    {% endif %}
-
-    <div class="form-actions">
-        <a href="{{ url_for('home') }}" class="btn-secondary">Indietro</a>
-    </div>
-
 </div>
 
 {% endblock %}

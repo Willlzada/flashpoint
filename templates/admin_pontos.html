@@ -4,126 +4,136 @@
 
 {% block content %}
 
-<div class="page-wrapper">
+<div class="row">
+    <div class="col-md-12">
 
-    <h1 class="page-title admin-title">Controllo delle ore generali</h1>
-
-    <!-- FILTROS -->
-    <div class="card form-card">
-        <form method="POST" class="filter-form">
-            <div class="filter-group">
-                <label>Seleziona il dipendente</label>
-                <select name="filtro_usuario">
-                    <option value="">Tutti</option>
-                    {% for u in usuarios %}
-                        <option value="{{ u.uid }}" {% if filtro_usuario == u.uid %}selected{% endif %}>
-                            {{ u.nome }}
-                        </option>
-                    {% endfor %}
-                </select>
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Gestione delle ore</h3>
             </div>
-
-            <div class="filter-group">
-                <label>Mese</label>
-                <input type="month" name="filtro_mes" value="{{ filtro_mes }}">
-            </div>
-
-            <div class="filter-actions">
-                <button type="submit" class="primary">Filtra</button>
-                <a href="/admin_pontos" class="btn-secondary">Cancella</a>
-            </div>
-        </form>
-    </div>
-
-    <!-- TOTAL DE HORAS -->
-    <div class="card info-card">
-        <div class="info-row">
-            <span class="info-label">
-                Totale ore {% if filtro_usuario %}selezionato{% else %}generale{% endif %}
-            </span>
-            <span class="info-value">
-                {{ total_horas }}
-            </span>
         </div>
+
+        <!-- FILTRI -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Filtri</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+                <form method="POST" class="row g-3">
+
+                    <div class="col-md-4">
+                        <label>Dipendente</label>
+                        <select name="filtro_usuario" class="form-control">
+                            <option value="">Tutti</option>
+                            {% for u in usuarios %}
+                                <option value="{{ u.uid }}"
+                                    {% if filtro_usuario == u.uid %}selected{% endif %}>
+                                    {{ u.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Mese</label>
+                        <input type="month"
+                               name="filtro_mes"
+                               value="{{ filtro_mes }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end align-items-center">
+                        <button class="btn btn-primary">
+                            <i class="fa fa-filter"></i> Filtra
+                        </button>
+                        <a href="/admin_pontos" class="btn btn-secondary">
+                            Cancella
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- TOTAL DE HORAS (CARD SUPERIOR) -->
+        <div class="x_panel">
+            <div class="col-md-4">
+                <div class="col-md-4">
+                    <div class="x_title">
+                        <h2>Totale ore</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <h2 class="green">{{ total_horas }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELA -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Presenze registrate</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Dipendente</th>
+                            <th>Locale</th>
+                            <th>Data</th>
+                            <th>Ore</th>
+                            <th>Note</th>
+                            <th style="width:140px;">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pontos %}
+                        <tr>
+                            <td>{{ p.usuario_nome }}</td>
+                            <td>{{ p.local }}</td>
+                            <td>{{ p.data_formatada }}</td>
+                            <td>{{ p.horas_formatadas }}</td>
+                            <td>{{ p.notas or "-" }}</td>
+                            <td class="text-center">
+
+                                <!-- EDITAR -->
+                                <a href="{{ url_for('editar_ponto_admin', id=p.id) }}"
+                                   class="btn btn-sm btn-warning"
+                                   title="Modifica">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+
+                                <!-- EXCLUIR -->
+                                <form action="{{ url_for('excluir_ponto', id=p.id) }}"
+                                      method="POST"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('Vuoi eliminare questo punto?');">
+                                    <button class="btn btn-sm btn-danger" title="Elimina">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="text-end">
+            <a href="/home" class="btn btn-secondary">Indietro</a>
+        </div>
+
     </div>
-
-    <!-- TABELA -->
-    <div class="card table-card">
-        <table class="styled-table admin-table">
-            <thead>
-                <tr>
-                    <th>Dipendente</th>
-                    <th>Locale</th>
-                    <th>Data</th>
-                    <th>Ore</th>
-                    <th>Note</th>
-                    <th>Opzioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in pontos %}
-                <tr>
-                    <td>{{ p.usuario_nome }}</td>
-                    <td>{{ p.local }}</td>
-                    <td>{{ p.data_formatada }}</td>
-                    <td>{{ p.horas_formatadas }}</td>
-
-                    <td class="nota-col">
-                        {% if p.notas %}
-                            <a href="javascript:void(0)"
-                               class="btn-link"
-                               onclick="abrirNota(`{{ p.notas | escape }}`)">
-                               Visualizza nota
-                            </a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-
-                    <td class="acoes-col">
-
-                        <form action="{{ url_for('editar_ponto_admin', id=p.id) }}" method="GET" style="display:inline;">
-                            <button type="submit" class="btn-edit">Modifica</button>
-                        </form>
-
-                        <form action="{{ url_for('excluir_ponto', id=p.id) }}" method="POST" style="display:inline;">
-                            <button type="submit"
-                                    class="btn-danger"
-                                    onclick="return confirm('Tem certeza che vuoi eliminare questo punto?');">
-                                Elimina
-                            </button>
-                        </form>
-
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="form-actions">
-        <a href="/home" class="btn-secondary">Indietro</a>
-    </div>
-
 </div>
-
-<!-- MODAL NOTA -->
-<div id="modalNota" class="modal-nota">
-    <div class="modal-nota-content">
-        <span class="modal-close" onclick="fecharNota()">❌</span>
-        <h3>Nota completa</h3>
-        <p id="textoNota"></p>
-    </div>
-</div>
-
-<script>
-function abrirNota(texto) {
-    document.getElementById("textoNota").innerText = texto;
-    document.getElementById("modalNota").style.display = "flex";
-}
-function fecharNota() {
-    document.getElementById("modalNota").style.display = "none";
-}
-</script>
 
 {% endblock %}

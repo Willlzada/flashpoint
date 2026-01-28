@@ -4,56 +4,109 @@
 
 {% block content %}
 
-<div class="page-wrapper">
+<div class="row">
+    <div class="col-md-8 col-sm-12 mx-auto">
 
-    <h1 class="page-title admin-title">Modifica Ore</h1>
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Modifica ore</h3>
+            </div>
+        </div>
 
-    <!-- FORMULÁRIO -->
-    <div class="card form-card">
-        <form method="POST" class="filter-form">
-
-            <div class="filter-group">
-                <label>Data</label>
-                <input type="date" name="data" value="{{ ponto.data }}" required>
+        <!-- FORMULÁRIO -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Dati del punto</h2>
+                <div class="clearfix"></div>
             </div>
 
-            <div class="filter-group">
-                <label>Locale</label>
-                <select name="local" required>
-                    {% for l in locais %}
-                        <option value="{{ l }}" {% if l == ponto.local %}selected{% endif %}>
-                            {{ l }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+            <div class="x_content">
 
-            <div class="filter-group">
-                <label>Ore</label>
-                <input type="number"
-                       name="horas"
-                       step="0.25"
-                       value="{{ ponto.horas }}"
-                       required>
-            </div>
+                <form method="POST" class="form-horizontal form-label-left">
 
-            <div class="filter-group">
-                <label>Note</label>
-                <textarea name="notas" rows="4">{{ ponto.notas }}</textarea>
-            </div>
+                    <!-- DATA -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Data
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <input type="date"
+                                   name="data"
+                                   value="{{ ponto.data }}"
+                                   class="form-control"
+                                   required>
+                        </div>
+                    </div>
 
-            <div class="filter-actions">
-                <button type="submit" class="primary">
-                    Salva modifiche
-                </button>
-                <a href="/admin_pontos" class="btn-secondary">
-                    Annulla
-                </a>
-            </div>
+                    <!-- LOCALE -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Locale
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <select name="local" class="form-control" required>
+                                {% for l in locais %}
+                                    <option value="{{ l }}"
+                                        {% if l == ponto.local %}selected{% endif %}>
+                                        {{ l }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
 
-        </form>
+                    <!-- ORE -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Ore
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <input type="number"
+                                   name="horas"
+                                   step="0.25"
+                                   value="{{ ponto.horas }}"
+                                   class="form-control"
+                                   required>
+                            <small class="text-muted">
+                                Usa valori decimali (es: 1.50 = 1h30)
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- NOTE -->
+                    <div class="form-group row mb-4">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Note
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <textarea name="notas"
+                                      rows="4"
+                                      class="form-control"
+                                      placeholder="Osservazioni aggiuntive...">{{ ponto.notas }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+
+                    <!-- AÇÕES -->
+                    <div class="form-group row">
+                        <div class="col-md-9 col-sm-9 offset-md-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save"></i> Salva modifiche
+                            </button>
+                            <a href="/meus_pontos" class="btn btn-secondary">
+                                Annulla
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
     </div>
-
 </div>
 
 {% endblock %}
