@@ -3,109 +3,134 @@
 {% block title %}Profilo | FlashPoint{% endblock %}
 
 {% block content %}
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.page-header h4 {
+    color: #000;
+    font-weight: 700;
+}
+.page-header p {
+    color: #555;
+    margin-top: 5px;
+}
+</style>
 
 <div class="row">
     <div class="col-md-12">
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>Il tuo profilo</h3>
-            </div>
+        <!-- HEADER -->
+        <div class="page-header">
+            <h4 class="text-dark">
+                <i class="fa fa-edit me-2"></i>Dati personali
+            </h4>
+            <p>Modifica le informazioni del tuo profilo</p>
         </div>
 
-        <!-- ALERTA PERFIL INCOMPLETO -->
-        {% if request.args.get('incompleto') %}
-        <div class="x_panel">
-            <div class="x_content">
-                <div class="alert alert-danger">
-                    <strong>Attenzione:</strong>
-                    Il tuo profilo è incompleto. Per generare la tessera di riconoscimento,
-                    ti preghiamo di compilare tutti i campi obbligatori.
-                </div>
-            </div>
-        </div>
-        {% endif %}
+        <hr class="my-4">
 
-        <!-- FORMULÁRIO EDITAR -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Dati personali</h2>
-                <div class="clearfix"></div>
+        <form method="POST" action="{{ url_for('perfil_editar') }}" class="row g-3">
+            
+            <!-- NOME -->
+            <div class="col-md-6">
+                <label class="form-label">Nome</label>
+                <input 
+                    type="text" 
+                    name="nome"
+                    class="form-control"
+                    placeholder="Ex.: João" 
+                    value="{{ usuario.nome or '' }}" 
+                    required 
+                >
             </div>
 
-            <div class="x_content">
-                <form method="POST" class="form-horizontal form-label-left">
-
-                    <!-- NOME -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">Nome</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="text" name="nome" class="form-control" placeholder="Ex.: João" value="{{ usuario.nome or '' }}" required>
-                        </div>
-                    </div>
-
-                    <!-- SOBRENOME -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">Sobrenome</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="text" name="sobrenome" class="form-control" placeholder="Ex.: Silva" value="{{ usuario.sobrenome or '' }}" required>
-                        </div>
-                    </div>
-
-                    <!-- DATA DE NASCIMENTO -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">Data de nascimento</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="date" name="data_nascimento" class="form-control" value="{{ usuario.data_nascimento or '' }}">
-                        </div>
-                    </div>
-
-                    <!-- PAÍS -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">País</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="text" name="pais" class="form-control" placeholder="Ex.: Brasil" value="{{ usuario.pais or '' }}">
-                        </div>
-                    </div>
-
-                    <!-- DATA DE ADMISSÃO -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">Data de admissão</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="date" name="data_assuncao" class="form-control" value="{{ usuario.data_assuncao or '' }}">
-                        </div>
-                    </div>
-
-                    <!-- CARGO -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">Cargo</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="text" name="cargo" class="form-control" placeholder="Ex.: Desenvolvedor" value="{{ usuario.cargo or '' }}">
-                        </div>
-                    </div>
-
-                    <!-- FOTO URL -->
-                    <div class="form-group row mb-4">
-                        <label class="control-label col-md-3 col-sm-3">Foto (URL)</label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="text" name="foto_url" class="form-control" placeholder="https://link-da-foto.com/foto.jpg" value="{{ usuario.foto_url or '' }}">
-                        </div>
-                    </div>
-
-                    <!-- AÇÕES -->
-                    <div class="ln_solid"></div>
-                    <div class="form-group row">
-                        <div class="col-md-9 col-sm-9 offset-md-3">
-                            <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Salva modifiche</button>
-                            <a href="{{ url_for('perfil_usuario') }}" class="btn btn-secondary">Voltar</a>
-                        </div>
-                    </div>
-
-                </form>
+            <!-- SOBRENOME -->            
+            <div class="col-md-6">
+                <label class="form-label">Cognome</label>
+                <input 
+                    type="text" 
+                    name="sobrenome"
+                    class="form-control"
+                    placeholder="Ex.: Silva" 
+                    value="{{ usuario.sobrenome or '' }}" 
+                    required 
+                >
             </div>
-        </div>
+            
+            <!-- DATA DE NASCIMENTO -->        
+            <div class="col-md-6">
+                <label for="inputEmail4" class="form-label">Data di nascita</label>
+                <input 
+                    type="date" 
+                    name="data_nascimento"
+                    class="form-control" 
+                    value="{{ usuario.data_nascimento or '' }}"
+                >
+            </div>
 
+            <!-- PAÍS -->
+            <div class="col-md-6">
+                <label for="inputPassword4" class="form-label">Paise di Origine</label>
+                <input 
+                    type="text" 
+                    name="pais" 
+                    class="form-control" 
+                    placeholder="Ex.: Brasile" 
+                    value="{{ usuario.pais or '' }}"
+                >
+            </div>
+
+            <!-- DATA DE ADMISSÃO -->
+            <div class="col-md-6">
+                <label for="inputEmail4" class="form-label">Data di Assunzione</label>
+                <input 
+                    type="date" 
+                    name="data_assuncao" 
+                    class="form-control"                    
+                    value="{{ usuario.data_assuncao or '' }}"
+                >
+            </div>
+
+            <!-- CARGO -->
+            <div class="col-md-6">
+                <label for="inputEmail4" class="form-label">Ruolo</label>
+                <input 
+                type="text" 
+                name="cargo"
+                class="form-control"
+                placeholder="Ex.: Elettricista"
+                value="{{ usuario.cargo or '' }}">
+            </div>
+
+            <!-- FOTO URL -->
+            <div class="col-md-6">
+                <label for="inputEmail4" class="form-label">Foto</label>
+                <input 
+                type="text" 
+                name="foto_url"
+                class="form-control" 
+                value="{{ usuario.foto_url or '' }}">
+            </div>
+
+            <hr class="my-4">
+
+            <!-- AÇÕES -->
+            <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa fa-save me-2"></i> Salva modifiche
+                </button>
+
+                <a href="{{ url_for('perfil_usuario') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fa fa-arrow-left me-2"></i>Tornare
+                </a>
+
+            </div>
+
+        </form>
     </div>
 </div>
 

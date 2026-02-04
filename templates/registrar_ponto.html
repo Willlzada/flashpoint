@@ -1,128 +1,114 @@
 {% extends "base.html" %}
-
 {% block title %}Registrar Ponto | FlashPoint{% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-12">
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-7 col-xl-6">
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>Registra Presenza</h3>
-            </div>
-        </div>
+            <!-- CARD -->
 
-        <!-- FORMULÁRIO -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Inserisci i dati</h2>
-                <div class="clearfix"></div>
-            </div>
 
-            <div class="x_content">
+                <!-- HEADER -->
+                <div class="row border-0 pt-4 text-center">
+                    <h4 class="fw-bold mb-1 text-dark">
+                        <i class="fa fa-clock me-2"></i>Registrare la presenza
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Compila i dati per registrare le tue ore.
+                    </p>
+                </div>
+                <hr class="my-4">
 
-                <!-- MENSAGENS -->
-                {% if error %}
-                    <div class="alert alert-danger">
-                        {{ error }}
-                    </div>
-                {% endif %}
+                <!-- BODY -->
+                <div class="card-body px-4 pb-4">
 
-                {% if mensagem %}
-                    <div class="alert alert-success">
-                        {{ mensagem }}
-                    </div>
-                {% endif %}
-
-                <form method="POST" class="form-horizontal form-label-left">
-
-                    <!-- LOCAL -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            Locale
-                        </label>
-                        <div class="col-md-6 col-sm-6">
-                            <select name="local" class="form-control" required>
-                                {% for local in locais %}
-                                    <option value="{{ local.nome }}">
-                                        {{ local.nome }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <small class="text-muted">
-                                Seleziona il luogo in cui è stata svolta l’attività
-                            </small>
+                    <!-- MENSAGENS -->
+                    {% if error %}
+                        <div class="alert alert-danger text-center rounded-3">
+                            {{ error }}
                         </div>
-                    </div>
+                    {% endif %}
 
-                    <!-- DATA -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            Data
-                        </label>
-                        <div class="col-md-6 col-sm-6">
-                            <input type="date"
-                                   name="data"
-                                   class="form-control"
-                                   required>
+                    {% if mensagem %}
+                        <div class="alert alert-success text-center rounded-3">
+                            {{ mensagem }}
                         </div>
-                    </div>
+                    {% endif %}
 
-                    <!-- ORE -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            Ore lavorate
-                        </label>
-                        <div class="col-md-6 col-sm-6">
-                            <input type="number"
-                                   name="horas"
-                                   step="0.25"
-                                   class="form-control"
-                                   required>
-                            <small class="text-muted">
-                                • 0.25 = 15 Minuti<br>
-                                • 1.50 = 1 Ora 30 Minuti<br>
-                                • 5.25 = 5 Ore 15 Minuti
-                            </small>
-                        </div>
-                    </div>
+                    <form method="POST" class="needs-validation" novalidate>
 
-                    <!-- NOTE -->
-                    <div class="form-group row mb-4">
-                        <label class="control-label col-md-3 col-sm-3">
-                            Note
-                        </label>
-                        <div class="col-md-6 col-sm-6">
-                            <textarea name="notas"
-                                      rows="3"
-                                      class="form-control"
-                                      placeholder="Qualche osservazione…"></textarea>
-                        </div>
-                    </div>
+                        <div class="row g-3">
 
-                    <!-- AÇÕES -->
-                    <div class="ln_solid"></div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-9 col-sm-9 offset-md-3">
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-check"></i> Registra
-                                </button>
-                                <button class="btn btn-outline-secondary" 
-                                    type="button">Indietro
-                                </button>
+                            <!-- LOCAL -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Local
+                                </label>
+                                <select name="local" class="form-select" required>
+                                    <option value="" disabled selected>Seleziona il luogo</option>
+                                    {% for local in locais %}
+                                        <option value="{{ local.nome }}">{{ local.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    Seleziona il luogo in cui si è svolta l'attività.
+                                </div>
                             </div>
+
+                            <!-- DATA -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Data
+                                </label>
+                                <input type="date" name="data" class="form-control" required>
+                            </div>
+
+                            <!-- HORAS -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Ore lavorate
+                                </label>
+                                <input type="number" step="0.25" name="horas" class="form-control" required>
+                                <div class="form-text">
+                                    Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15
+                                </div>
+                            </div>
+
+                            <!-- NOTAS -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Osservazioni <span class="text-muted">(opzionale)</span>
+                                </label>
+                                <textarea name="notas"
+                                          rows="3"
+                                          class="form-control"
+                                          placeholder="Aggiungi un'osservazione rilevante..."></textarea>
+                            </div>
+
                         </div>
-                    </div>
 
-                </form>
+                        <hr class="my-4">
 
-            </div>
+                        <!-- AÇÕES -->
+                        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa fa-check me-2"></i>Registrar
+                            </button>
+
+                            <a href="{{ url_for('meus_pontos') }}" class="btn btn-outline-secondary px-4">
+                                <i class="fa fa-arrow-left me-2"></i>Tornare
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
         </div>
-
     </div>
 </div>
 

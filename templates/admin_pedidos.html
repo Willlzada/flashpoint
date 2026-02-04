@@ -1,132 +1,225 @@
 {% extends "base.html" %}
-
-{% block title %}Admin • Pedidos | FlashPoint{% endblock %}
+{% block title %}Admin • Ordini | FlashPoint{% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-12">
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>Ordini degli utenti</h3>
-            </div>
+/* ===== MOBILE CARDS ===== */
+.pedidos-cards {
+    display: grid;
+    gap: 14px;
+    padding-bottom: 18px;
+}
+
+.pedido-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-left: 4px solid #041955;
+}
+
+/* HEADER */
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.pedido-user {
+    font-weight: 700;
+    font-size: 13px;
+    color: #041955;
+}
+
+.pedido-tipo {
+    font-size: 11px;
+    background: #eef2ff;
+    color: #041955;
+    padding: 2px 8px;
+    border-radius: 16px;
+    font-weight: 600;
+}
+
+/* MENSAGEM */
+.pedido-msg {
+    font-size: 12px;
+    color: #555;
+    margin: 8px 0;
+    border-top: 1px dashed #ddd;
+    padding-top: 6px;
+}
+
+/* STATUS */
+.pedido-status {
+    margin-bottom: 8px;
+}
+
+/* AÇÕES */
+.pedido-acoes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+.pedido-acoes .btn {
+    padding: 6px 0;
+    border-radius: 10px;
+}
+
+/* ===== DESKTOP ===== */
+.table-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .pedidos-cards {
+        display: none;
+    }
+    .table-desktop {
+        display: block;
+    }
+}
+</style>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-inbox me-2"></i>Ordini degli utenti
+    </h4>
+    <p>Gestione richieste e ordini</p>
+</div>
+
+<hr class="my-4">
+
+{% if pedidos %}
+
+<!-- ===== MOBILE: CARDS ===== -->
+<div class="pedidos-cards">
+    {% for p in pedidos %}
+    <div class="pedido-card">
+
+        <div class="pedido-header">
+            <div class="pedido-user">{{ p.nome }}</div>
+            <div class="pedido-tipo">{{ p.tipo }}</div>
         </div>
 
-        {% if pedidos %}
-
-        <!-- TABELA -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Lista ordini</h2>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="x_content">
-
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Utente</th>
-                            <th>Tipo</th>
-                            <th>Messaggio</th>
-                            <th>Creato il</th>
-                            <th>Stato</th>
-                            <th style="width:220px;">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {% for p in pedidos %}
-                        <tr>
-                            <td>{{ p.nome }}</td>
-                            <td>{{ p.tipo }}</td>
-                            <td>{{ p.mensagem }}</td>
-                            <td>{{ formatar_data_pedido(p.criado_em) }}</td>
-
-                            <td>
-                                {% if p.status == "in sospeso" %}
-                                    <span class="label label-warning">In sospeso</span>
-                                {% elif p.status == "approvato" %}
-                                    <span class="label label-success">Approvato</span>
-                                {% elif p.status == "rifiutato" %}
-                                    <span class="label label-danger">Rifiutato</span>
-                                {% elif p.status == "evaso" %}
-                                    <span class="label label-primary">Evaso</span>
-                                {% else %}
-                                    <span class="label label-default">{{ p.status }}</span>
-                                {% endif %}
-                            </td>
-
-                            <td class="text-center">
-
-                                <form method="post" style="display:inline;">
-                                    <input type="hidden" name="pedido_id" value="{{ p.id }}">
-
-                                    <button type="submit"
-                                            name="acao"
-                                            value="aprovar"
-                                            class="btn btn-sm btn-success"
-                                            title="Approva">
-                                        <i class="fa fa-check"></i>
-                                    </button>
-
-                                    <button type="submit"
-                                            name="acao"
-                                            value="recusar"
-                                            class="btn btn-sm btn-warning"
-                                            title="Rifiuta">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-
-                                    <button type="submit"
-                                            name="acao"
-                                            value="atendido"
-                                            class="btn btn-sm btn-info"
-                                            title="Evaso">
-                                        <i class="fa fa-truck"></i>
-                                    </button>
-
-                                    <button type="submit"
-                                            name="acao"
-                                            value="excluir"
-                                            class="btn btn-sm btn-danger"
-                                            title="Elimina"
-                                            onclick="return confirm('Vuoi eliminare questo ordine?');">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-                    </tbody>
-                </table>
-
-            </div>
+        <div class="pedido-msg">
+            {{ p.mensagem }}
         </div>
 
-        {% else %}
-        <!-- EMPTY STATE -->
-        <div class="x_panel">
-            <div class="x_content text-center">
-                <p class="text-muted">
-                    Nessun ordine registrato.
-                </p>
-            </div>
+        <div class="pedido-status">
+            {% if p.status == "in sospeso" %}
+                <span class="badge bg-warning">In sospeso</span>
+            {% elif p.status == "Approvato" %}
+                <span class="badge bg-success">Approvato</span>
+            {% elif p.status == "Rifiutato" %}
+                <span class="badge bg-danger">Rifiutato</span>
+            {% elif p.status == "Evaso" %}
+                <span class="badge bg-info">Evaso</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ p.status }}</span>
+            {% endif %}
         </div>
-        {% endif %}
 
-        <!-- VOLTAR -->
-        <div class="text-end">
-            <a href="{{ url_for('home') }}" class="btn btn-secondary">
-                Indietro
-            </a>
-        </div>
+        <form method="post" class="pedido-acoes">
+            <input type="hidden" name="pedido_id" value="{{ p.id }}">
+
+            <button name="acao" value="Approvato" class="btn btn-success">
+                <i class="fa fa-check"></i>
+            </button>
+
+            <button name="acao" value="Rifiutato" class="btn btn-warning">
+                <i class="fa fa-times"></i>
+            </button>
+
+            <button name="acao" value="Evaso" class="btn btn-info">
+                <i class="fa fa-truck"></i>
+            </button>
+
+            <button name="acao" value="Excluir"
+                    class="btn btn-danger"
+                    onclick="return confirm('Vuoi eliminare questo ordine?');">
+                <i class="fa fa-trash"></i>
+            </button>
+        </form>
 
     </div>
+    {% endfor %}
+</div>
+
+<!-- ===== DESKTOP: TABELA ===== -->
+<div class="table-desktop">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Utente</th>
+                <th>Tipo</th>
+                <th>Messaggio</th>
+                <th>Creato il</th>
+                <th>Stato</th>
+                <th class="text-center">Azioni</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for p in pedidos %}
+            <tr>
+                <td>{{ p.nome }}</td>
+                <td>{{ p.tipo }}</td>
+                <td>{{ p.mensagem }}</td>
+                <td>{{ formatar_data_pedido(p.criado_em) }}</td>
+                <td>
+                    {% if p.status == "in sospeso" %}
+                        <span class="badge bg-warning">In sospeso</span>
+                    {% elif p.status == "Approvato" %}
+                        <span class="badge bg-success">Approvato</span>
+                    {% elif p.status == "Rifiutato" %}
+                        <span class="badge bg-danger">Rifiutato</span>
+                    {% elif p.status == "Evaso" %}
+                        <span class="badge bg-info">Evaso</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="pedido_id" value="{{ p.id }}">
+                        <button name="acao" value="Approvato" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>
+                        <button name="acao" value="Rifiutato" class="btn btn-sm btn-warning"><i class="fa fa-times"></i></button>
+                        <button name="acao" value="Evaso" class="btn btn-sm btn-info"><i class="fa fa-truck"></i></button>
+                        <button name="acao" value="Excluir" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Vuoi eliminare questo ordine?');">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<p class="text-muted text-center mt-4">
+    Nessun ordine registrato.
+</p>
+{% endif %}
+
+<div class="text-end mt-3">
+    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+        <i class="fa fa-arrow-left me-2"></i>Indietro
+    </a>
 </div>
 
 {% endblock %}

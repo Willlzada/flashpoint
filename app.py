@@ -5,6 +5,19 @@ import json
 import os
 from firebase_admin import credentials, firestore, storage, initialize_app
 from datetime import datetime
+from flask import send_file, session, request
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
+)
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from io import BytesIO
+from datetime import datetime
+
+
+
 
 # =========================
 # CONFIGURAÇÃO DO FLASK
@@ -31,6 +44,7 @@ auth = firebase.auth()
 # =========================
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
 # =========================
+
 firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
 if not firebase_json:
     raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
@@ -240,9 +254,62 @@ def horas_por_ano(uid, ano):
     return round(total, 1)
 
 
+
 # =========================
 # ROTAS
 # =========================
+
+
+from datetime import datetime
+from flask import render_template, redirect, session
+
+@app.route("/dashboard")
+@app.route("/home")
+def dashboard():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+    hoje = datetime.now()
+
+    # Usuário
+    usuario_doc = db.collection("usuarios").document(uid).get()
+    if not usuario_doc.exists:
+        return redirect("/")
+
+    usuario = usuario_doc.to_dict()
+    nome_usuario = usuario.get("nome", "Usuário")
+
+    # Horas
+    horas_mes_atual = horas_por_mes(uid, hoje.year, hoje.month)
+
+    mes_anterior = hoje.month - 1 if hoje.month > 1 else 12
+    ano_anterior = hoje.year if hoje.month > 1 else hoje.year - 1
+    horas_mes_anterior = horas_por_mes(uid, ano_anterior, mes_anterior)
+
+    horas_ano = horas_por_ano(uid, hoje.year)
+
+    # Ranking mensal
+    ranking = ranking_mensal(hoje.year, hoje.month)
+
+    # Posição do usuário no ranking (CORRIGIDO)
+    posicao = "-"
+    for i, r in enumerate(ranking):
+        if r["nome"] == nome_usuario:
+            posicao = i + 1
+            break
+
+    return render_template(
+        "dashboard.html",
+        usuario=usuario,
+        horas_mes_atual=horas_mes_atual,
+        horas_mes_anterior=horas_mes_anterior,
+        horas_ano=horas_ano,
+        ranking=ranking,
+        posicao=posicao
+    )
+
+
 
 # LOGIN
 @app.route("/", methods=["GET", "POST"])
@@ -387,6 +454,9 @@ def perfil_editar():
 
 
 # REGISTRAR PONTO
+from datetime import datetime, timedelta
+from flask import render_template, redirect, session, request, url_for
+
 @app.route("/registrar_ponto", methods=["GET", "POST"])
 def registrar_ponto_usuario():
     if "uid" not in session:
@@ -396,9 +466,12 @@ def registrar_ponto_usuario():
     usuario_doc = db.collection("usuarios").document(uid).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {"nome": "Desconhecido"}
 
-    # Buscar locais do Firestore como dicionários
+    # Horário Itália (UTC+1, fixo)
+    agora = datetime.utcnow() + timedelta(hours=1)
+
+    # Buscar locais do Firestore
     locais_docs = db.collection("locais").stream()
-    locais = [{"nome": "-"}]  # adiciona "-" como opção padrão
+    locais = []  # opção padrão
     for doc in locais_docs:
         data = doc.to_dict()
         if data.get("nome"):
@@ -410,8 +483,19 @@ def registrar_ponto_usuario():
     if request.method == "POST":
         data_ponto = request.form.get("data")
         local_selecionado = request.form.get("local")
+        horas_input = request.form.get("horas")
+        notas_input = request.form.get("notas", "")
 
-        # Verificar duplicidade (data já registrada)
+        # Validar horas
+        try:
+            horas = float(horas_input)
+            if horas <= 0:
+                raise ValueError()
+        except:
+            error = "Inserisci un numero valido di ore!"
+            horas = 0
+
+        # Verificar duplicidade (mesma data)
         pontos_existentes = db.collection("pontos") \
             .where("uid", "==", uid) \
             .where("data", "==", data_ponto) \
@@ -419,15 +503,16 @@ def registrar_ponto_usuario():
 
         if any(pontos_existentes):
             error = f"Hai già registrato una presenza per {data_ponto}!"
-        else:
+        
+        if not error:
             ponto_data = {
                 "uid": uid,
                 "nome": usuario["nome"],
                 "local": local_selecionado,
                 "data": data_ponto,
-                "horas": float(request.form.get("horas")),
-                "notas": request.form.get("notas"),
-                "criado_em": datetime.utcnow()
+                "horas": horas,
+                "notas": notas_input,
+                "criado_em": agora  # salva com fuso Itália (UTC+1)
             }
             db.collection("pontos").add(ponto_data)
             mensagem = "Ora registrata con successo!"
@@ -440,8 +525,10 @@ def registrar_ponto_usuario():
     )
 
 
+
 # MEUS PONTOS
-from datetime import datetime
+from datetime import datetime, timedelta
+from flask import render_template, redirect, session, request
 
 @app.route("/meus_pontos", methods=["GET", "POST"])
 def meus_pontos():
@@ -449,34 +536,58 @@ def meus_pontos():
         return redirect("/")
 
     uid = session["uid"]
+
+    # Fuso horário Itália: UTC+1 (considerando horário padrão)
+    # OBS: Não calcula horário de verão automaticamente
+    def agora_italia():
+        return datetime.utcnow() + timedelta(hours=1)
+
+    agora = agora_italia()
+
     filtro_data = request.form.get("filtro_data")
     filtro_mes = request.form.get("filtro_mes")
 
     pontos_ref = db.collection("pontos").where("uid", "==", uid)
-    
-    # Busca todos os pontos
     pontos_docs = pontos_ref.stream()
 
     pontos = []
     total_horas = 0.0
 
+    # Dias da semana em italiano
+    dias_semana = {
+        0: "LUN",
+        1: "MAR",
+        2: "MER",
+        3: "GIO",
+        4: "VEN",
+        5: "SAB",
+        6: "DOM"
+    }
+
     for doc in pontos_docs:
         p = doc.to_dict()
-        data_obj = datetime.strptime(p["data"], "%Y-%m-%d")  # assumindo data salva como AAAA-MM-DD
 
-        # Aplicar filtros se houver
+        if "data" not in p:
+            continue
+
+        # Converte string para datetime (fuso fixo Itália)
+        data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
+
+        # Aplicar filtros
         if filtro_data and p["data"] != filtro_data:
             continue
+
         if filtro_mes:
-            ano_mes = filtro_mes.split("-")
-            if int(ano_mes[0]) != data_obj.year or int(ano_mes[1]) != data_obj.month:
+            ano, mes = map(int, filtro_mes.split("-"))
+            if data_obj.year != ano or data_obj.month != mes:
                 continue
 
-        # Formata data como DD/MM/AAAA
-        data_formatada = data_obj.strftime("%d/%m/%Y")
+        # Dia da semana + data
+        dia_semana = dias_semana[data_obj.weekday()]
+        data_formatada = f"{data_obj.strftime('%d/%m/%Y')} • {dia_semana}"
 
-        # Formata horas em HH:MM
-        horas_totais = p.get("horas", 0)
+        # Horas HH:MM
+        horas_totais = float(p.get("horas", 0))
         horas_int = int(horas_totais)
         minutos = int(round((horas_totais - horas_int) * 60))
         horas_hhmm = f"{horas_int:02d}:{minutos:02d}"
@@ -493,17 +604,18 @@ def meus_pontos():
 
         total_horas += horas_totais
 
-    # Ordena pontos por data (mais recente primeiro)
-    pontos.sort(key=lambda x: datetime.strptime(x["data"], "%Y-%m-%d"), reverse=False)
+    # Ordena por data (mais recente primeiro)
+    pontos.sort(key=lambda x: datetime.strptime(x["data"], "%Y-%m-%d"), reverse=True)
 
     return render_template(
         "meus_pontos.html",
         pontos=pontos,
-        total_horas=total_horas,
+        total_horas=round(total_horas, 1),
         filtro_data=filtro_data,
         filtro_mes=filtro_mes
     )
 
+# =========================
 
 
 # ADMIN PONTOS
@@ -869,13 +981,13 @@ def admin_pedidos():
             pedido_doc = pedidos_ref.document(pedido_id).get()
             if pedido_doc.exists:
                 pedido_ref = pedidos_ref.document(pedido_id)
-                if acao == "aprovar":
-                    pedido_ref.update({"status": "aprovado"})
-                elif acao == "recusar":
-                    pedido_ref.update({"status": "recusado"})
-                elif acao == "atendido":
-                    pedido_ref.update({"atendido": True})
-                elif acao == "excluir":
+                if acao == "Approvato":
+                    pedido_ref.update({"status": "Approvato"})
+                elif acao == "Rifiutato":
+                    pedido_ref.update({"status": "Rifiutato"})
+                elif acao == "Evaso":
+                    pedido_ref.update({"status": "Evaso"})
+                elif acao == "Excluir":
                     pedido_ref.delete()
         # após a ação, recarrega os pedidos
         return redirect(url_for("admin_pedidos"))
@@ -921,14 +1033,194 @@ def decidir_pedido(id):
     pedido_ref = db.collection("pedidos").document(id)
     pedido_doc = pedido_ref.get()
     if pedido_doc.exists:
-        if acao == "aprovar":
-            pedido_ref.update({"status": "aprovado"})
-        elif acao == "recusar":
-            pedido_ref.update({"status": "recusado"})
-        elif acao == "atendido":
-            pedido_ref.update({"status": "atendido"})
+        if acao == "Approvato":
+            pedido_ref.update({"status": "Approvato"})
+        elif acao == "Rifiutato":
+            pedido_ref.update({"status": "Rifiutato"})
+        elif acao == "Evaso":
+            pedido_ref.update({"status": "Evaso"})
 
     return redirect(url_for("admin_pedidos"))
+
+
+
+
+from flask import send_file, request, session, redirect
+from io import BytesIO
+from datetime import datetime
+import os
+
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
+)
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+@app.route("/exportar_relatorio")
+def exportar_relatorio():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+
+    filtro_data = request.args.get("filtro_data")
+    filtro_mes = request.args.get("filtro_mes")
+
+    # =========================
+    # USUÁRIO
+    # =========================
+    usuario = db.collection("usuarios").document(uid).get().to_dict()
+    nome_usuario = f"{usuario.get('nome', '')} {usuario.get('sobrenome', '')}".strip()
+
+    # =========================
+    # BUSCA PONTOS
+    # =========================
+    pontos_ref = db.collection("pontos").where("uid", "==", uid)
+    pontos_docs = pontos_ref.stream()
+
+    dados = []
+    total_horas_float = 0.0
+
+    # Dias da semana em italiano (IGUAL AO /meus_pontos)
+    dias_semana = {
+        0: "LUN",
+        1: "MAR",
+        2: "MER",
+        3: "GIO",
+        4: "VEN",
+        5: "SAB",
+        6: "DOM"
+    }
+
+    for doc in pontos_docs:
+        p = doc.to_dict()
+
+        if "data" not in p:
+            continue
+
+        # Converte data (fuso Itália fixo)
+        data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
+
+        # 🔹 filtro por data
+        if filtro_data and p["data"] != filtro_data:
+            continue
+
+        # 🔹 filtro por mês
+        if filtro_mes:
+            ano, mes = map(int, filtro_mes.split("-"))
+            if data_obj.year != ano or data_obj.month != mes:
+                continue
+
+        # 🔹 data formatada + dia da semana
+        dia_semana = dias_semana[data_obj.weekday()]
+        data_formatada = f"{data_obj.strftime('%d/%m/%Y')} • {dia_semana}"
+
+        # 🔹 horas (FLOAT → HH:MM)
+        horas_totais = float(p.get("horas", 0))
+        horas_int = int(horas_totais)
+        minutos = int(round((horas_totais - horas_int) * 60))
+        horas_hhmm = f"{horas_int:02d}:{minutos:02d}"
+
+        total_horas_float += horas_totais
+
+        dados.append([
+            data_formatada,
+            p.get("local", "-"),
+            horas_hhmm,
+            p.get("notas", "")
+        ])
+
+    # 🔹 TOTAL FINAL
+    total_int = int(total_horas_float)
+    total_min = int(round((total_horas_float - total_int) * 60))
+    total_horas = f"{total_int:02d}:{total_min:02d}"
+
+    # =========================
+    # PDF
+    # =========================
+    buffer = BytesIO()
+
+    pdf = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm
+    )
+
+    styles = getSampleStyleSheet()
+    elementos = []
+
+    # LOGO
+    logo_path = os.path.join(
+        os.path.dirname(__file__), "static", "img", "logo-login.png"
+    )
+    if os.path.exists(logo_path):
+        elementos.append(Image(logo_path, width=5.5*cm, height=2.5*cm))
+        elementos.append(Spacer(1, 12))
+
+    # TÍTULO
+    elementos.append(Paragraph("Rapporto presenze", styles["Title"]))
+    elementos.append(Spacer(1, 12))
+
+    periodo = filtro_data or filtro_mes or "Tutto il periodo"
+
+    elementos.append(Paragraph(
+        f"<b>Collaboratore:</b> {nome_usuario}<br/>"
+        f"<b>Periodo:</b> {periodo}",
+        styles["Normal"]
+    ))
+
+    elementos.append(Spacer(1, 15))
+
+    # TABELA
+    tabela = Table(
+        [["Data", "Locale", "Ore", "Note"]] + dados,
+        colWidths=[4*cm, 4*cm, 2.5*cm, 5.5*cm]
+    )
+
+    tabela.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#041955")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (2, 1), (2, -1), "CENTER"),
+    ]))
+
+    elementos.append(tabela)
+    elementos.append(Spacer(1, 12))
+
+    # TOTAL
+    elementos.append(Paragraph(
+        f"<b>Totale ore:</b> {total_horas}",
+        styles["Heading2"]
+    ))
+
+    elementos.append(Spacer(1, 30))
+
+    # ASSINATURA
+    elementos.append(Paragraph("Firma del collaboratore:", styles["Normal"]))
+    elementos.append(Spacer(1, 20))
+    elementos.append(Paragraph(
+        "_______________________________<br/>"
+        f"Data: {datetime.now().strftime('%d/%m/%Y')}",
+        styles["Normal"]
+    ))
+
+    pdf.build(elementos)
+    buffer.seek(0)
+
+    nome_arquivo = f"relatorio_{nome_usuario.replace(' ', '_')}.pdf"
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=nome_arquivo,
+        mimetype="application/pdf"
+    )
+
 
 
 

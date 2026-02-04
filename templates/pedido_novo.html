@@ -1,48 +1,190 @@
 {% extends "base.html" %}
 
-{% block title %}Novo Pedido | FlashPoint{% endblock %}
+{% block title %}Nuova richiesta | FlashPoint{% endblock %}
 
 {% block content %}
+
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.page-header h4 {
+    font-weight: 700;
+}
+
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* ===== FILTROS ===== */
+.filtros {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin: 25px 0;
+}
+
+.filtros form {
+    display: grid;
+    gap: 18px;
+}
+
+/* ===== TOTAL DE HORAS ===== */
+.total-card {
+    background: linear-gradient(135deg, #041955, #3450a1);
+    color: #fff;
+    padding: 12px 18px; /* altura reduzida */
+    border-radius: 16px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-card span {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.total-card strong {
+    font-size: 22px; /* levemente menor */
+    font-weight: 800;
+}
+
+/* ===== CARDS MOBILE ===== */
+.pontos-cards {
+    display: grid;
+    gap: 14px;
+    padding-bottom: 18px;
+}
+
+.ponto-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px; /* altura reduzida */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-left: 4px solid #041955;
+}
+
+/* HEADER CARD */
+.ponto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* reduzido */
+}
+
+.ponto-data {
+    font-weight: 700;
+    font-size: 13px;
+    color: #041955;
+}
+
+.ponto-local {
+    font-size: 11px;
+    background: #eef2ff;
+    color: #041955;
+    padding: 2px 8px;
+    border-radius: 16px;
+    font-weight: 600;
+}
+
+/* HORAS */
+.ponto-horas {
+    background: #f8f9fc;
+    border-radius: 12px;
+    padding: 8px; /* altura reduzida */
+    text-align: center;
+    margin: 8px 0; /* menos espaçamento */
+}
+
+.ponto-horas span {
+    display: block;
+    font-size: 11px;
+    color: #666;
+}
+
+.ponto-horas strong {
+    font-size: 20px; /* levemente menor */
+    color: #041955;
+    font-weight: 800;
+}
+
+/* NOTAS */
+.ponto-notas {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 10px; /* menos espaçamento */
+    border-top: 1px dashed #ddd;
+    padding-top: 6px;
+}
+
+/* AÇÕES */
+.ponto-acoes .btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 6px 0;
+}
+
+/* ===== TABELA DESKTOP ===== */
+.table-desktop {
+    display: none;
+}
+
+/* ===== DESKTOP ===== */
+@media (min-width: 768px) {
+
+    .pontos-cards {
+        display: none;
+    }
+
+    .table-desktop {
+        display: block;
+    }
+
+    .filtros form {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+    }
+}
+</style>
 
 <div class="row">
     <div class="col-md-12">
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>Nuovo richiesta</h3>
-            </div>
+        <!-- HEADER -->
+        <div class="page-header">
+            <h4 class="text-dark">
+                <i class="fa fa-plus-square me-2"></i>Nuova richiesta
+            </h4>
+            <p>Invia una nuova richiesta</p>
         </div>
 
-        <!-- FORMULÁRIO NOVO PEDIDO -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Invia nuova richiesta</h2>
-                <div class="clearfix"></div>
-            </div>
+        <hr class="my-4">
 
+        <!-- FORM -->
+        <div class="x_panel">
             <div class="x_content">
                 <form method="POST" class="row g-3">
 
                     <div class="col-md-6">
                         <label class="form-label">Tipo di ordine</label>
-                        <input type="text"
-                               name="tipo"
-                               class="form-control"
-                               required>
+                        <input type="text" name="tipo" class="form-control" required>
                     </div>
 
                     <div class="col-md-12">
                         <label class="form-label">Messaggio</label>
-                        <textarea name="mensagem"
-                            rows="4"
-                            class="form-control"
-                            required></textarea>
+                        <textarea name="mensagem" rows="4" class="form-control" required></textarea>
                     </div>
-                        
+
                     <div class="col-md-12 text-end">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-paper-plane"></i> Invia ordine
+                            <i class="fa fa-paper-plane me-1"></i> Invia ordine
                         </button>
                     </div>
 
@@ -50,73 +192,133 @@
             </div>
         </div>
 
-        <!-- MEUS PEDIDOS -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>I miei ordini</h2>
-                <div class="clearfix"></div>
-            </div>
+        <hr class="my-4">
 
-            <div class="x_content">
-
-                {% if pedidos %}
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Messaggio</th>
-                            <th>Stato</th>
-                            <th>Creato il</th>
-                            <th>Evaso</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in pedidos %}
-                        <tr>
-                            <td>{{ p.tipo }}</td>
-                            <td>{{ p.mensagem }}</td>
-
-                            <td>
-                                {% if p.status == "in sospeso" %}
-                                    <span class="badge bg-warning">In sospeso</span>
-                                {% elif p.status == "approvato" %}
-                                    <span class="badge bg-success">Approvato</span>
-                                {% elif p.status == "rifiutato" %}
-                                    <span class="badge bg-danger">Rifiutato</span>
-                                {% elif p.status == "evaso" %}
-                                    <span class="badge bg-info">Evaso</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ p.status }}</span>
-                                {% endif %}
-                            </td>
-
-                            <td>{{ formatar_data_pedido(p.criado_em) }}</td>
-
-                            <td>
-                                {% if p.atendido %}
-                                    <span class="text-success"><strong>Si</strong></span>
-                                {% else %}
-                                    <span class="text-muted">Non</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                {% else %}
-                <div class="text-center text-muted">
-                    <p>Non hai ancora effettuato alcun ordine.</p>
-                </div>
-                {% endif %}
-
-            </div>
+        <!-- HEADER -->
+        <div class="page-header">
+            <h4 class="text-dark">
+                <i class="fa fa-inbox me-2"></i>I miei ordini
+            </h4>
+            <p>Visualizza e gestisci i tuoi ordini</p>
         </div>
 
+        <hr class="my-4">
+
+        {% if pedidos %}
+
+        <!-- ===== TABELA DESKTOP ===== -->
+        <div class="d-none d-md-block">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tipo</th>
+                        <th>Messaggio</th>
+                        <th>Stato</th>
+                        <th>Creato il</th>
+                        <th>Evaso</th>
+                    </tr>
+                </thead>
+
+                <tbody class="table-group-divider">
+                    {% for p in pedidos %}
+                    <tr>
+                        <th>{{ loop.index }}</th>
+                        <td>{{ p.tipo }}</td>
+                        <td>{{ p.mensagem }}</td>
+                        <td>
+                            {% if p.status == "in sospeso" %}
+                                <span class="badge bg-warning">In sospeso</span>
+                            {% elif p.status == "Approvato" %}
+                                <span class="badge bg-success">Approvato</span>
+                            {% elif p.status == "Rifiutato" %}
+                                <span class="badge bg-danger">Rifiutato</span>
+                            {% elif p.status == "Evaso" %}
+                                <span class="badge bg-info">Evaso</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ p.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ formatar_data_pedido(p.criado_em) }}</td>
+                        <td>
+                            {% if p.atendido %}
+                                <span class="text-success fw-bold">Si</span>
+                            {% else %}
+                                <span class="text-muted">Non</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ===== MOBILE: CARDS ===== -->
+        <div class="ordini-cards d-md-none">
+            {% for p in pedidos %}
+            <div class="ponto-card">
+
+                <!-- HEADER -->
+                <div class="ponto-header">
+                    <div class="ponto-data">
+                        {{ formatar_data_pedido(p.criado_em) }}
+                    </div>
+                    <div class="ponto-local">
+                        {{ p.tipo }}
+                    </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="ponto-horas">
+                    <span>Stato ordine</span>
+                    <strong>
+                        {% if p.status == "in sospeso" %}
+                            <span class="badge bg-warning">In sospeso</span>
+                        {% elif p.status == "Approvato" %}
+                            <span class="badge bg-success text-white">Approvato</span>
+                        {% elif p.status == "Rifiutato" %}
+                            <span class="badge bg-danger text-white">Rifiutato</span>
+                        {% elif p.status == "Evaso" %}
+                            <span class="badge bg-info text-white">Evaso</span>
+                        {% else %}
+                            <span class="badge bg-secondary text-light">{{ p.status }}</span>
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <!-- MESSAGGIO -->
+                <div class="ponto-notas">
+                    {{ p.mensagem or "Nessun messaggio inserito." }}
+                </div>
+
+                <!-- ATENDIDO -->
+                <div class="ponto-horas">
+                    <span>Evaso</span>
+                    <strong>
+                        {% if p.atendido %}
+                            <span class="text-success">Si</span>
+                        {% else %}
+                            <span class="text-muted">Non</span>
+                        {% endif %}
+                    </strong>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+
+        {% else %}
+        <div class="text-center text-muted">
+            <p>Non hai ancora effettuato alcun ordine.</p>
+        </div>
+        {% endif %}
+
         <!-- VOLTAR -->
-        <div class="text-end">
-            <a href="{{ url_for('home') }}" class="btn btn-secondary">
-                Indietro
+        <div class="text-end mt-3">
+            <a href="/dashboard" class="btn btn-outline-secondary px-4">
+                <i class="fa fa-arrow-left me-2"></i>Tornare
             </a>
         </div>
 

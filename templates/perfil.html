@@ -1,62 +1,237 @@
 {% extends "base.html" %}
+{% block title %}Perfil | FlashPoint{% endblock %}
+
 {% block content %}
 
-<div class="page-title">
-  <div class="title_left">
-    <h3>Perfil do Usuário</h3>
-  </div>
-</div>
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.page-header h4 {
+    color: #000;
+    font-weight: 700;
+}
+.page-header p {
+    color: #555;
+    margin-top: 5px;
+}
 
-<div class="clearfix"></div>
+/* ===== CARD PERFIL PRINCIPAL ===== */
+.profile-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-card .row {
+    align-items: center;
+    gap: 20px;
+}
+
+/* FOTO */
+.profile_pic img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #c0c0c0;
+}
+
+/* NOME E CARGO */
+.profile-info h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #000;
+}
+.profile-info h2 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* BADGES */
+.badge-role {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #041955;
+    padding: 4px 10px;
+    border-radius: 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* BOTÕES ABAIXO DO NOME/CARGO */
+.profile-card .btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.profile-card .btn {
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 8px 16px;
+    flex: 1;
+    text-align: center;
+}
+
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 767px) {
+    .profile-card .row {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-card .btn-group {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
+    }
+    .profile-card .btn-group .btn {
+        width: 100%;
+    }
+}
+
+/* DESKTOP: ALINHAMENTO FOTO + INFO + BOTOES */
+@media (min-width: 768px) {
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .profile-card .btn-group {
+        justify-content: flex-start; /* botões abaixo do nome/cargo */
+        margin-top: 10px;
+    }
+}
+
+/* BADGES ESTILO UNIFORME */
+.badge-role {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+</style>
 
 <!-- HEADER -->
-<div class="x_panel">
-  <div class="x_content">
-    <div class="row align-items-center">
-
-
-      <div class="col col-lg-4 text-center">
-        <div class="profile_pic">
-                    <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" 
-                        alt="User profile photo" 
-                        class="img-circle profile_img" 
-                        loading="lazy"
-                    >
-                </div>
-      </div>
-
-      <div class="col-md-5 justify-content-center">
-        <h1>{{ usuario.sobrenome }} {{ usuario.nome }}</h1>
-        <h2>{{ usuario.get("cargo", "Colaborador") }}</h2>
-
-        <span class="badge bg-primary">Usuário ativo</span>
-        {% if usuario.tipo == 'admin' %}
-          <span class="badge bg-success">Administrador</span>
-        {% endif %}
-      </div>
-
-      
-
-      <div class="col-md-3 align-self-center text-right">
-        <a href="/perfil/editar" class="btn btn-primary">
-        <i class="fa fa-edit"></i> Editar Perfil
-        </a>
-      </div>
-    </div>
-  </div>
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-user me-2"></i>Profilo
+    </h4>
+    <p>Consulta e modifica le informazioni del tuo profilo</p>
 </div>
+<hr class="my-4">
+<!-- CARD PERFIL PRINCIPAL -->
+<div class="profile-card">
+    <div class="row">
+        <!-- FOTO -->
+        <div class="col-12 col-md-4 text-center text-md-start mb-3 mb-md-0">
+            <div class="profile_pic">
+                <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil">
+            </div>
+        </div>
 
-<!-- CARDS -->
- 
-<div class="row">
-  <div class="col-md-3 col-sm-6">
-    <div class="x_panel tile fixed_height_320">
-      <div class="x_content text-center">
-        <i class="fa fa-clock fa-3x text-info"></i>
-        <p>...</p>
-      </div>
+        <!-- INFORMAÇÕES + BADGES -->
+        <div class="col-12 col-md-4 profile-info text-center text-md-start">
+            <h1>{{ usuario.sobrenome }} {{ usuario.nome }}</h1>
+            <h2>{{ usuario.get("cargo", "Colaborador") }}</h2>
+
+            <!-- BADGES REFORMULADOS -->
+            <div class="mt-2">
+                <span class="badge text-bg-primary rounded-pill">Utente</span>
+                {% if usuario.tipo == 'admin' %}
+                <span class="badge text-bg-info rounded-pill">Amministratore</span>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- BOTÕES -->
+        <div class="btn-group mt-2">
+            <a href="/perfil/editar" class="btn btn-primary">
+                <i class="fa fa-edit me-1"></i> Modifica Profilo
+            </a>
+            <a href="{{ url_for('gerar_cartao_perfil') }}" class="btn btn-secondary">
+                <i class="fa fa-id-card me-1"></i> Genera Cartão
+            </a>
+        </div>
     </div>
-  </div>
+
+    <!-- ===== MOBILE ADMIN ACTIONS ===== -->
+    {% if usuario.tipo == 'admin' %}
+    <div class="d-md-none mt-4">
+
+        <h6 class="text-muted mb-3">
+            <i class="fa fa-shield me-1"></i> Area amministratore
+        </h6>
+
+        <div class="pontos-cards">
+
+
+
+
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Gestione delle ore registrate</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/admin_pontos" class="btn btn-primary w-100">
+                        <i class="fa fa-clock me-1"></i> Ore
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Gestione dei cantieri</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/adm_locais" class="btn btn-primary w-100">
+                        <i class="fa fa-institution me-1"></i> Cantieri
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Tesserini</div>
+                </div>
+
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('admin_cartoes') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-id-card me-1"></i> Tesserini
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Richeste degli utenti</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('admin_pedidos') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-folder me-1"></i> Richeste
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
 
 </div>
 

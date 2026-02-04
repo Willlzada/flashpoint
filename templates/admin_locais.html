@@ -1,113 +1,172 @@
 {% extends "base.html" %}
-
 {% block title %}Admin • Locais | FlashPoint{% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-12">
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>Gestione dei Locali</h3>
-            </div>
+/* ===== CARD PADRÃO ===== */
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+/* ===== FORM NOVO LOCAL ===== */
+.form-local {
+    display: grid;
+    gap: 16px;
+}
+
+/* ===== LISTA MOBILE ===== */
+.locais-cards {
+    display: grid;
+    gap: 14px;
+    padding-bottom: 18px;
+}
+
+.local-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-left: 4px solid #041955;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.local-nome {
+    font-weight: 700;
+    color: #041955;
+}
+
+/* ===== DESKTOP ===== */
+.table-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .locais-cards {
+        display: none;
+    }
+    .table-desktop {
+        display: block;
+    }
+}
+</style>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-map-marker me-2"></i>Gestione dei locali
+    </h4>
+    <p>Aggiungi e gestisci i luoghi disponibili</p>
+</div>
+
+<hr class="my-4">
+
+<!-- NOVO LOCAL -->
+<div class="card-box">
+    <h6 class="fw-bold mb-3">
+        <i class="fa fa-plus-circle me-1"></i> Aggiungi nuovo locale
+    </h6>
+
+    <form method="POST" class="form-local">
+        <div>
+            <label class="form-label">Nome del locale</label>
+            <input type="text"
+                   name="novo_local"
+                   class="form-control"
+                   placeholder="Es: Ufficio Centrale"
+                   required>
         </div>
 
-        <!-- FORMULÁRIO NOVO LOCAL -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Aggiungi nuovo locale</h2>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="x_content">
-                <form method="POST" class="form-horizontal">
-
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            Nome del locale
-                        </label>
-                        <div class="col-md-6 col-sm-6">
-                            <input type="text"
-                                   name="novo_local"
-                                   class="form-control"
-                                   placeholder="Es: Ufficio Centrale"
-                                   required>
-                        </div>
-                    </div>
-
-                    <div class="ln_solid"></div>
-
-                    <div class="form-group row">
-                        <div class="col-md-6 col-sm-6 offset-md-3">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fa fa-plus"></i> Aggiungi
-                            </button>
-                            <a href="{{ url_for('gerenciar_locais') }}"
-                               class="btn btn-secondary">
-                                Cancella
-                            </a>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-
-        <!-- TABELA DE LOCAIS -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Locali registrati</h2>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="x_content">
-
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Locale</th>
-                            <th style="width:120px;">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for local in locais %}
-                        <tr>
-                            <td>{{ local }}</td>
-                            <td class="text-center">
-                                <form method="POST"
-                                      action="{{ url_for('excluir_local') }}"
-                                      style="display:inline;"
-                                      onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
-                                    <input type="hidden" name="nome" value="{{ local }}">
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="2" class="text-center text-muted">
-                                Nessun locale registrato.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-
-        <!-- VOLTAR -->
-        <div class="text-end">
-            <a href="{{ url_for('home') }}" class="btn btn-secondary">
-                Indietro
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-plus"></i> Aggiungi
+            </button>
+            <a href="{{ url_for('gerenciar_locais') }}"
+               class="btn btn-secondary">
+                Cancella
             </a>
         </div>
+    </form>
+</div>
+
+<!-- LISTA DE LOCAIS -->
+{% if locais %}
+
+<!-- ===== MOBILE ===== -->
+<div class="locais-cards">
+    {% for local in locais %}
+    <div class="local-card">
+
+        <div class="local-nome">
+            <i class="fa fa-building me-1"></i>{{ local }}
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('excluir_local') }}"
+              onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
+            <input type="hidden" name="nome" value="{{ local }}">
+            <button class="btn btn-sm btn-danger">
+                <i class="fa fa-trash"></i>
+            </button>
+        </form>
 
     </div>
+    {% endfor %}
 </div>
+
+<!-- ===== DESKTOP ===== -->
+<div class="table-desktop">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Locale</th>
+                <th class="text-center">Azioni</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for local in locais %}
+            <tr>
+                <td class="fw-bold">{{ local }}</td>
+                <td class="text-center">
+                    <form method="POST"
+                          action="{{ url_for('excluir_local') }}"
+                          style="display:inline;"
+                          onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
+                        <input type="hidden" name="nome" value="{{ local }}">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<p class="text-muted text-center mt-4">
+    Nessun locale registrato.
+</p>
+{% endif %}
 
 {% endblock %}

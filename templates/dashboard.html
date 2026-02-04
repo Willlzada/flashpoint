@@ -1,45 +1,156 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}FlashPoint{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Dashboard | FlashPoint{% endblock %}
 
-<div class="dashboard">
+{% block content %}
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">⚡ FlashPoint</span>
+<style>
+/* ===== DASHBOARD ===== */
+
+.dashboard-header {
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.dashboard-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* Cards */
+.dashboard-card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.dashboard-card .icon {
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+.dashboard-card .label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.dashboard-card .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #041955;
+}
+
+/* Ranking */
+.ranking-card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.ranking-card th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.ranking-card td,
+.ranking-card th {
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+</style>
+
+<!-- ===== HEADER ===== -->
+<div class="dashboard-header">
+    <h2>Bem-vindo, {{ usuario.nome }}</h2>
+    <p>Resumo do seu desempenho</p>
+</div>
+
+<!-- ===== CARDS ===== -->
+<div class="row g-4 mb-4">
+
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex align-items-start">
+                <i class="fa fa-calendar-alt icon me-3 mt-1"></i>
+                <div>
+                    <div class="label">Horas no mês</div>
+                    <div class="value">{{ horas_mes_atual }}h</div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <nav class="menu">
-            <a href="/home" class="menu-item"><span class="icon">🏠</span>Dashboard</a>
-            <a href="/meus_pontos" class="menu-item"><span class="icon">📆</span>Le mie ore</a>
-            <a href="/registrar_ponto" class="menu-item"><span class="icon">📝</span>Segna ore</a>
-            <a href="{{ url_for('novo_pedido') }}" class="menu-item"><span class="icon">📦</span>Richieste</a>
-            <a href="/perfil" class="menu-item"><span class="icon">👤</span>Profilo</a>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex align-items-start">
+                <i class="fa fa-calendar icon me-3 mt-1"></i>
+                <div>
+                    <div class="label">Mês anterior</div>
+                    <div class="value">{{ horas_mes_anterior }}h</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            {% if usuario.tipo == 'admin' %}
-            <div class="menu-title">ADMIN</div>
-            <a href="/admin_pontos" class="menu-item admin"><span class="icon">🕧</span>Gestione ore</a>
-            <a href="/adm_locais" class="menu-item admin"><span class="icon">🏗️</span>Luoghi</a>
-            <a href="{{ url_for('admin_cartoes') }}" class="menu-item admin"><span class="icon">🪪</span>Cartões</a>
-            <a href="{{ url_for('admin_pedidos') }}" class="menu-item admin"><span class="icon">📦</span>Pedidos</a>
-            {% endif %}
-        </nav>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex align-items-start">
+                <i class="fa fa-chart-line icon me-3 mt-1"></i>
+                <div>
+                    <div class="label">Total no ano</div>
+                    <div class="value">{{ horas_ano }}h</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <a href="/logout" class="menu-item logout"><span class="icon">❌</span>Esci</a>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="content">
-        {% block dashboard_content %}{% endblock %}
-    </main>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex align-items-start">
+                <i class="fa fa-trophy icon me-3 mt-1"></i>
+                <div>
+                    <div class="label">Posição no ranking</div>
+                    <div class="value">{{ posicao }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
-</body>
-</html>
+<!-- ===== RANKING ===== -->
+<div class="card ranking-card">
+    <div class="card-body">
+        <h5 class="mb-3 fw-semibold">
+            <i class="fa fa-list-ol me-2 text-secondary"></i>
+            Ranking mensal
+        </h5>
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuário</th>
+                        <th>Horas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in ranking %}
+                    <tr {% if r.nome == usuario.nome %}class="fw-semibold"{% endif %}>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ r.nome }}</td>
+                        <td>{{ r.horas }}h</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
