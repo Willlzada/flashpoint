@@ -44,7 +44,7 @@
                             <!-- LOCAL -->
                             <div class="col-12">
                                 <label class="form-label fw-semibold">
-                                    Local
+                                    Locale
                                 </label>
                                 <select name="local" class="form-select" required>
                                     <option value="" disabled selected>Seleziona il luogo</option>
@@ -62,7 +62,10 @@
                                 <label class="form-label fw-semibold">
                                     Data
                                 </label>
-                                <input type="date" name="data" class="form-control" required>
+                                <input type="date" name="data" id="data" class="form-control" required>
+                                <div class="form-text">
+                                    Modificabile se necessario.
+                                </div>
                             </div>
 
                             <!-- HORAS -->
@@ -111,5 +114,18 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const campoData = document.getElementById("data");
+
+    if (campoData) {
+        const hoje = new Date();
+        campoData.value = hoje.toISOString().split('T')[0];
+    }
+});
+</script>
+
+
 
 {% endblock %}

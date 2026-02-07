@@ -126,6 +126,14 @@
 
 <body>
 
+{% macro format_ddmmyyyy(date_str) -%}
+  {%- if date_str and '-' in date_str -%}
+    {{ date_str.split('-')|reverse|join('/') }}
+  {%- else -%}
+    {{ date_str }}
+  {%- endif -%}
+{%- endmacro %}
+
 <div>
 
     <div class="cartao">
@@ -137,7 +145,7 @@
                 {% if user.foto_url %}
                     <img src="{{ url_for('static', filename='img/perfis/' ~ user.foto_url) }}" class="foto">
                 {% else %}
-                    <img src="{{ url_for('static', filename='img/perfis/default.png') }}" class="foto">
+                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" class="foto">
                 {% endif %}
 
                 <div class="nome_card">
@@ -145,8 +153,8 @@
                 </div>
 
 
-                <p>Nato: <strong>{{ user.data_nascimento }}</strong> a <strong>{{ user.pais }}</strong></p>
-                <p>Data Assunzione: <strong>{{ user.data_assuncao }}</strong></p>
+                <p>Nato: <strong>{{ format_ddmmyyyy(user.data_nascimento) }}</strong> a <strong>{{ user.pais }}</strong></p>
+                <p>Data Assunzione: <strong>{{ format_ddmmyyyy(user.data_assuncao) }}</strong></p>
 
                 <p>Ruolo / Mansione:</p>
                 <p><strong>{{ user.cargo }}</strong></p>

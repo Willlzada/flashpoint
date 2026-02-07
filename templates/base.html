@@ -164,6 +164,14 @@
                 <i class="fa fa-folder-open me-2"></i> Mie Richeste
             </a>
         </li>
+    <!-- ===== SIDEBAR DESKTOP ===== 
+        <li>
+            <a href="{{ url_for('work_management') }}" class="nav-link {% if request.path == '/work_management' %}active{% endif %}">
+                <i class="fa fa-briefcase me-2"></i> Minhas Atividades
+            </a>
+        </li>
+    -->
+
 
         <li>
             <a href="/perfil" class="nav-link {% if request.path == '/perfil' %}active{% endif %}">
@@ -216,6 +224,14 @@
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-id-badge"></i>
                             Tesserini
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('admin_perfis') }}"
+                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
+                            <i class="fa fa-user-pen"></i>
+                            Profili utenti
                         </a>
                     </li>
 
@@ -296,6 +312,7 @@
                 <i class="fa fa-folder-open d-block" width="30" height="30"></i>
             </a>
         </li>
+
         <li class="nav-item flex-fill">
             <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Perfil">
                 <i class="fa fa-user d-block" width="30" height="30"></i>

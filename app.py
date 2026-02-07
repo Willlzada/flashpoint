@@ -6,6 +6,7 @@ import os
 from firebase_admin import credentials, firestore, storage, initialize_app
 from datetime import datetime
 from flask import send_file, session, request
+from werkzeug.utils import secure_filename
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
 )
@@ -23,6 +24,10 @@ from datetime import datetime
 # CONFIGURAÇÃO DO FLASK
 # =========================
 app = Flask(__name__)
+app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "static", "img", "perfis")
+app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # 3MB
+
+ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 app.secret_key = "chave-secreta-simples"  # essencial para sessão
 
 # =========================
@@ -44,26 +49,57 @@ auth = firebase.auth()
 # =========================
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
 # =========================
-
-firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
-if not firebase_json:
-    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
-
-cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
-cred = credentials.Certificate(cred_dict)
-firebase_admin.initialize_app(cred)
-db = firestore.client()
-
-# =========================
-# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
-# =========================
-#cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
+#
+#firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
+#if not firebase_json:
+#    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
+#
+#cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
+#cred = credentials.Certificate(cred_dict)
 #firebase_admin.initialize_app(cred)
 #db = firestore.client()
 
 # =========================
+# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
+# =========================
+cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+# =========================
 # FUNÇÕES AUXILIARES
 # =========================
+from datetime import datetime
+
+def formatar_data_somente_data(timestamp):
+    """Formata timestamp do Firebase para dd/mm/aaaa"""
+    try:
+        # Se for datetime
+        if isinstance(timestamp, datetime):
+            return timestamp.strftime("%d/%m/%Y")
+        # Se for string no formato "YYYY-MM-DD HH:MM:SS"
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d/%m/%Y")
+    except:
+        return str(timestamp)
+
+# ⚠️ Registrar filtro no Jinja
+app.jinja_env.filters['formatar_data'] = formatar_data_somente_data
+
+from datetime import datetime
+
+def formatar_data_pedido(timestamp):
+    """Formata timestamp do Firebase para dd/mm/aaaa HH:MM"""
+    try:
+        # Firebase retorna timestamp como objeto datetime
+        if isinstance(timestamp, datetime):
+            return timestamp.strftime("%d/%m/%Y %H:%M")
+        # Caso seja string, tenta converter
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%d/%m/%Y %H:%M")
+    except:
+        return str(timestamp)
+
 
 # Função para verificar se o usuário é ADM
 def is_admin():
@@ -101,6 +137,44 @@ def get_user_by_id(uid):
         user["uid"] = doc.id
         return user
     return None
+
+
+def is_allowed_image(filename):
+    if not filename or "." not in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1].lower()
+    return ext in ALLOWED_IMAGE_EXTENSIONS
+
+
+def salvar_foto_perfil(file_storage, uid, foto_anterior=None):
+    if not file_storage or not file_storage.filename:
+        return None
+    if not is_allowed_image(file_storage.filename):
+        return None
+
+    safe_name = secure_filename(file_storage.filename)
+    ext = os.path.splitext(safe_name)[1].lower()
+    if not ext:
+        return None
+
+    timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    new_filename = f"{uid}_{timestamp}{ext}"
+
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    save_path = os.path.join(app.config["UPLOAD_FOLDER"], new_filename)
+    file_storage.save(save_path)
+
+    if foto_anterior:
+        foto_anterior = os.path.basename(foto_anterior)
+        if foto_anterior and foto_anterior != new_filename:
+            old_path = os.path.join(app.config["UPLOAD_FOLDER"], foto_anterior)
+            if os.path.isfile(old_path):
+                try:
+                    os.remove(old_path)
+                except OSError:
+                    pass
+
+    return new_filename
 
 
 def decimal_para_hhmm(horas_decimal):
@@ -255,10 +329,169 @@ def horas_por_ano(uid, ano):
 
 
 
+
+def parse_work_due_date(due_date):
+    """Converte yyyy-mm-dd para datetime para ordenação."""
+    if not due_date:
+        return datetime.max
+    try:
+        return datetime.strptime(due_date, "%Y-%m-%d")
+    except Exception:
+        return datetime.max
+
+
+
 # =========================
 # ROTAS
 # =========================
 
+
+# =========================
+# WORK MANAGEMENT (CRUD TAREFAS)
+# =========================
+@app.route("/work_management", methods=["GET", "POST"])
+def work_management():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+    usuario_doc = db.collection("usuarios").document(uid).get()
+    usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+    is_admin_user = usuario.get("tipo") == "admin"
+
+    if request.method == "POST":
+        if not is_admin_user:
+            flash("Somente administradores podem criar ou editar tarefas.", "danger")
+            return redirect(url_for("work_management"))
+
+        acao = request.form.get("acao")
+
+        if acao == "criar":
+            titulo = request.form.get("titulo", "").strip()
+            descricao = request.form.get("descricao", "").strip()
+            prioridade = request.form.get("prioridade", "media")
+            due_date = request.form.get("due_date", "")
+            assigned_uids = [uid.strip() for uid in request.form.getlist("assigned_uids") if uid.strip()]
+
+            if not titulo:
+                flash("O título da tarefa é obrigatório.", "danger")
+            elif not assigned_uids:
+                flash("Selecione pelo menos um colaborador responsável pela tarefa.", "danger")
+            else:
+                assigned_names = []
+                valid_assigned_uids = []
+
+                for assigned_uid in assigned_uids:
+                    assigned_doc = db.collection("usuarios").document(assigned_uid).get()
+                    if assigned_doc.exists:
+                        assigned_data = assigned_doc.to_dict()
+                        assigned_name = f"{assigned_data.get('nome', '')} {assigned_data.get('sobrenome', '')}".strip()
+                        assigned_names.append(assigned_name or assigned_uid)
+                        valid_assigned_uids.append(assigned_uid)
+
+                if not valid_assigned_uids:
+                    flash("Nenhum colaborador válido foi selecionado.", "danger")
+                else:
+                    created_by = f"{usuario.get('nome', '')} {usuario.get('sobrenome', '')}".strip()
+
+                    db.collection("work_items").add({
+                        "created_by_uid": uid,
+                        "created_by_nome": created_by,
+                        "assigned_uid": valid_assigned_uids[0],
+                        "assigned_nome": assigned_names[0],
+                        "assigned_uids": valid_assigned_uids,
+                        "assigned_nomes": assigned_names,
+                        "titulo": titulo,
+                        "descricao": descricao,
+                        "prioridade": prioridade,
+                        "status": "todo",
+                        "due_date": due_date,
+                        "criado_em": firestore.SERVER_TIMESTAMP,
+                    })
+                    flash("Tarefa criada e designada com sucesso.", "success")
+
+        elif acao == "status":
+            item_id = request.form.get("item_id")
+            novo_status = request.form.get("novo_status")
+
+            if item_id and novo_status in {"todo", "in_progress", "done"}:
+                item_ref = db.collection("work_items").document(item_id)
+                item_doc = item_ref.get()
+                if item_doc.exists:
+                    item_ref.update({"status": novo_status})
+                    flash("Status atualizado.", "success")
+
+        elif acao == "excluir":
+            item_id = request.form.get("item_id")
+            if item_id:
+                item_ref = db.collection("work_items").document(item_id)
+                item_doc = item_ref.get()
+                if item_doc.exists:
+                    item_ref.delete()
+                    flash("Tarefa excluída.", "success")
+
+        return redirect(url_for("work_management"))
+
+    status_filtro = request.args.get("status", "all")
+
+    items_docs = db.collection("work_items").stream()
+    items = []
+
+    for doc in items_docs:
+        data = doc.to_dict()
+        data["id"] = doc.id
+
+        assigned_uids_item = data.get("assigned_uids")
+        if not isinstance(assigned_uids_item, list):
+            assigned_uids_item = [data.get("assigned_uid")] if data.get("assigned_uid") else []
+
+        data["assigned_uids"] = assigned_uids_item
+
+        assigned_nomes_item = data.get("assigned_nomes")
+        if not isinstance(assigned_nomes_item, list):
+            assigned_nomes_item = [data.get("assigned_nome")] if data.get("assigned_nome") else []
+
+        data["assigned_nomes"] = assigned_nomes_item
+
+        if not is_admin_user and uid not in assigned_uids_item:
+            continue
+
+        if status_filtro != "all" and data.get("status") != status_filtro:
+            continue
+
+        items.append(data)
+
+    items.sort(key=lambda x: (x.get("status") == "done", parse_work_due_date(x.get("due_date"))))
+
+    contadores = {"todo": 0, "in_progress": 0, "done": 0}
+    for item in items:
+        st = item.get("status", "todo")
+        if st in contadores:
+            contadores[st] += 1
+
+    colaboradores = []
+    if is_admin_user:
+        usuarios_docs = db.collection("usuarios").stream()
+        for u in usuarios_docs:
+            d = u.to_dict()
+            nome = f"{d.get('nome', '')} {d.get('sobrenome', '')}".strip()
+            colaboradores.append({"uid": u.id, "nome": nome or u.id})
+        colaboradores.sort(key=lambda c: c["nome"].lower())
+
+    return render_template(
+        "work_management.html",
+        items=items,
+        status_filtro=status_filtro,
+        contadores=contadores,
+        is_admin_user=is_admin_user,
+        colaboradores=colaboradores
+    )
+
+
+
+# =========================
+# DASHBOARD/HOME
+# =========================
 
 from datetime import datetime
 from flask import render_template, redirect, session
@@ -310,8 +543,51 @@ def dashboard():
     )
 
 
+# =========================
+# HOME
+# =========================
 
+@app.route("/home")
+def home():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+    hoje = datetime.now()
+
+    horas_mes_atual = horas_por_mes(uid, hoje.year, hoje.month)
+
+    mes_anterior = hoje.month - 1 or 12
+    ano_anterior = hoje.year if hoje.month != 1 else hoje.year - 1
+    horas_mes_anterior = horas_por_mes(uid, ano_anterior, mes_anterior)
+
+    horas_ano = horas_por_ano(uid, hoje.year)
+
+
+    ranking = ranking_mensal(hoje.year, hoje.month)
+
+    # posição do usuário no ranking
+    posicao = "-"
+    for i, r in enumerate(ranking):
+        if r["nome"]:
+            posicao = i + 1
+            break
+
+    return render_template(
+    "home.html",
+    horas_mes_atual=horas_mes_atual,
+    horas_mes_anterior=horas_mes_anterior,
+    horas_ano=horas_ano,
+    ranking=ranking,
+    posicao=posicao
+)
+
+
+
+# =========================
 # LOGIN
+# =========================
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     error = None
@@ -326,7 +602,10 @@ def login():
             error = "Email ou senha inválidos"
     return render_template("login.html", error=error)
 
-# REGISTRO
+
+# =========================
+# REGISTER
+# =========================
 
 @app.route("/register", methods=["GET", "POST"])
 def register_usuario():
@@ -370,46 +649,12 @@ def register_usuario():
     return render_template("register.html", error=error, success=success)
 
 
-# HOME
-@app.route("/home")
-def home():
-    if "uid" not in session:
-        return redirect("/")
-
-    uid = session["uid"]
-    hoje = datetime.now()
-
-    horas_mes_atual = horas_por_mes(uid, hoje.year, hoje.month)
-
-    mes_anterior = hoje.month - 1 or 12
-    ano_anterior = hoje.year if hoje.month != 1 else hoje.year - 1
-    horas_mes_anterior = horas_por_mes(uid, ano_anterior, mes_anterior)
-
-    horas_ano = horas_por_ano(uid, hoje.year)
 
 
-    ranking = ranking_mensal(hoje.year, hoje.month)
+# =========================
+# PERFIL USUÁRIO
+# =========================
 
-    # posição do usuário no ranking
-    posicao = "-"
-    for i, r in enumerate(ranking):
-        if r["nome"]:
-            posicao = i + 1
-            break
-
-    return render_template(
-    "home.html",
-    horas_mes_atual=horas_mes_atual,
-    horas_mes_anterior=horas_mes_anterior,
-    horas_ano=horas_ano,
-    ranking=ranking,
-    posicao=posicao
-)
-
-
-
-
-# PERFIL
 @app.route("/perfil")
 def perfil_usuario():
     if "uid" not in session:
@@ -429,6 +674,10 @@ def perfil_usuario():
     )
 
 
+# =========================
+# PERFIL EDITAR
+# =========================
+
 @app.route("/perfil/editar", methods=["GET", "POST"])
 def perfil_editar():
     if "uid" not in session:
@@ -439,21 +688,81 @@ def perfil_editar():
     usuario = usuario_ref.get().to_dict()
 
     if request.method == "POST":
-        usuario_ref.update({
+        update_data = {
             "nome": request.form.get("nome"),
             "sobrenome": request.form.get("sobrenome"),
             "data_nascimento": request.form.get("data_nascimento"),
             "pais": request.form.get("pais"),
             "data_assuncao": request.form.get("data_assuncao"),
-            "cargo": request.form.get("cargo"),
-            "foto_url": request.form.get("foto_url")
-        })
+            "cargo": request.form.get("cargo")
+        }
+        foto_file = request.files.get("foto")
+        novo_nome = salvar_foto_perfil(foto_file, uid, usuario.get("foto_url"))
+        if novo_nome:
+            update_data["foto_url"] = novo_nome
+
+        usuario_ref.update(update_data)
         return redirect("/perfil")
 
     return render_template("perfil_editar.html", usuario=usuario)
 
 
+# =========================
+# ADMIN - PERFIS USUÁRIOS
+# =========================
+
+@app.route("/admin/perfis", methods=["GET"])
+def admin_perfis():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    usuarios = get_all_users()
+    usuarios = sorted(
+        usuarios,
+        key=lambda u: f"{u.get('nome','')} {u.get('sobrenome','')}".strip().lower()
+    )
+    return render_template("admin_perfis.html", usuarios=usuarios)
+
+
+@app.route("/admin/perfis/editar/<uid>", methods=["GET", "POST"])
+def admin_perfil_editar(uid):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    usuario_ref = db.collection("usuarios").document(uid)
+    usuario_doc = usuario_ref.get()
+    if not usuario_doc.exists:
+        return "Utente non trovato"
+
+    usuario = usuario_doc.to_dict()
+    usuario["uid"] = uid
+
+    if request.method == "POST":
+        update_data = {
+            "nome": request.form.get("nome"),
+            "sobrenome": request.form.get("sobrenome"),
+            "data_nascimento": request.form.get("data_nascimento"),
+            "pais": request.form.get("pais"),
+            "data_assuncao": request.form.get("data_assuncao"),
+            "cargo": request.form.get("cargo")
+        }
+        foto_file = request.files.get("foto")
+        novo_nome = salvar_foto_perfil(foto_file, uid, usuario.get("foto_url"))
+        if novo_nome:
+            update_data["foto_url"] = novo_nome
+
+        usuario_ref.update(update_data)
+        return redirect(url_for("admin_perfis"))
+
+    return render_template("admin_perfil_editar.html", usuario=usuario)
+
+
+# =========================
 # REGISTRAR PONTO
+# =========================
+
 from datetime import datetime, timedelta
 from flask import render_template, redirect, session, request, url_for
 
@@ -526,7 +835,10 @@ def registrar_ponto_usuario():
 
 
 
+# =========================
 # MEUS PONTOS
+# =========================
+
 from datetime import datetime, timedelta
 from flask import render_template, redirect, session, request
 
@@ -615,10 +927,13 @@ def meus_pontos():
         filtro_mes=filtro_mes
     )
 
+
+
+
+# =========================
+# ADMIN PONTOS
 # =========================
 
-
-# ADMIN PONTOS
 from datetime import datetime
 
 @app.route("/admin_pontos", methods=["GET", "POST"])
@@ -716,9 +1031,10 @@ def admin_pontos():
 
 
 
+# =========================
+# EDITAR PONTO
+# =========================
 
-
-# EDITAR PONTO (ADMIN)
 @app.route("/editar_ponto/<id>", methods=["GET", "POST"])
 def editar_ponto_admin(id):
     if "uid" not in session:
@@ -782,7 +1098,9 @@ def editar_ponto_admin(id):
     )
 
 
-
+# =========================
+# EXCLUIR PONTO
+# =========================
 
 @app.route("/excluir_ponto/<id>", methods=["POST"])
 def excluir_ponto(id):
@@ -804,7 +1122,12 @@ def excluir_ponto(id):
 
     return redirect("/admin_pontos")
 
-# Página para gerenciar locais (ADM)
+
+
+# =========================
+# GERENCIAR LOCAIS (ADMIN)
+# =========================
+
 @app.route("/adm_locais", methods=["GET", "POST"])
 def gerenciar_locais():
     usuario = get_usuario_logado()
@@ -825,6 +1148,11 @@ def gerenciar_locais():
     return render_template("admin_locais.html", locais=locais)
 
 
+
+# =========================
+# EXCLUIR LOCAL (ADMIN)
+# =========================
+
 @app.route("/excluir_local", methods=["POST"])
 def excluir_local():
     usuario = get_usuario_logado()
@@ -838,9 +1166,12 @@ def excluir_local():
             db.collection("locais").document(doc.id).delete()
     return redirect(url_for("gerenciar_locais"))
 
+
+
 # =========================
-# LISTAR USUÁRIOS PARA CARTÃO (ADMIN)
+# ADMIN CARTÕES DE RECONHECIMENTO
 # =========================
+
 @app.route("/admin/cartoes", methods=["GET"])
 def admin_cartoes():
     usuario = get_usuario_logado()
@@ -851,18 +1182,20 @@ def admin_cartoes():
     return render_template("admin_cartoes.html", usuarios=usuarios)
 
 
+
 # =========================
 # GERAR CARTÃO (ADMIN)
 # =========================
+
 @app.route("/admin/cartoes/gerar/<uid>", methods=["GET"])
 def gerar_cartao(uid):
     usuario_logado = get_usuario_logado()
     if not usuario_logado or usuario_logado.get("tipo") != "admin":
-        return "Acesso negado!"
+        return "Accesso negato!"
 
     usuario = get_user_by_id(uid)
     if not usuario:
-        return "Usuário não encontrado"
+        return "Utente non trovato"
 
     # Valida campos obrigatórios
     campos_obrigatorios = ["nome", "sobrenome", "data_nascimento", "pais", "data_assuncao", "cargo"]
@@ -871,9 +1204,13 @@ def gerar_cartao(uid):
 
     return render_template("cartao_reconhecimento.html", user=usuario)
 
+
+
+
 # =========================
-# GERAR CARTÃO (USUÁRIO LOGADO)
+# GERAR CARTÃO (USUÁRIO)
 # =========================
+
 @app.route("/perfil/cartao", methods=["GET"])
 def gerar_cartao_perfil():
     usuario = get_usuario_logado()
@@ -901,6 +1238,9 @@ def gerar_cartao_perfil():
     )
 
 
+# =========================
+# PEDIDO NOVO E LISTAGEM DE PEDIDOS DO USUÁRIO
+# =========================
 
 from datetime import datetime
 from google.cloud import firestore
@@ -949,20 +1289,9 @@ def novo_pedido():
 
 
 
-
-from datetime import datetime
-
-def formatar_data_pedido(timestamp):
-    """Formata timestamp do Firebase para dd/mm/aaaa HH:MM"""
-    try:
-        # Firebase retorna timestamp como objeto datetime
-        if isinstance(timestamp, datetime):
-            return timestamp.strftime("%d/%m/%Y %H:%M")
-        # Caso seja string, tenta converter
-        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-        return dt.strftime("%d/%m/%Y %H:%M")
-    except:
-        return str(timestamp)
+# =========================
+# ADMIN PEDIDOS - LISTAGEM E AÇÕES
+# =========================
 
 @app.route("/admin/pedidos", methods=["GET", "POST"])
 def admin_pedidos():
@@ -1020,6 +1349,12 @@ def admin_pedidos():
     return render_template("admin_pedidos.html", pedidos=pedidos)
 
 
+
+
+# =========================
+# DECIDIR PEDIDO (APPROVAR, RECUSAR, ATENDER)
+# =========================
+
 @app.route("/admin/pedidos/decidir/<id>", methods=["POST"])
 def decidir_pedido(id):
     usuario = get_usuario_logado()
@@ -1044,6 +1379,9 @@ def decidir_pedido(id):
 
 
 
+# =========================
+# EXPORTAR RELATÓRIO DE PONTOS EM PDF
+# =========================
 
 from flask import send_file, request, session, redirect
 from io import BytesIO
@@ -1224,12 +1562,16 @@ def exportar_relatorio():
 
 
 
-
+# =========================
 # LOGOUT
+# =========================
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
+
+
 
 # =========================
 # INICIAR APP

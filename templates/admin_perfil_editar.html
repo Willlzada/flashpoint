@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Profilo | FlashPoint{% endblock %}
+{% block title %}Admin • Modifica Profilo | FlashPoint{% endblock %}
 
 {% block content %}
 <style>
@@ -17,6 +17,13 @@
     color: #555;
     margin-top: 5px;
 }
+
+.info-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
 </style>
 
 <div class="row">
@@ -25,14 +32,25 @@
         <!-- HEADER -->
         <div class="page-header">
             <h4 class="text-dark">
-                <i class="fa fa-edit me-2"></i>Dati personali
+                <i class="fa fa-user-pen me-2"></i>Modifica profilo utente
             </h4>
-            <p>Modifica le informazioni del tuo profilo</p>
+            <p>Solo amministratori possono aggiornare i profili</p>
         </div>
 
         <hr class="my-4">
 
-        <form method="POST" action="{{ url_for('perfil_editar') }}" class="row g-3" enctype="multipart/form-data">
+        <div class="info-box mb-4">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <strong>UID:</strong> {{ usuario.uid }}
+                </div>
+                <div class="col-md-6">
+                    <strong>Email:</strong> {{ usuario.email or "-" }}
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('admin_perfil_editar', uid=usuario.uid) }}" class="row g-3" enctype="multipart/form-data">
             
             <!-- NOME -->
             <div class="col-md-6">
@@ -41,7 +59,7 @@
                     type="text" 
                     name="nome"
                     class="form-control"
-                    placeholder="Ex.: João" 
+                    placeholder="Ex.: Joao" 
                     value="{{ usuario.nome or '' }}" 
                     required 
                 >
@@ -60,9 +78,9 @@
                 >
             </div>
             
-            <!-- DATA DE NASCIMENTO -->        
+            <!-- DATA DI NASCITA -->        
             <div class="col-md-6">
-                <label for="inputEmail4" class="form-label">Data di nascita</label>
+                <label class="form-label">Data di nascita</label>
                 <input 
                     type="date" 
                     name="data_nascimento"
@@ -71,9 +89,9 @@
                 >
             </div>
 
-            <!-- PAÍS -->
+            <!-- PAESE -->
             <div class="col-md-6">
-                <label for="inputPassword4" class="form-label">Paise di Origine</label>
+                <label class="form-label">Paese di origine</label>
                 <input 
                     type="text" 
                     name="pais" 
@@ -83,9 +101,9 @@
                 >
             </div>
 
-            <!-- DATA DE ADMISSÃO -->
+            <!-- DATA DI ASSUNZIONE -->
             <div class="col-md-6">
-                <label for="inputEmail4" class="form-label">Data di Assunzione</label>
+                <label class="form-label">Data di assunzione</label>
                 <input 
                     type="date" 
                     name="data_assuncao" 
@@ -94,9 +112,9 @@
                 >
             </div>
 
-            <!-- CARGO -->
+            <!-- RUOLO -->
             <div class="col-md-6">
-                <label for="inputEmail4" class="form-label">Ruolo</label>
+                <label class="form-label">Ruolo</label>
                 <input 
                 type="text" 
                 name="cargo"
@@ -110,9 +128,9 @@
                 <label class="form-label">Foto</label>
                 <div class="d-flex align-items-center gap-3">
                     {% if usuario.foto_url %}
-                        <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                        <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto del profilo" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% else %}
-                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="Foto do perfil" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="Foto del profilo" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% endif %}
                     <div class="flex-grow-1">
                         <input 
@@ -128,15 +146,15 @@
 
             <hr class="my-4">
 
-            <!-- AÇÕES -->
+            <!-- AZIONI -->
             <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
 
                 <button type="submit" class="btn btn-primary px-4">
                     <i class="fa fa-save me-2"></i> Salva modifiche
                 </button>
 
-                <a href="{{ url_for('perfil_usuario') }}" class="btn btn-outline-secondary px-4">
-                    <i class="fa fa-arrow-left me-2"></i>Tornare
+                <a href="{{ url_for('admin_perfis') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fa fa-arrow-left me-2"></i> Tornare
                 </a>
 
             </div>

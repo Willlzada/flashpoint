@@ -140,7 +140,11 @@
         <!-- FOTO -->
         <div class="col-12 col-md-4 text-center text-md-start mb-3 mb-md-0">
             <div class="profile_pic">
-                <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil">
+                {% if usuario.foto_url %}
+                    <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="Foto do perfil">
+                {% endif %}
             </div>
         </div>
 
@@ -165,7 +169,7 @@
                 <i class="fa fa-edit me-1"></i> Modifica Profilo
             </a>
             <a href="{{ url_for('gerar_cartao_perfil') }}" class="btn btn-secondary">
-                <i class="fa fa-id-card me-1"></i> Genera Cartão
+                <i class="fa fa-id-card me-1"></i> Genera tessera
             </a>
         </div>
     </div>
@@ -181,8 +185,18 @@
         <div class="pontos-cards">
 
 
-
-
+            <!-- ===== MOBILE ADMIN ACTIONS ===== 
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Gestione delle Ativita</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('work_management') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-plus-square me-1"></i> Ativita
+                    </a>
+                </div>
+            </div>
+            -->
 
             <div class="ponto-card">
                 <div class="ponto-header">

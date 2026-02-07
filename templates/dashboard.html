@@ -64,8 +64,8 @@
 
 <!-- ===== HEADER ===== -->
 <div class="dashboard-header">
-    <h2>Bem-vindo, {{ usuario.nome }}</h2>
-    <p>Resumo do seu desempenho</p>
+    <h2>Benvenuto, {{ usuario.nome }}</h2>
+    <p>Riepilogo della tua attività</p>
 </div>
 
 <!-- ===== CARDS ===== -->
@@ -76,8 +76,8 @@
             <div class="card-body d-flex align-items-start">
                 <i class="fa fa-calendar-alt icon me-3 mt-1"></i>
                 <div>
-                    <div class="label">Horas no mês</div>
-                    <div class="value">{{ horas_mes_atual }}h</div>
+                    <div class="label">Ore lavorate questo mese</div>
+                    <div class="value">{{ horas_mes_atual}} Ore</div>
                 </div>
             </div>
         </div>
@@ -88,8 +88,8 @@
             <div class="card-body d-flex align-items-start">
                 <i class="fa fa-calendar icon me-3 mt-1"></i>
                 <div>
-                    <div class="label">Mês anterior</div>
-                    <div class="value">{{ horas_mes_anterior }}h</div>
+                    <div class="label">Ore lavorate nel mese precedente</div>
+                    <div class="value">{{ horas_mes_anterior }} Ore</div>
                 </div>
             </div>
         </div>
@@ -100,8 +100,8 @@
             <div class="card-body d-flex align-items-start">
                 <i class="fa fa-chart-line icon me-3 mt-1"></i>
                 <div>
-                    <div class="label">Total no ano</div>
-                    <div class="value">{{ horas_ano }}h</div>
+                    <div class="label">Totale delle ore lavorate quest’anno</div>
+                    <div class="value">{{ horas_ano }} Ore</div>
                 </div>
             </div>
         </div>
@@ -112,7 +112,7 @@
             <div class="card-body d-flex align-items-start">
                 <i class="fa fa-trophy icon me-3 mt-1"></i>
                 <div>
-                    <div class="label">Posição no ranking</div>
+                    <div class="label">Posizione in classifica</div>
                     <div class="value">{{ posicao }}</div>
                 </div>
             </div>
@@ -126,7 +126,7 @@
     <div class="card-body">
         <h5 class="mb-3 fw-semibold">
             <i class="fa fa-list-ol me-2 text-secondary"></i>
-            Ranking mensal
+            Classifica mensile ore lavorate
         </h5>
 
         <div class="table-responsive">
@@ -134,8 +134,8 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Usuário</th>
-                        <th>Horas</th>
+                        <th>Utente</th>
+                        <th>Ore</th>
                     </tr>
                 </thead>
                 <tbody>
