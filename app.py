@@ -49,22 +49,22 @@ auth = firebase.auth()
 # =========================
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
 # =========================
-#
-#firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
-#if not firebase_json:
-#    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
-#
-#cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
-#cred = credentials.Certificate(cred_dict)
-#firebase_admin.initialize_app(cred)
-#db = firestore.client()
+
+firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
+if not firebase_json:
+    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
+
+cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
+cred = credentials.Certificate(cred_dict)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # =========================
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
 # =========================
-cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+#cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
+#firebase_admin.initialize_app(cred)
+#db = firestore.client()
 
 # =========================
 # FUNÇÕES AUXILIARES
