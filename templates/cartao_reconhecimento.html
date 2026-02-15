@@ -1,15 +1,8 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="{{ current_lang }}">
 <head>
 <meta charset="UTF-8">
 <title>{{ tr("Cartão de Reconhecimento") }}</title>
-=======
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Cartão de Reconhecimento</title>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 <style>
     body {
@@ -150,11 +143,7 @@
 
             <div class="info">
                 {% if user.foto_url %}
-<<<<<<< HEAD
                     <img src="{{ foto_url(user.foto_url) }}" class="foto">
-=======
-                    <img src="{{ url_for('static', filename='img/perfis/' ~ user.foto_url) }}" class="foto">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 {% else %}
                     <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" class="foto">
                 {% endif %}
@@ -164,7 +153,6 @@
                 </div>
 
 
-<<<<<<< HEAD
                 <p>{{ tr("Nato") }}: <strong>{{ format_ddmmyyyy(user.data_nascimento) }}</strong> {{ tr("a") }} <strong>{{ user.pais }}</strong></p>
                 <p>{{ tr("Data Assunzione") }}: <strong>{{ format_ddmmyyyy(user.data_assuncao) }}</strong></p>
 
@@ -173,16 +161,6 @@
 
                 <div class="info2">
                     <p>{{ tr("Distaccato Presso") }}:</p>
-=======
-                <p>Nato: <strong>{{ format_ddmmyyyy(user.data_nascimento) }}</strong> a <strong>{{ user.pais }}</strong></p>
-                <p>Data Assunzione: <strong>{{ format_ddmmyyyy(user.data_assuncao) }}</strong></p>
-
-                <p>Ruolo / Mansione:</p>
-                <p><strong>{{ user.cargo }}</strong></p>
-
-                <div class="info2">
-                    <p>Distaccato Presso:</p>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </div>
 
                 <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo">
@@ -198,13 +176,8 @@
 
     <!-- AÇÕES -->
     <div class="acoes">
-<<<<<<< HEAD
         <button onclick="window.print()" class="btn">{{ tr("Esporta PDF") }}</button>
         <a href="{{ url_for('admin_cartoes') }}" class="btn">{{ tr("Indietro") }}</a>
-=======
-        <button onclick="window.print()" class="btn">Esporta PDF</button>
-        <a href="{{ url_for('admin_cartoes') }}" class="btn">Indietro</a>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </div>
 
 </div>

@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="{{ current_lang }}">
-=======
-<html lang="pt-br">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}FlowWork{% endblock %}</title>
@@ -147,41 +143,25 @@
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
             <a href="/dashboard" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}">
-<<<<<<< HEAD
                 <i class="fa fa-home me-2"></i> {{ t('nav.home') }}
-=======
-                <i class="fa fa-home me-2"></i> Home
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </li>
 
         <li>
             <a href="{{ url_for('registrar_ponto_usuario') }}" class="nav-link {% if request.path == '/registrar_ponto' %}active{% endif %}">
-<<<<<<< HEAD
                 <i class="fa fa-plus-square me-2"></i> {{ t('nav.clock_in') }}
-=======
-                <i class="fa fa-plus-square me-2"></i> Segna Ore
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </li>
 
         <li>
             <a href="/meus_pontos" class="nav-link {% if request.path == '/meus_pontos' %}active{% endif %}">
-<<<<<<< HEAD
                 <i class="fa fa-clock me-2"></i> {{ t('nav.my_hours') }}
-=======
-                <i class="fa fa-clock me-2"></i> Mie Ore
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </li>
 
         <li>
             <a href="{{ url_for('novo_pedido') }}" class="nav-link {% if request.path == '/pedido/novo' %}active{% endif %}">
-<<<<<<< HEAD
                 <i class="fa fa-folder-open me-2"></i> {{ t('nav.my_requests') }}
-=======
-                <i class="fa fa-folder-open me-2"></i> Mie Richeste
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </li>
     <!-- ===== SIDEBAR DESKTOP ===== 
@@ -195,11 +175,7 @@
 
         <li>
             <a href="/perfil" class="nav-link {% if request.path == '/perfil' %}active{% endif %}">
-<<<<<<< HEAD
                 <i class="fa fa-user me-2"></i> {{ t('nav.profile') }}
-=======
-                <i class="fa fa-user me-2"></i> Profilo
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </li>
 
@@ -217,11 +193,7 @@
                 <!-- Ícone + texto -->
                 <span class="d-flex align-items-center gap-2">
                     <i class="fa fa-desktop"></i>
-<<<<<<< HEAD
                     {{ t('nav.admin') }}
-=======
-                    Amministrazione
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </span>
 
                 <!-- Seta à direita -->
@@ -235,11 +207,7 @@
                         <a href="{{ url_for('admin_pontos') }}"
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-users"></i>
-<<<<<<< HEAD
                             {{ t('nav.admin_hours') }}
-=======
-                            Gestione delle ore registrate
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </a>
                     </li>
 
@@ -247,11 +215,7 @@
                         <a href="/adm_locais"
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-institution"></i>
-<<<<<<< HEAD
                             {{ t('nav.admin_sites') }}
-=======
-                            Gestione dei cantieri
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </a>
                     </li>
 
@@ -259,11 +223,7 @@
                         <a href="{{ url_for('admin_cartoes') }}"
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-id-badge"></i>
-<<<<<<< HEAD
                             {{ t('nav.admin_badges') }}
-=======
-                            Tesserini
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </a>
                     </li>
 
@@ -271,11 +231,7 @@
                         <a href="{{ url_for('admin_perfis') }}"
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-user-pen"></i>
-<<<<<<< HEAD
                             {{ t('nav.admin_profiles') }}
-=======
-                            Profili utenti
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </a>
                     </li>
 
@@ -283,11 +239,7 @@
                         <a href="{{ url_for('admin_pedidos') }}"
                         class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
                             <i class="fa fa-folder"></i>
-<<<<<<< HEAD
                             {{ t('nav.admin_requests') }}
-=======
-                            Richesta degli dipendenti
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </a>
                     </li>
 
@@ -319,11 +271,7 @@
     <hr>
 
     <a href="/logout" class="btn btn-outline-secondary btn-sm mb-3">
-<<<<<<< HEAD
         <i class="fa fa-sign-out-alt"></i> {{ t('nav.logout') }}
-=======
-        <i class="fa fa-sign-out-alt"></i> Sair
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </a>
 </aside>
 
@@ -345,56 +293,31 @@
 <nav class="bottom-nav d-md-none">
     <ul class="nav nav-pills nav-flush flex-row w-100 mb-0 text-center">
         <li class="nav-item flex-fill">
-<<<<<<< HEAD
             <a href="/dashboard" class="nav-link py-3 {% if request.path == '/dashboard' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.home') }}">
-=======
-            <a href="/dashboard" class="nav-link py-3 {% if request.path == '/dashboard' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Home">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <i class="fa fa-home d-block" width="30" height="30"></i>
             </a>
         </li>
         <li class="nav-item flex-fill">
-<<<<<<< HEAD
             <a href="{{ url_for('registrar_ponto_usuario') }}" class="nav-link py-3 {% if request.path == '/registrar_ponto' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.new_point') }}">
-=======
-            <a href="{{ url_for('registrar_ponto_usuario') }}" class="nav-link py-3 {% if request.path == '/registrar_ponto' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Novo Ponto">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <i class="fa fa-plus-square d-block" width="30" height="30"></i>
             </a>
         </li>
         <li class="nav-item flex-fill">
-<<<<<<< HEAD
             <a href="/meus_pontos" class="nav-link py-3 {% if request.path == '/meus_pontos' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.my_points') }}">
-=======
-            <a href="/meus_pontos" class="nav-link py-3 {% if request.path == '/meus_pontos' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Meus Pontos">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <i class="fa fa-clock d-block" width="30" height="30"></i>
             </a>
         </li>
                 <li class="nav-item flex-fill">
-<<<<<<< HEAD
             <a href="{{ url_for('novo_pedido') }}" class="nav-link py-3 {% if request.path == '/pedido/novo' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.new_request') }}">
-=======
-            <a href="{{ url_for('novo_pedido') }}" class="nav-link py-3 {% if request.path == '/pedido/novo' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Novo Pedido">
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <i class="fa fa-folder-open d-block" width="30" height="30"></i>
             </a>
         </li>
 
         <li class="nav-item flex-fill">
-<<<<<<< HEAD
             <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.profile') }}">
                 <i class="fa fa-user d-block" width="30" height="30"></i>
             </a>
         </li>
-=======
-            <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Perfil">
-                <i class="fa fa-user d-block" width="30" height="30"></i>
-            </a>
-        </li>
-
-
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </ul>
 </nav>
 

@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
-<<<<<<< HEAD
 {% block title %}{{ tr("Nuova richiesta | FlashPoint") }}{% endblock %}
-=======
-{% block title %}Nuova richiesta | FlashPoint{% endblock %}
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -164,15 +160,9 @@
         <!-- HEADER -->
         <div class="page-header">
             <h4 class="text-dark">
-<<<<<<< HEAD
                 <i class="fa fa-plus-square me-2"></i>{{ tr("Nuova richiesta") }}
             </h4>
             <p>{{ tr("Invia una nuova richiesta") }}</p>
-=======
-                <i class="fa fa-plus-square me-2"></i>Nuova richiesta
-            </h4>
-            <p>Invia una nuova richiesta</p>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
 
         <hr class="my-4">
@@ -183,30 +173,18 @@
                 <form method="POST" class="row g-3">
 
                     <div class="col-md-6">
-<<<<<<< HEAD
                         <label class="form-label">{{ tr("Tipo di ordine") }}</label>
-=======
-                        <label class="form-label">Tipo di ordine</label>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         <input type="text" name="tipo" class="form-control" required>
                     </div>
 
                     <div class="col-md-12">
-<<<<<<< HEAD
                         <label class="form-label">{{ tr("Messaggio") }}</label>
-=======
-                        <label class="form-label">Messaggio</label>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         <textarea name="mensagem" rows="4" class="form-control" required></textarea>
                     </div>
 
                     <div class="col-md-12 text-end">
                         <button type="submit" class="btn btn-primary">
-<<<<<<< HEAD
                             <i class="fa fa-paper-plane me-1"></i> {{ tr("Invia ordine") }}
-=======
-                            <i class="fa fa-paper-plane me-1"></i> Invia ordine
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </button>
                     </div>
 
@@ -219,15 +197,9 @@
         <!-- HEADER -->
         <div class="page-header">
             <h4 class="text-dark">
-<<<<<<< HEAD
                 <i class="fa fa-inbox me-2"></i>{{ tr("I miei ordini") }}
             </h4>
             <p>{{ tr("Visualizza e gestisci i tuoi ordini") }}</p>
-=======
-                <i class="fa fa-inbox me-2"></i>I miei ordini
-            </h4>
-            <p>Visualizza e gestisci i tuoi ordini</p>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
 
         <hr class="my-4">
@@ -240,19 +212,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-<<<<<<< HEAD
                         <th>{{ tr("Tipo") }}</th>
                         <th>{{ tr("Messaggio") }}</th>
                         <th>{{ tr("Stato") }}</th>
                         <th>{{ tr("Creato il") }}</th>
                         <th>{{ tr("Evaso") }}</th>
-=======
-                        <th>Tipo</th>
-                        <th>Messaggio</th>
-                        <th>Stato</th>
-                        <th>Creato il</th>
-                        <th>Evaso</th>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </tr>
                 </thead>
 
@@ -264,7 +228,6 @@
                         <td>{{ p.mensagem }}</td>
                         <td>
                             {% if p.status == "in sospeso" %}
-<<<<<<< HEAD
                                 <span class="badge bg-warning">{{ tr("In sospeso") }}</span>
                             {% elif p.status == "Approvato" %}
                                 <span class="badge bg-success">{{ tr("Approvato") }}</span>
@@ -272,15 +235,6 @@
                                 <span class="badge bg-danger">{{ tr("Rifiutato") }}</span>
                             {% elif p.status == "Evaso" %}
                                 <span class="badge bg-info">{{ tr("Evaso") }}</span>
-=======
-                                <span class="badge bg-warning">In sospeso</span>
-                            {% elif p.status == "Approvato" %}
-                                <span class="badge bg-success">Approvato</span>
-                            {% elif p.status == "Rifiutato" %}
-                                <span class="badge bg-danger">Rifiutato</span>
-                            {% elif p.status == "Evaso" %}
-                                <span class="badge bg-info">Evaso</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                             {% else %}
                                 <span class="badge bg-secondary">{{ p.status }}</span>
                             {% endif %}
@@ -288,15 +242,9 @@
                         <td>{{ formatar_data_pedido(p.criado_em) }}</td>
                         <td>
                             {% if p.atendido %}
-<<<<<<< HEAD
                                 <span class="text-success fw-bold">{{ tr("Si") }}</span>
                             {% else %}
                                 <span class="text-muted">{{ tr("Non") }}</span>
-=======
-                                <span class="text-success fw-bold">Si</span>
-                            {% else %}
-                                <span class="text-muted">Non</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                             {% endif %}
                         </td>
                     </tr>
@@ -323,7 +271,6 @@
 
                 <!-- STATUS -->
                 <div class="ponto-horas">
-<<<<<<< HEAD
                     <span>{{ tr("Stato ordine") }}</span>
                     <strong>
                         {% if p.status == "in sospeso" %}
@@ -334,18 +281,6 @@
                             <span class="badge bg-danger text-white">{{ tr("Rifiutato") }}</span>
                         {% elif p.status == "Evaso" %}
                             <span class="badge bg-info text-white">{{ tr("Evaso") }}</span>
-=======
-                    <span>Stato ordine</span>
-                    <strong>
-                        {% if p.status == "in sospeso" %}
-                            <span class="badge bg-warning">In sospeso</span>
-                        {% elif p.status == "Approvato" %}
-                            <span class="badge bg-success text-white">Approvato</span>
-                        {% elif p.status == "Rifiutato" %}
-                            <span class="badge bg-danger text-white">Rifiutato</span>
-                        {% elif p.status == "Evaso" %}
-                            <span class="badge bg-info text-white">Evaso</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         {% else %}
                             <span class="badge bg-secondary text-light">{{ p.status }}</span>
                         {% endif %}
@@ -354,30 +289,17 @@
 
                 <!-- MESSAGGIO -->
                 <div class="ponto-notas">
-<<<<<<< HEAD
                     {{ p.mensagem or tr("Nessun messaggio inserito.") }}
-=======
-                    {{ p.mensagem or "Nessun messaggio inserito." }}
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </div>
 
                 <!-- ATENDIDO -->
                 <div class="ponto-horas">
-<<<<<<< HEAD
                     <span>{{ tr("Evaso") }}</span>
                     <strong>
                         {% if p.atendido %}
                             <span class="text-success">{{ tr("Si") }}</span>
                         {% else %}
                             <span class="text-muted">{{ tr("Non") }}</span>
-=======
-                    <span>Evaso</span>
-                    <strong>
-                        {% if p.atendido %}
-                            <span class="text-success">Si</span>
-                        {% else %}
-                            <span class="text-muted">Non</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         {% endif %}
                     </strong>
                 </div>
@@ -389,22 +311,14 @@
 
         {% else %}
         <div class="text-center text-muted">
-<<<<<<< HEAD
             <p>{{ tr("Non hai ancora effettuato alcun ordine.") }}</p>
-=======
-            <p>Non hai ancora effettuato alcun ordine.</p>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
         {% endif %}
 
         <!-- VOLTAR -->
         <div class="text-end mt-3">
             <a href="/dashboard" class="btn btn-outline-secondary px-4">
-<<<<<<< HEAD
                 <i class="fa fa-arrow-left me-2"></i>{{ tr("Tornare") }}
-=======
-                <i class="fa fa-arrow-left me-2"></i>Tornare
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
 

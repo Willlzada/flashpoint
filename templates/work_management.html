@@ -1,28 +1,16 @@
 {% extends "base.html" %}
-<<<<<<< HEAD
 {% block title %}{{ tr("Work Management") }}{% endblock %}
-=======
-{% block title %}Work Management{% endblock %}
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <div>
             {% if is_admin_user %}
-<<<<<<< HEAD
             <h2 class="mb-0">{{ tr("Work Management") }}</h2>
             <small class="text-muted">{{ tr("Admin cria e designa atividades para os colaboradores") }}</small>
             {% else %}
             <h2 class="mb-0">{{ tr("Minhas Atividades") }}</h2>
             <small class="text-muted">{{ tr("Visualização das tarefas que foram designadas para você") }}</small>
-=======
-            <h2 class="mb-0">Work Management</h2>
-            <small class="text-muted">Admin cria e designa atividades para os colaboradores</small>
-            {% else %}
-            <h2 class="mb-0">Minhas Atividades</h2>
-            <small class="text-muted">Visualização das tarefas que foram designadas para você</small>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             {% endif %}
         </div>
     </div>
@@ -44,11 +32,7 @@
         <div class="col-md-4">
             <div class="card border-start border-primary border-4">
                 <div class="card-body">
-<<<<<<< HEAD
                     <span class="text-muted">{{ tr("To Do") }}</span>
-=======
-                    <span class="text-muted">To Do</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     <h4 class="mb-0">{{ contadores.todo }}</h4>
                 </div>
             </div>
@@ -56,11 +40,7 @@
         <div class="col-md-4">
             <div class="card border-start border-warning border-4">
                 <div class="card-body">
-<<<<<<< HEAD
                     <span class="text-muted">{{ tr("In Progress") }}</span>
-=======
-                    <span class="text-muted">In Progress</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     <h4 class="mb-0">{{ contadores.in_progress }}</h4>
                 </div>
             </div>
@@ -68,11 +48,7 @@
         <div class="col-md-4">
             <div class="card border-start border-success border-4">
                 <div class="card-body">
-<<<<<<< HEAD
                     <span class="text-muted">{{ tr("Done") }}</span>
-=======
-                    <span class="text-muted">Done</span>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     <h4 class="mb-0">{{ contadores.done }}</h4>
                 </div>
             </div>
@@ -81,16 +57,11 @@
 
     {% if is_admin_user %}
     <div class="card mb-4">
-<<<<<<< HEAD
         <div class="card-header">{{ tr("Nova tarefa") }}</div>
-=======
-        <div class="card-header">Nova tarefa</div>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         <div class="card-body">
             <form method="post" class="row g-3">
                 <input type="hidden" name="acao" value="criar">
                 <div class="col-md-6">
-<<<<<<< HEAD
                     <label class="form-label">{{ tr("Título") }}</label>
                     <input type="text" name="titulo" class="form-control" required>
                 </div>
@@ -108,31 +79,11 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ tr("Designar para (pode selecionar vários)") }}</label>
-=======
-                    <label class="form-label">Título</label>
-                    <input type="text" name="titulo" class="form-control" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Prioridade</label>
-                    <select name="prioridade" class="form-select">
-                        <option value="baixa">Baixa</option>
-                        <option value="media" selected>Média</option>
-                        <option value="alta">Alta</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Prazo</label>
-                    <input type="date" name="due_date" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Designar para (pode selecionar vários)</label>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     <select name="assigned_uids" class="form-select" multiple required>
                         {% for c in colaboradores %}
                         <option value="{{ c.uid }}">{{ c.nome }}</option>
                         {% endfor %}
                     </select>
-<<<<<<< HEAD
                     <small class="text-muted">{{ tr("Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.") }}</small>
                 </div>
                 <div class="col-12">
@@ -141,16 +92,6 @@
                 </div>
                 <div class="col-12">
                     <button class="btn btn-primary" type="submit">{{ tr("Criar e designar tarefa") }}</button>
-=======
-                    <small class="text-muted">Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.</small>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Descrição</label>
-                    <textarea name="descricao" rows="2" class="form-control" placeholder="Detalhes da tarefa"></textarea>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-primary" type="submit">Criar e designar tarefa</button>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </div>
             </form>
         </div>
@@ -158,7 +99,6 @@
     {% endif %}
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-<<<<<<< HEAD
         <h5 class="mb-0">{% if is_admin_user %}{{ tr("Tarefas de toda a equipa") }}{% else %}{{ tr("Tarefas atribuídas") }}{% endif %}</h5>
         <form method="get" class="d-flex gap-2 align-items-center">
             <label class="small text-muted">{{ tr("Status") }}</label>
@@ -167,16 +107,6 @@
                 <option value="todo" {% if status_filtro == 'todo' %}selected{% endif %}>{{ tr("To Do") }}</option>
                 <option value="in_progress" {% if status_filtro == 'in_progress' %}selected{% endif %}>{{ tr("In Progress") }}</option>
                 <option value="done" {% if status_filtro == 'done' %}selected{% endif %}>{{ tr("Done") }}</option>
-=======
-        <h5 class="mb-0">{% if is_admin_user %}Tarefas de toda a equipa{% else %}Tarefas atribuídas{% endif %}</h5>
-        <form method="get" class="d-flex gap-2 align-items-center">
-            <label class="small text-muted">Status</label>
-            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                <option value="all" {% if status_filtro == 'all' %}selected{% endif %}>Todos</option>
-                <option value="todo" {% if status_filtro == 'todo' %}selected{% endif %}>To Do</option>
-                <option value="in_progress" {% if status_filtro == 'in_progress' %}selected{% endif %}>In Progress</option>
-                <option value="done" {% if status_filtro == 'done' %}selected{% endif %}>Done</option>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </select>
         </form>
     </div>
@@ -189,29 +119,18 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="mb-1">{{ item.titulo }}</h6>
-<<<<<<< HEAD
                             <small class="text-muted">{{ tr("Responsável") }}:
-=======
-                            <small class="text-muted">Responsável:
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                                 {% if item.assigned_nomes %}
                                     {{ item.assigned_nomes | join(', ') }}
                                 {% else %}
                                     {{ item.assigned_nome or '—' }}
                                 {% endif %}
                             </small><br>
-<<<<<<< HEAD
                             <small class="text-muted">{{ tr("Criado por") }}: {{ item.created_by_nome or "—" }}</small>
                         </div>
                         {% set status_label = "To Do" if item.status == "todo" else "In Progress" if item.status == "in_progress" else "Done" %}
                         <span class="badge {% if item.status == 'done' %}bg-success{% elif item.status == 'in_progress' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
                             {{ tr(status_label) }}
-=======
-                            <small class="text-muted">Criado por: {{ item.created_by_nome or '—' }}</small>
-                        </div>
-                        <span class="badge {% if item.status == 'done' %}bg-success{% elif item.status == 'in_progress' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
-                            {{ item.status }}
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </span>
                     </div>
 
@@ -220,13 +139,8 @@
                     {% endif %}
 
                     <div class="small text-muted mb-3">
-<<<<<<< HEAD
                         {{ tr("Prioridade") }}: <strong>{{ item.prioridade|capitalize }}</strong>
                         {% if item.due_date %} • {{ tr("Prazo") }}: {{ item.due_date }}{% endif %}
-=======
-                        Prioridade: <strong>{{ item.prioridade|capitalize }}</strong>
-                        {% if item.due_date %} • Prazo: {{ item.due_date }}{% endif %}
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </div>
 
                     {% if is_admin_user %}
@@ -235,7 +149,6 @@
                             <input type="hidden" name="acao" value="status">
                             <input type="hidden" name="item_id" value="{{ item.id }}">
                             <select name="novo_status" class="form-select form-select-sm">
-<<<<<<< HEAD
                                 <option value="todo" {% if item.status == 'todo' %}selected{% endif %}>{{ tr("To Do") }}</option>
                                 <option value="in_progress" {% if item.status == 'in_progress' %}selected{% endif %}>{{ tr("In Progress") }}</option>
                                 <option value="done" {% if item.status == 'done' %}selected{% endif %}>{{ tr("Done") }}</option>
@@ -247,19 +160,6 @@
                             <input type="hidden" name="acao" value="excluir">
                             <input type="hidden" name="item_id" value="{{ item.id }}">
                             <button class="btn btn-sm btn-outline-danger" type="submit">{{ tr("Excluir") }}</button>
-=======
-                                <option value="todo" {% if item.status == 'todo' %}selected{% endif %}>To Do</option>
-                                <option value="in_progress" {% if item.status == 'in_progress' %}selected{% endif %}>In Progress</option>
-                                <option value="done" {% if item.status == 'done' %}selected{% endif %}>Done</option>
-                            </select>
-                            <button class="btn btn-sm btn-outline-primary" type="submit">Atualizar</button>
-                        </form>
-
-                        <form method="post" onsubmit="return confirm('Deseja excluir esta tarefa?');">
-                            <input type="hidden" name="acao" value="excluir">
-                            <input type="hidden" name="item_id" value="{{ item.id }}">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </form>
                     </div>
                     {% endif %}
@@ -268,11 +168,7 @@
         </div>
         {% else %}
         <div class="col-12">
-<<<<<<< HEAD
             <div class="alert alert-light border">{{ tr("Nenhuma tarefa encontrada para o filtro selecionado.") }}</div>
-=======
-            <div class="alert alert-light border">Nenhuma tarefa encontrada para o filtro selecionado.</div>
->>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
         {% endfor %}
     </div>
