@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tr("Admin • Modifica Profilo | FlashPoint") }}{% endblock %}
+
+{% block content %}
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.page-header h4 {
+    color: #000;
+    font-weight: 700;
+}
+.page-header p {
+    color: #555;
+    margin-top: 5px;
+}
+
+.info-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <h4 class="text-dark">
+                <i class="fa fa-user-pen me-2"></i>{{ tr("Modifica profilo utente") }}
+            </h4>
+            <p>{{ tr("Solo amministratori possono aggiornare i profili") }}</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="info-box mb-4">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <strong>{{ tr("UID") }}:</strong> {{ usuario.uid }}
+                </div>
+                <div class="col-md-6">
+                    <strong>{{ tr("Email") }}:</strong> {{ usuario.email or "-" }}
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('admin_perfil_editar', uid=usuario.uid) }}" class="row g-3" enctype="multipart/form-data">
+            
+            <!-- NOME -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Nome") }}</label>
+                <input 
+                    type="text" 
+                    name="nome"
+                    class="form-control"
+                    placeholder="{{ tr("Ex.: Joao") }}" 
+                    value="{{ usuario.nome or '' }}" 
+                    required 
+                >
+            </div>
+
+            <!-- SOBRENOME -->            
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Cognome") }}</label>
+                <input 
+                    type="text" 
+                    name="sobrenome"
+                    class="form-control"
+                    placeholder="{{ tr("Ex.: Silva") }}" 
+                    value="{{ usuario.sobrenome or '' }}" 
+                    required 
+                >
+            </div>
+            
+            <!-- DATA DI NASCITA -->        
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Data di nascita") }}</label>
+                <input 
+                    type="date" 
+                    name="data_nascimento"
+                    class="form-control" 
+                    value="{{ usuario.data_nascimento or '' }}"
+                >
+            </div>
+
+            <!-- PAESE -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Paese di origine") }}</label>
+                <input 
+                    type="text" 
+                    name="pais" 
+                    class="form-control" 
+                    placeholder="{{ tr("Ex.: Brasile") }}" 
+                    value="{{ usuario.pais or '' }}"
+                >
+            </div>
+
+            <!-- DATA DI ASSUNZIONE -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Data di assunzione") }}</label>
+                <input 
+                    type="date" 
+                    name="data_assuncao" 
+                    class="form-control"                    
+                    value="{{ usuario.data_assuncao or '' }}"
+                >
+            </div>
+
+            <!-- RUOLO -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Ruolo") }}</label>
+                <input 
+                type="text" 
+                name="cargo"
+                class="form-control"
+                placeholder="{{ tr("Ex.: Elettricista") }}"
+                value="{{ usuario.cargo or '' }}">
+            </div>
+
+            <!-- FOTO -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Foto") }}</label>
+                <div class="d-flex align-items-center gap-3">
+                    {% if usuario.foto_url %}
+                        <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto del profilo") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto del profilo") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <input 
+                            type="file" 
+                            name="foto"
+                            class="form-control"
+                            accept="image/png, image/jpeg, image/webp"
+                        >
+                        <small class="text-muted">{{ tr("PNG, JPG ou WEBP. Máx 3MB.") }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- AZIONI -->
+            <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa fa-save me-2"></i> {{ tr("Salva modifiche") }}
+                </button>
+
+                <a href="{{ url_for('admin_perfis') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fa fa-arrow-left me-2"></i> {{ tr("Tornare") }}
+                </a>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

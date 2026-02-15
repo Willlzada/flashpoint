@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+<meta charset="UTF-8">
+<title>{{ tr("Cartão de Reconhecimento") }}</title>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+    }
+
+    .cartao {
+        width: 253px;
+        height: 390px;
+        background: #fff;
+        border-radius: 12px;
+
+        /* 👇 BORDA REAL DO CARTÃO */
+        border: 2px solid #000;
+
+        /* sombra só para tela */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+        padding: 22px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .topo {
+        display: block;
+    }
+
+
+    .foto {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #085e08;
+        display: block;
+        margin: 0 auto 10px auto;  /* 👈 centralização real */
+    }
+
+
+    .info h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        text-align: center;
+    }
+
+    .info p {
+        font-size: 14px;
+        margin: 2px 0;
+        color: #333;
+    }
+
+    .info2 p {
+        font-size: 16px;
+        margin-top: 10px;
+        
+    }
+
+    .nome_card p {
+        font-size: 20px;
+        margin-top: 10px;
+        text-align: center;
+        
+    }
+
+    .logo {
+        width: 200px;
+        margin: 6px auto;
+        display: block;
+    }
+
+    .detalhes {
+        font-size: 11px;
+        text-align: center;
+        color: #333;
+    }
+
+    .acoes {
+        margin-top: 25px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 12px 18px;
+        border-radius: 6px;
+        background: #d9dadd;
+        color: #333;
+        text-decoration: none;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+    }
+
+    @media print {
+        body {
+            background: #fff;
+            padding: 0;
+        }
+
+        .acoes {
+            display: none;
+        }
+
+        .cartao {
+            box-shadow: none;          /* remove sombra */
+            border: 2px solid #000;    /* mantém a borda */
+            border-radius: 12px;
+            margin: auto;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+{% macro format_ddmmyyyy(date_str) -%}
+  {%- if date_str and '-' in date_str -%}
+    {{ date_str.split('-')|reverse|join('/') }}
+  {%- else -%}
+    {{ date_str }}
+  {%- endif -%}
+{%- endmacro %}
+
+<div>
+
+    <div class="cartao">
+
+        <div class="topo">
+            
+
+            <div class="info">
+                {% if user.foto_url %}
+                    <img src="{{ foto_url(user.foto_url) }}" class="foto">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" class="foto">
+                {% endif %}
+
+                <div class="nome_card">
+                <p><strong>{{ user.sobrenome }} {{ user.nome }}</strong></p>
+                </div>
+
+
+                <p>{{ tr("Nato") }}: <strong>{{ format_ddmmyyyy(user.data_nascimento) }}</strong> {{ tr("a") }} <strong>{{ user.pais }}</strong></p>
+                <p>{{ tr("Data Assunzione") }}: <strong>{{ format_ddmmyyyy(user.data_assuncao) }}</strong></p>
+
+                <p>{{ tr("Ruolo / Mansione") }}:</p>
+                <p><strong>{{ user.cargo }}</strong></p>
+
+                <div class="info2">
+                    <p>{{ tr("Distaccato Presso") }}:</p>
+                </div>
+
+                <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo">
+
+                <div class="detalhes">
+                    <p>Sede: Via Corfù, 66 - 25124 BRESCIA (BS)</p>
+                    <p>Partita IVA: IT04447670987</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="acoes">
+        <button onclick="window.print()" class="btn">{{ tr("Esporta PDF") }}</button>
+        <a href="{{ url_for('admin_cartoes') }}" class="btn">{{ tr("Indietro") }}</a>
+    </div>
+
+</div>
+
+</body>
+</html>

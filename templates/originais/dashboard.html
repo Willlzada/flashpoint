@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}FlashPoint{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text">⚡ FlashPoint</span>
+        </div>
+
+        <nav class="menu">
+            <a href="/home" class="menu-item"><span class="icon">🏠</span>Dashboard</a>
+            <a href="/meus_pontos" class="menu-item"><span class="icon">📆</span>Le mie ore</a>
+            <a href="/registrar_ponto" class="menu-item"><span class="icon">📝</span>Segna ore</a>
+            <a href="{{ url_for('novo_pedido') }}" class="menu-item"><span class="icon">📦</span>Richieste</a>
+            <a href="/perfil" class="menu-item"><span class="icon">👤</span>Profilo</a>
+
+            {% if usuario.tipo == 'admin' %}
+            <div class="menu-title">ADMIN</div>
+            <a href="/admin_pontos" class="menu-item admin"><span class="icon">🕧</span>Gestione ore</a>
+            <a href="/adm_locais" class="menu-item admin"><span class="icon">🏗️</span>Luoghi</a>
+            <a href="{{ url_for('admin_cartoes') }}" class="menu-item admin"><span class="icon">🪪</span>Cartões</a>
+            <a href="{{ url_for('admin_pedidos') }}" class="menu-item admin"><span class="icon">📦</span>Pedidos</a>
+            {% endif %}
+        </nav>
+
+        <a href="/logout" class="menu-item logout"><span class="icon">❌</span>Esci</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        {% block dashboard_content %}{% endblock %}
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Ponto | FlashPoint{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Registra Presenza</h3>
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Inserisci i dati</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+
+                <!-- MENSAGENS -->
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if mensagem %}
+                    <div class="alert alert-success">
+                        {{ mensagem }}
+                    </div>
+                {% endif %}
+
+                <form method="POST" class="form-horizontal form-label-left">
+
+                    <!-- LOCAL -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Locale
+                        </label>
+                        <div class="col-md-6 col-sm-6">
+                            <select name="local" class="form-control" required>
+                                {% for local in locais %}
+                                    <option value="{{ local.nome }}">
+                                        {{ local.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">
+                                Seleziona il luogo in cui è stata svolta l’attività
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- DATA -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Data
+                        </label>
+                        <div class="col-md-6 col-sm-6">
+                            <input type="date"
+                                   name="data"
+                                   class="form-control"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- ORE -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Ore lavorate
+                        </label>
+                        <div class="col-md-6 col-sm-6">
+                            <input type="number"
+                                   name="horas"
+                                   step="0.25"
+                                   class="form-control"
+                                   required>
+                            <small class="text-muted">
+                                • 0.25 = 15 Minuti<br>
+                                • 1.50 = 1 Ora 30 Minuti<br>
+                                • 5.25 = 5 Ore 15 Minuti
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- NOTE -->
+                    <div class="form-group row mb-4">
+                        <label class="control-label col-md-3 col-sm-3">
+                            Note
+                        </label>
+                        <div class="col-md-6 col-sm-6">
+                            <textarea name="notas"
+                                      rows="3"
+                                      class="form-control"
+                                      placeholder="Qualche osservazione…"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- AÇÕES -->
+                    <div class="ln_solid"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-9 col-sm-9 offset-md-3">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-check"></i> Registra
+                                </button>
+                                <button class="btn btn-outline-secondary" 
+                                    type="button">Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

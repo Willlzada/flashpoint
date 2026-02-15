@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tr("Admin • Modifica Punto | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8 col-sm-12 mx-auto">
+
+        <!-- TÍTULO -->
+        <div class="page-title">
+            <div class="title_left">
+                <h3>{{ tr("Modifica ore") }}</h3>
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>{{ tr("Dati del punto") }}</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+
+                <form method="POST" class="form-horizontal form-label-left">
+
+                    <!-- DATA -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            {{ tr("Data") }}
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <input type="date"
+                                   name="data"
+                                   value="{{ ponto.data }}"
+                                   class="form-control"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- LOCALE -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            {{ tr("Locale") }}
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <select name="local" class="form-control" required>
+                                {% for l in locais %}
+                                    <option value="{{ l }}"
+                                        {% if l == ponto.local %}selected{% endif %}>
+                                        {{ l }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ORE -->
+                    <div class="form-group row mb-3">
+                        <label class="control-label col-md-3 col-sm-3">
+                            {{ tr("Ore") }}
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <input type="number"
+                                   name="horas"
+                                   step="0.25"
+                                   value="{{ ponto.horas }}"
+                                   class="form-control"
+                                   required>
+                            <small class="text-muted">
+                                {{ tr("Usa valori decimali (es: 1.50 = 1h30)") }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- NOTE -->
+                    <div class="form-group row mb-4">
+                        <label class="control-label col-md-3 col-sm-3">
+                            {{ tr("Note") }}
+                        </label>
+                        <div class="col-md-9 col-sm-9">
+                            <textarea name="notas"
+                                      rows="4"
+                                      class="form-control"
+                                      placeholder="{{ tr("Osservazioni aggiuntive...") }}">{{ ponto.notas }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+
+                    <!-- AÇÕES -->
+                    <div class="form-group row">
+                        <div class="col-md-9 col-sm-9 offset-md-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save"></i> {{ tr("Salva modifiche") }}
+                            </button>
+                            <a href="/meus_pontos" class="btn btn-secondary">
+                                {{ tr("Annulla") }}
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

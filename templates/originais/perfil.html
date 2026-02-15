@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-title">
+  <div class="title_left">
+    <h3>Perfil do Usuário</h3>
+  </div>
+</div>
+
+<div class="clearfix"></div>
+
+<!-- HEADER -->
+<div class="x_panel">
+  <div class="x_content">
+    <div class="row align-items-center">
+
+
+      <div class="col col-lg-4 text-center">
+        <div class="profile_pic">
+                    <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" 
+                        alt="User profile photo" 
+                        class="img-circle profile_img" 
+                        loading="lazy"
+                    >
+                </div>
+      </div>
+
+      <div class="col-md-5 justify-content-center">
+        <h1>{{ usuario.sobrenome }} {{ usuario.nome }}</h1>
+        <h2>{{ usuario.get("cargo", "Colaborador") }}</h2>
+
+        <span class="badge bg-primary">Usuário ativo</span>
+        {% if usuario.tipo == 'admin' %}
+          <span class="badge bg-success">Administrador</span>
+        {% endif %}
+      </div>
+
+      
+
+      <div class="col-md-3 align-self-center text-right">
+        <a href="/perfil/editar" class="btn btn-primary">
+        <i class="fa fa-edit"></i> Editar Perfil
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CARDS -->
+ 
+<div class="row">
+  <div class="col-md-3 col-sm-6">
+    <div class="x_panel tile fixed_height_320">
+      <div class="x_content text-center">
+        <i class="fa fa-clock fa-3x text-info"></i>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

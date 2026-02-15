@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Perfil | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.page-header h4 {
+    color: #000;
+    font-weight: 700;
+}
+.page-header p {
+    color: #555;
+    margin-top: 5px;
+}
+
+/* ===== CARD PERFIL PRINCIPAL ===== */
+.profile-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-card .row {
+    align-items: center;
+    gap: 20px;
+}
+
+/* FOTO */
+.profile_pic img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #c0c0c0;
+}
+
+/* NOME E CARGO */
+.profile-info h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #000;
+}
+.profile-info h2 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* BADGES */
+.badge-role {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #041955;
+    padding: 4px 10px;
+    border-radius: 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* BOTÕES ABAIXO DO NOME/CARGO */
+.profile-card .btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.profile-card .btn {
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 8px 16px;
+    flex: 1;
+    text-align: center;
+}
+
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 767px) {
+    .profile-card .row {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-card .btn-group {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
+    }
+    .profile-card .btn-group .btn {
+        width: 100%;
+    }
+}
+
+/* DESKTOP: ALINHAMENTO FOTO + INFO + BOTOES */
+@media (min-width: 768px) {
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .profile-card .btn-group {
+        justify-content: flex-start; /* botões abaixo do nome/cargo */
+        margin-top: 10px;
+    }
+}
+
+/* BADGES ESTILO UNIFORME */
+.badge-role {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+</style>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-user me-2"></i>{{ tr("Profilo") }}
+    </h4>
+    <p>{{ tr("Consulta e modifica le informazioni del tuo profilo") }}</p>
+</div>
+<hr class="my-4">
+<!-- CARD PERFIL PRINCIPAL -->
+<div class="profile-card">
+    <div class="row">
+        <!-- FOTO -->
+        <div class="col-12 col-md-4 text-center text-md-start mb-3 mb-md-0">
+            <div class="profile_pic">
+                {% if usuario.foto_url %}
+                    <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto do perfil") }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto do perfil") }}">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- INFORMAÇÕES + BADGES -->
+        <div class="col-12 col-md-4 profile-info text-center text-md-start">
+            <h1>{{ usuario.sobrenome }} {{ usuario.nome }}</h1>
+            <h2>{{ usuario.get("cargo", tr("Colaborador")) }}</h2>
+
+            <!-- BADGES REFORMULADOS -->
+            <div class="mt-2">
+                <span class="badge text-bg-primary rounded-pill">{{ tr("Utente") }}</span>
+                {% if usuario.tipo == 'admin' %}
+                <span class="badge text-bg-info rounded-pill">{{ tr("Amministratore") }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- BOTÕES -->
+        <div class="btn-group mt-2">
+            <a href="/perfil/editar" class="btn btn-primary">
+                <i class="fa fa-edit me-1"></i> {{ tr("Modifica Profilo") }}
+            </a>
+            <a href="{{ url_for('gerar_cartao_perfil') }}" class="btn btn-secondary">
+                <i class="fa fa-id-card me-1"></i> {{ tr("Genera tessera") }}
+            </a>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center"
+                type="button" data-bs-toggle="collapse" data-bs-target="#profile-settings"
+                aria-expanded="false" aria-controls="profile-settings">
+            <span><i class="fa fa-gear me-2"></i>{{ tr("Configurações") }}</span>
+            <i class="fa fa-angle-down"></i>
+        </button>
+
+        <div class="collapse mt-3" id="profile-settings">
+            <form method="POST" action="{{ url_for('set_language') }}" class="row g-2 align-items-center">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <div class="col-12 col-md-4">
+                    <label class="form-label mb-1" for="language-select-profile">{{ tr("Idioma") }}</label>
+                    <select id="language-select-profile" name="lang" class="form-select" onchange="this.form.submit()">
+                        {% for lang in language_options %}
+                            <option value="{{ lang.code }}" {% if lang.code == current_lang %}selected{% endif %}>{{ lang.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MOBILE ADMIN ACTIONS ===== -->
+    {% if usuario.tipo == 'admin' %}
+    <div class="d-md-none mt-4">
+
+        <h6 class="text-muted mb-3">
+            <i class="fa fa-shield me-1"></i> {{ tr("Area amministratore") }}
+        </h6>
+
+        <div class="pontos-cards">
+
+
+            <!-- ===== MOBILE ADMIN ACTIONS ===== 
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">Gestione delle Ativita</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('work_management') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-plus-square me-1"></i> Ativita
+                    </a>
+                </div>
+            </div>
+            -->
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">{{ tr("Gestione delle ore registrate") }}</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/admin_pontos" class="btn btn-primary w-100">
+                        <i class="fa fa-clock me-1"></i> {{ tr("Ore") }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">{{ tr("Gestione dei cantieri") }}</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/adm_locais" class="btn btn-primary w-100">
+                        <i class="fa fa-institution me-1"></i> {{ tr("Cantieri") }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">{{ tr("Tesserini") }}</div>
+                </div>
+
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('admin_cartoes') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-id-card me-1"></i> {{ tr("Tesserini") }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="ponto-card">
+                <div class="ponto-header">
+                    <div class="ponto-local">{{ tr("Richeste degli utenti") }}</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('admin_pedidos') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-folder me-1"></i> {{ tr("Richeste") }}
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

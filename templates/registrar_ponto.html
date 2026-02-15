@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Registrar Ponto | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-7 col-xl-6">
+
+            <!-- CARD -->
+
+
+                <!-- HEADER -->
+                <div class="row border-0 pt-4 text-center">
+                    <h4 class="fw-bold mb-1 text-dark">
+                        <i class="fa fa-clock me-2"></i>{{ tr("Registrare la presenza") }}
+                    </h4>
+                    <p class="text-muted mb-0">
+                        {{ tr("Compila i dati per registrare le tue ore.") }}
+                    </p>
+                </div>
+                <hr class="my-4">
+
+                <!-- BODY -->
+                <div class="card-body px-4 pb-4">
+
+                    <!-- MENSAGENS -->
+                    {% if error %}
+                        <div class="alert alert-danger text-center rounded-3">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    {% if mensagem %}
+                        <div class="alert alert-success text-center rounded-3">
+                            {{ mensagem }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" class="needs-validation" novalidate>
+
+                        <div class="row g-3">
+
+                            <!-- LOCAL -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    {{ tr("Locale") }}
+                                </label>
+                                <select name="local" class="form-select" required>
+                                    <option value="" disabled selected>{{ tr("Seleziona il luogo") }}</option>
+                                    {% for local in locais %}
+                                        <option value="{{ local.nome }}">{{ local.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    {{ tr("Seleziona il luogo in cui si è svolta l'attività.") }}
+                                </div>
+                            </div>
+
+                            <!-- DATA -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    {{ tr("Data") }}
+                                </label>
+                                <input type="date" name="data" id="data" class="form-control" required>
+                                <div class="form-text">
+                                    {{ tr("Modificabile se necessario.") }}
+                                </div>
+                            </div>
+
+                            <!-- HORAS -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    {{ tr("Ore lavorate") }}
+                                </label>
+                                <input type="number" step="0.25" name="horas" class="form-control" required>
+                                <div class="form-text">
+                                    {{ tr("Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15") }}
+                                </div>
+                            </div>
+
+                            <!-- NOTAS -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    {{ tr("Osservazioni") }} <span class="text-muted">({{ tr("opzionale") }})</span>
+                                </label>
+                                <textarea name="notas"
+                                          rows="3"
+                                          class="form-control"
+                                          placeholder="{{ tr("Aggiungi un'osservazione rilevante...") }}"></textarea>
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- AÇÕES -->
+                        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa fa-check me-2"></i>{{ tr("Registrar") }}
+                            </button>
+
+                            <a href="{{ url_for('meus_pontos') }}" class="btn btn-outline-secondary px-4">
+                                <i class="fa fa-arrow-left me-2"></i>{{ tr("Tornare") }}
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const campoData = document.getElementById("data");
+
+    if (campoData) {
+        const hoje = new Date();
+        campoData.value = hoje.toISOString().split('T')[0];
+    }
+});
+</script>
+
+
+
+{% endblock %}
