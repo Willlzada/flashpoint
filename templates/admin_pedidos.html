@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Admin • Ordini | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Admin • Ordini | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -98,9 +102,15 @@
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-inbox me-2"></i>{{ tr("Ordini degli utenti") }}
     </h4>
     <p>{{ tr("Gestione richieste e ordini") }}</p>
+=======
+        <i class="fa fa-inbox me-2"></i>Ordini degli utenti
+    </h4>
+    <p>Gestione richieste e ordini</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 
 <hr class="my-4">
@@ -123,6 +133,7 @@
 
         <div class="pedido-status">
             {% if p.status == "in sospeso" %}
+<<<<<<< HEAD
                 <span class="badge bg-warning">{{ tr("In sospeso") }}</span>
             {% elif p.status == "Approvato" %}
                 <span class="badge bg-success">{{ tr("Approvato") }}</span>
@@ -130,6 +141,15 @@
                 <span class="badge bg-danger">{{ tr("Rifiutato") }}</span>
             {% elif p.status == "Evaso" %}
                 <span class="badge bg-info">{{ tr("Evaso") }}</span>
+=======
+                <span class="badge bg-warning">In sospeso</span>
+            {% elif p.status == "Approvato" %}
+                <span class="badge bg-success">Approvato</span>
+            {% elif p.status == "Rifiutato" %}
+                <span class="badge bg-danger">Rifiutato</span>
+            {% elif p.status == "Evaso" %}
+                <span class="badge bg-info">Evaso</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             {% else %}
                 <span class="badge bg-secondary">{{ p.status }}</span>
             {% endif %}
@@ -152,7 +172,11 @@
 
             <button name="acao" value="Excluir"
                     class="btn btn-danger"
+<<<<<<< HEAD
                     onclick="return confirm('{{ tr("Vuoi eliminare questo ordine?") }}');">
+=======
+                    onclick="return confirm('Vuoi eliminare questo ordine?');">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <i class="fa fa-trash"></i>
             </button>
         </form>
@@ -166,12 +190,21 @@
     <table class="table align-middle">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>{{ tr("Utente") }}</th>
                 <th>{{ tr("Tipo") }}</th>
                 <th>{{ tr("Messaggio") }}</th>
                 <th>{{ tr("Creato il") }}</th>
                 <th>{{ tr("Stato") }}</th>
                 <th class="text-center">{{ tr("Azioni") }}</th>
+=======
+                <th>Utente</th>
+                <th>Tipo</th>
+                <th>Messaggio</th>
+                <th>Creato il</th>
+                <th>Stato</th>
+                <th class="text-center">Azioni</th>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -183,6 +216,7 @@
                 <td>{{ formatar_data_pedido(p.criado_em) }}</td>
                 <td>
                     {% if p.status == "in sospeso" %}
+<<<<<<< HEAD
                         <span class="badge bg-warning">{{ tr("In sospeso") }}</span>
                     {% elif p.status == "Approvato" %}
                         <span class="badge bg-success">{{ tr("Approvato") }}</span>
@@ -190,6 +224,15 @@
                         <span class="badge bg-danger">{{ tr("Rifiutato") }}</span>
                     {% elif p.status == "Evaso" %}
                         <span class="badge bg-info">{{ tr("Evaso") }}</span>
+=======
+                        <span class="badge bg-warning">In sospeso</span>
+                    {% elif p.status == "Approvato" %}
+                        <span class="badge bg-success">Approvato</span>
+                    {% elif p.status == "Rifiutato" %}
+                        <span class="badge bg-danger">Rifiutato</span>
+                    {% elif p.status == "Evaso" %}
+                        <span class="badge bg-info">Evaso</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     {% endif %}
                 </td>
                 <td class="text-center">
@@ -199,7 +242,11 @@
                         <button name="acao" value="Rifiutato" class="btn btn-sm btn-warning"><i class="fa fa-times"></i></button>
                         <button name="acao" value="Evaso" class="btn btn-sm btn-info"><i class="fa fa-truck"></i></button>
                         <button name="acao" value="Excluir" class="btn btn-sm btn-danger"
+<<<<<<< HEAD
                                 onclick="return confirm('{{ tr("Vuoi eliminare questo ordine?") }}');">
+=======
+                                onclick="return confirm('Vuoi eliminare questo ordine?');">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>
@@ -212,13 +259,21 @@
 
 {% else %}
 <p class="text-muted text-center mt-4">
+<<<<<<< HEAD
     {{ tr("Nessun ordine registrato.") }}
+=======
+    Nessun ordine registrato.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </p>
 {% endif %}
 
 <div class="text-end mt-3">
     <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+<<<<<<< HEAD
         <i class="fa fa-arrow-left me-2"></i>{{ tr("Indietro") }}
+=======
+        <i class="fa fa-arrow-left me-2"></i>Indietro
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </a>
 </div>
 

@@ -3,10 +3,13 @@ import pyrebase
 import firebase_admin
 import json
 import os
+<<<<<<< HEAD
 import csv
 import calendar
 import uuid
 from urllib.parse import quote, unquote, urlparse
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 from firebase_admin import credentials, firestore, storage, initialize_app
 from datetime import datetime
 from flask import send_file, session, request
@@ -18,7 +21,11 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import cm
+<<<<<<< HEAD
 from io import BytesIO, StringIO
+=======
+from io import BytesIO
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 from datetime import datetime
 
 
@@ -35,6 +42,7 @@ ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 app.secret_key = "chave-secreta-simples"  # essencial para sessão
 
 # =========================
+<<<<<<< HEAD
 # CONFIGURACAO DE IDIOMA
 # =========================
 SUPPORTED_LANGUAGES = [
@@ -742,6 +750,8 @@ TEXT_TRANSLATIONS = {
 }
 
 # =========================
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 # CONFIGURAÇÃO DO FIREBASE (pyrebase)
 # =========================
 firebase_config = {
@@ -773,6 +783,7 @@ db = firestore.client()
 # =========================
 # CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
 # =========================
+<<<<<<< HEAD
 
 #cred = credentials.Certificate("JSON/flashpoint-V0.0.json")
 #_bucket_name = firebase_config.get("storageBucket")
@@ -842,6 +853,15 @@ def set_language():
     next_url = request.form.get("next") or request.referrer
     return redirect(safe_next_url(next_url))
 
+=======
+#cred = credentials.Certificate("1x/flashpoint-0001-firebase-adminsdk-fbsvc-aa433fdd0e.json")
+#firebase_admin.initialize_app(cred)
+#db = firestore.client()
+
+# =========================
+# FUNÇÕES AUXILIARES
+# =========================
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 from datetime import datetime
 
 def formatar_data_somente_data(timestamp):
@@ -919,6 +939,7 @@ def is_allowed_image(filename):
     return ext in ALLOWED_IMAGE_EXTENSIONS
 
 
+<<<<<<< HEAD
 def is_remote_url(value):
     return isinstance(value, str) and value.startswith(("http://", "https://"))
 
@@ -969,6 +990,8 @@ def delete_old_foto(foto_anterior, bucket=None):
         pass
 
 
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 def salvar_foto_perfil(file_storage, uid, foto_anterior=None):
     if not file_storage or not file_storage.filename:
         return None
@@ -983,6 +1006,7 @@ def salvar_foto_perfil(file_storage, uid, foto_anterior=None):
     timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     new_filename = f"{uid}_{timestamp}{ext}"
 
+<<<<<<< HEAD
     try:
         bucket = storage.bucket()
         blob_path = f"perfis/{new_filename}"
@@ -1023,6 +1047,23 @@ def foto_url(value):
 
 
 app.jinja_env.globals["foto_url"] = foto_url
+=======
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    save_path = os.path.join(app.config["UPLOAD_FOLDER"], new_filename)
+    file_storage.save(save_path)
+
+    if foto_anterior:
+        foto_anterior = os.path.basename(foto_anterior)
+        if foto_anterior and foto_anterior != new_filename:
+            old_path = os.path.join(app.config["UPLOAD_FOLDER"], foto_anterior)
+            if os.path.isfile(old_path):
+                try:
+                    os.remove(old_path)
+                except OSError:
+                    pass
+
+    return new_filename
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 
 def decimal_para_hhmm(horas_decimal):
@@ -1188,6 +1229,7 @@ def parse_work_due_date(due_date):
         return datetime.max
 
 
+<<<<<<< HEAD
 def parse_month_range(mes_inicio, mes_fim):
     """Converte meses (YYYY-MM) em intervalo de datas (YYYY-MM-DD)."""
     if not mes_inicio and not mes_fim:
@@ -1239,6 +1281,8 @@ def get_usuarios_map():
     return usuarios_map
 
 
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 # =========================
 # ROTAS
@@ -1925,13 +1969,18 @@ def admin_pontos():
         total_horas=f"{total_horas:.2f}",
         usuarios=usuarios,
         filtro_usuario=filtro_usuario,
+<<<<<<< HEAD
         filtro_mes=filtro_mes,
         backup_error=request.args.get("backup_error")
+=======
+        filtro_mes=filtro_mes
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     )
 
 
 
 # =========================
+<<<<<<< HEAD
 # ADMIN BACKUP/EXCLUIR PONTOS
 # =========================
 
@@ -2034,6 +2083,8 @@ def admin_pontos_backup():
 
 
 # =========================
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 # EDITAR PONTO
 # =========================
 

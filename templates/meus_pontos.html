@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Meus Pontos | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Meus Pontos | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -156,9 +160,15 @@
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-file-text me-2"></i>{{ tr("Le mie presenze") }}
     </h4>
     <p>{{ tr("Consulta e gestisci le ore registrate") }}</p>
+=======
+        <i class="fa fa-file-text me-2"></i>Le mie presenze
+    </h4>
+    <p>Consulta e gestisci le ore registrate</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 
 <hr class="my-4">
@@ -167,21 +177,36 @@
 <div class="filtros">
     <form method="POST">
         <div>
+<<<<<<< HEAD
             <label class="form-label">{{ tr("Data specifica") }}</label>
+=======
+            <label class="form-label">Data specifica</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <input type="date" name="filtro_data" value="{{ filtro_data }}" class="form-control">
         </div>
 
         <div>
+<<<<<<< HEAD
             <label class="form-label">{{ tr("Mese") }}</label>
+=======
+            <label class="form-label">Mese</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <input type="month" name="filtro_mes" value="{{ filtro_mes }}" class="form-control">
         </div>
 
         <div>
             <button type="submit" class="btn btn-primary w-100">
+<<<<<<< HEAD
                 <i class="fa fa-filter"></i> {{ tr("Filtra") }}
             </button>
             <a href="/meus_pontos" class="btn btn-secondary w-100 mt-2">
                 {{ tr("Cancella") }}
+=======
+                <i class="fa fa-filter"></i> Filtra
+            </button>
+            <a href="/meus_pontos" class="btn btn-secondary w-100 mt-2">
+                Cancella
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
     </form>
@@ -191,7 +216,11 @@
 
 <!-- TOTAL DE HORAS -->
 <div class="total-card">
+<<<<<<< HEAD
     <span>{{ tr("Totale ore registrate") }}</span>
+=======
+    <span>Totale ore registrate</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     <strong>{{ total_horas }}</strong>
 </div>
 
@@ -202,7 +231,11 @@
         filtro_mes=filtro_mes) }}"
        class="btn btn-outline-primary w-100">
         <i class="fa fa-file-pdf-o"></i>
+<<<<<<< HEAD
         {{ tr("Esporta rapporto in PDF") }}
+=======
+        Esporta rapporto in PDF
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </a>
 </div>
 
@@ -218,20 +251,32 @@
         </div>
 
         <div class="ponto-horas">
+<<<<<<< HEAD
             <span>{{ tr("Ore lavorate") }}</span>
+=======
+            <span>Ore lavorate</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <strong>
                 <i class="fa fa-clock-o me-1"></i>{{ ponto.horas_hhmm }}
             </strong>
         </div>
 
         <div class="ponto-notas">
+<<<<<<< HEAD
             {{ ponto.notas or tr("Nessuna nota inserita.") }}
+=======
+            {{ ponto.notas or "Nessuna nota inserita." }}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
 
         <div class="ponto-acoes">
             <a href="{{ url_for('editar_ponto_admin', id=ponto.id) }}"
                class="btn btn-warning w-100">
+<<<<<<< HEAD
                 <i class="fa fa-pencil"></i> {{ tr("Modifica") }}
+=======
+                <i class="fa fa-pencil"></i> Modifica
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
 
@@ -244,11 +289,19 @@
     <table class="table align-middle">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>{{ tr("Data") }}</th>
                 <th>{{ tr("Locale") }}</th>
                 <th>{{ tr("Ore") }}</th>
                 <th>{{ tr("Note") }}</th>
                 <th class="text-center">{{ tr("Azioni") }}</th>
+=======
+                <th>Data</th>
+                <th>Locale</th>
+                <th>Ore</th>
+                <th>Note</th>
+                <th class="text-center">Azioni</th>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -272,7 +325,11 @@
 
 {% else %}
 <p class="text-muted mt-4 text-center">
+<<<<<<< HEAD
     {{ tr("Nessuna presenza registrata con questi filtri.") }}
+=======
+    Nessuna presenza registrata con questi filtri.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </p>
 {% endif %}
 

@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Admin • Pontos | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Admin • Pontos | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -150,37 +154,55 @@
         grid-template-columns: repeat(3, 1fr);
         align-items: end;
     }
+<<<<<<< HEAD
 
     .filtros.backup form {
         grid-template-columns: repeat(4, 1fr);
     }
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 }
 </style>
 
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-users me-2"></i>{{ tr("Gestione delle presenze") }}
     </h4>
     <p>{{ tr("Amministrazione e controllo delle ore") }}</p>
+=======
+        <i class="fa fa-users me-2"></i>Gestione delle presenze
+    </h4>
+    <p>Amministrazione e controllo delle ore</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 
 <hr class="my-4">
 
+<<<<<<< HEAD
 {% if backup_error %}
 <div class="alert alert-danger">
     {{ backup_error }}
 </div>
 {% endif %}
 
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 <!-- FILTROS -->
 <div class="filtros">
     <form method="POST">
 
         <div>
+<<<<<<< HEAD
             <label class="form-label">{{ tr("Dipendente") }}</label>
             <select name="filtro_usuario" class="form-control">
                 <option value="">{{ tr("Tutti") }}</option>
+=======
+            <label class="form-label">Dipendente</label>
+            <select name="filtro_usuario" class="form-control">
+                <option value="">Tutti</option>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 {% for u in usuarios %}
                     <option value="{{ u.uid }}"
                         {% if filtro_usuario == u.uid %}selected{% endif %}>
@@ -191,7 +213,11 @@
         </div>
 
         <div>
+<<<<<<< HEAD
             <label class="form-label">{{ tr("Mese") }}</label>
+=======
+            <label class="form-label">Mese</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <input type="month"
                    name="filtro_mes"
                    value="{{ filtro_mes }}"
@@ -200,16 +226,24 @@
 
         <div>
             <button type="submit" class="btn btn-primary w-100">
+<<<<<<< HEAD
                 <i class="fa fa-filter"></i> {{ tr("Filtra") }}
             </button>
             <a href="/admin_pontos" class="btn btn-secondary w-100 mt-2">
                 {{ tr("Cancella") }}
+=======
+                <i class="fa fa-filter"></i> Filtra
+            </button>
+            <a href="/admin_pontos" class="btn btn-secondary w-100 mt-2">
+                Cancella
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
 
     </form>
 </div>
 
+<<<<<<< HEAD
 <!-- BACKUP/ARCHIVIO -->
 <div class="filtros backup">
     <form method="POST" action="{{ url_for('admin_pontos_backup') }}">
@@ -261,11 +295,17 @@
     </form>
 </div>
 
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 {% if pontos %}
 
 <!-- TOTAL -->
 <div class="total-card">
+<<<<<<< HEAD
     <span>{{ tr("Totale ore registrate") }}</span>
+=======
+    <span>Totale ore registrate</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     <strong>{{ total_horas }}</strong>
 </div>
 
@@ -284,27 +324,45 @@
         </div>
 
         <div class="ponto-horas">
+<<<<<<< HEAD
             <span>{{ tr("Ore lavorate") }}</span>
+=======
+            <span>Ore lavorate</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <strong>
                 <i class="fa fa-clock-o me-1"></i>{{ p.horas_formatadas }}
             </strong>
         </div>
 
         <div class="ponto-notas">
+<<<<<<< HEAD
             {{ p.notas or tr("Nessuna nota inserita.") }}
+=======
+            {{ p.notas or "Nessuna nota inserita." }}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
 
         <div class="ponto-acoes">
             <a href="{{ url_for('editar_ponto_admin', id=p.id) }}"
                class="btn btn-warning">
+<<<<<<< HEAD
                 <i class="fa fa-pencil"></i> {{ tr("Modifica") }}
+=======
+                <i class="fa fa-pencil"></i> Modifica
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
 
             <form action="{{ url_for('excluir_ponto', id=p.id) }}"
                   method="POST"
+<<<<<<< HEAD
                   onsubmit="return confirm('{{ tr("Vuoi eliminare questo punto?") }}');">
                 <button class="btn btn-danger w-100">
                     <i class="fa fa-trash"></i> {{ tr("Elimina") }}
+=======
+                  onsubmit="return confirm('Vuoi eliminare questo punto?');">
+                <button class="btn btn-danger w-100">
+                    <i class="fa fa-trash"></i> Elimina
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </button>
             </form>
         </div>
@@ -318,12 +376,21 @@
     <table class="table align-middle">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>{{ tr("Dipendente") }}</th>
                 <th>{{ tr("Locale") }}</th>
                 <th>{{ tr("Data") }}</th>
                 <th>{{ tr("Ore") }}</th>
                 <th>{{ tr("Note") }}</th>
                 <th class="text-center">{{ tr("Azioni") }}</th>
+=======
+                <th>Dipendente</th>
+                <th>Locale</th>
+                <th>Data</th>
+                <th>Ore</th>
+                <th>Note</th>
+                <th class="text-center">Azioni</th>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -344,7 +411,11 @@
                     <form action="{{ url_for('excluir_ponto', id=p.id) }}"
                           method="POST"
                           style="display:inline;"
+<<<<<<< HEAD
                           onsubmit="return confirm('{{ tr("Vuoi eliminare questo punto?") }}');">
+=======
+                          onsubmit="return confirm('Vuoi eliminare questo punto?');">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         <button class="btn btn-sm btn-danger">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -359,7 +430,11 @@
 
 {% else %}
 <p class="text-muted mt-4 text-center">
+<<<<<<< HEAD
     {{ tr("Nessuna presenza trovata con questi filtri.") }}
+=======
+    Nessuna presenza trovata con questi filtri.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </p>
 {% endif %}
 

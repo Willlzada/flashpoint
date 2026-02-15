@@ -1,6 +1,10 @@
 {% extends "base_login.html" %}
 
+<<<<<<< HEAD
 {% block title %}{{ t('register.page_title') }}{% endblock %}
+=======
+{% block title %}Criar Conta | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -13,7 +17,11 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico">
 
+<<<<<<< HEAD
     <title>{{ t('register.page_title') }}</title>    
+=======
+    <title>Login - Gentelella</title>    
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     
     <!-- Vite Entry Point - will bundle all styles -->
     
@@ -78,7 +86,11 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
                 alt="Gentelella" 
                 style="width: 270px;">
             </div>
+<<<<<<< HEAD
             <p class="p">{{ t('register.subtitle') }}</p>                         
+=======
+            <p class="p">Crea il tuo nuovo account</p>                         
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </div>
 
             {% if error %}
@@ -92,7 +104,11 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
             <!-- Registration Form -->
             <form method="POST">
             <div class="mb-3">
+<<<<<<< HEAD
                 <label for="regUsername" class="p">{{ t('register.first_name') }}</label>
+=======
+                <label for="regUsername" class="p">Nome</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <div class="input-group login-input-group">
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-user text-muted"></i>
@@ -100,13 +116,21 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
                 <input type="text" 
                 name="nome"
                 class="form-control border-start-0 ps-0"                
+<<<<<<< HEAD
                 placeholder="{{ t('register.first_name') }}" 
+=======
+                placeholder="Inserisci il tuo nome" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 required>
                 </div>
             </div>
 
             <div class="mb-3">
+<<<<<<< HEAD
                 <label for="regUsername" class="p">{{ t('register.last_name') }}</label>
+=======
+                <label for="regUsername" class="p">Cognome</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <div class="input-group login-input-group">
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-user text-muted"></i>
@@ -114,13 +138,21 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
                 <input type="text" 
                 name="sobrenome"
                 class="form-control border-start-0 ps-0" 
+<<<<<<< HEAD
                 placeholder="{{ t('register.last_name') }}" 
+=======
+                placeholder="Inserisci il tuo cognome" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 required>
                 </div>
             </div>
 
             <div class="mb-3">
+<<<<<<< HEAD
                 <label for="regEmail" class="p">{{ t('register.email_label') }}</label>
+=======
+                <label for="regEmail" class="p">Email Address</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <div class="input-group login-input-group">
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-envelope text-muted"></i>
@@ -128,13 +160,21 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
                 <input type="email" 
                 name="email" 
                 class="form-control border-start-0 ps-0" 
+<<<<<<< HEAD
                 placeholder="{{ t('register.email_placeholder') }}" 
+=======
+                placeholder="Inserisci la tua email" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 required>
                 </div>
             </div>
 
             <div class="mb-3">
+<<<<<<< HEAD
                 <label for="regPassword" class="p">{{ t('register.password_label') }}</label>
+=======
+                <label for="regPassword" class="p">Password</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <div class="input-group login-input-group">
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-lock text-muted"></i>
@@ -142,7 +182,11 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
                 <input type="password" 
                 name="password" 
                 class="form-control border-start-0 ps-0" 
+<<<<<<< HEAD
                 placeholder="{{ t('register.password_placeholder') }}" 
+=======
+                placeholder="Crea una password" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 required>
                 </div>
             </div>
@@ -150,17 +194,28 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
 
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-success btn-lg">
+<<<<<<< HEAD
                 <i class="fas fa-user-plus me-2"></i>{{ t('register.submit') }}
+=======
+                <i class="fas fa-user-plus me-2"></i>Crea un account
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </button>
             </div>       
         
             
             <div class="login-footer">
                 <div class="text-center mb-3">
+<<<<<<< HEAD
                 <span class="p">{{ t('register.have_account') }}</span>
                 <a href="/" 
                 class="text-decoration-none ms-1" 
                 id="showLoginForm">{{ t('register.sign_in') }}</a> 
+=======
+                <span class="p">Hai già un account?</span>
+                <a href="/" 
+                class="text-decoration-none ms-1" 
+                id="showLoginForm">Accedi</a> 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </div>                     
             </div>
             
@@ -173,7 +228,11 @@ style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
         <!-- Footer -->
         <div class="text-center mt-4">
         <p class="text-light opacity-75 mb-2">
+<<<<<<< HEAD
             {{ t('register.footer') }}
+=======
+            © FlashPoint 2026 All Rights Reserved.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </p>
         
         </div>

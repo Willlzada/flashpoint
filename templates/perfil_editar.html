@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
+<<<<<<< HEAD
 {% block title %}{{ tr("Profilo | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Profilo | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 <style>
@@ -25,9 +29,15 @@
         <!-- HEADER -->
         <div class="page-header">
             <h4 class="text-dark">
+<<<<<<< HEAD
                 <i class="fa fa-edit me-2"></i>{{ tr("Dati personali") }}
             </h4>
             <p>{{ tr("Modifica le informazioni del tuo profilo") }}</p>
+=======
+                <i class="fa fa-edit me-2"></i>Dati personali
+            </h4>
+            <p>Modifica le informazioni del tuo profilo</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </div>
 
         <hr class="my-4">
@@ -36,12 +46,20 @@
             
             <!-- NOME -->
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label class="form-label">{{ tr("Nome") }}</label>
+=======
+                <label class="form-label">Nome</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                     type="text" 
                     name="nome"
                     class="form-control"
+<<<<<<< HEAD
                     placeholder="{{ tr("Ex.: João") }}" 
+=======
+                    placeholder="Ex.: João" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     value="{{ usuario.nome or '' }}" 
                     required 
                 >
@@ -49,12 +67,20 @@
 
             <!-- SOBRENOME -->            
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label class="form-label">{{ tr("Cognome") }}</label>
+=======
+                <label class="form-label">Cognome</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                     type="text" 
                     name="sobrenome"
                     class="form-control"
+<<<<<<< HEAD
                     placeholder="{{ tr("Ex.: Silva") }}" 
+=======
+                    placeholder="Ex.: Silva" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     value="{{ usuario.sobrenome or '' }}" 
                     required 
                 >
@@ -62,7 +88,11 @@
             
             <!-- DATA DE NASCIMENTO -->        
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label for="inputEmail4" class="form-label">{{ tr("Data di nascita") }}</label>
+=======
+                <label for="inputEmail4" class="form-label">Data di nascita</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                     type="date" 
                     name="data_nascimento"
@@ -73,19 +103,31 @@
 
             <!-- PAÍS -->
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label for="inputPassword4" class="form-label">{{ tr("Paese di origine") }}</label>
+=======
+                <label for="inputPassword4" class="form-label">Paise di Origine</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                     type="text" 
                     name="pais" 
                     class="form-control" 
+<<<<<<< HEAD
                     placeholder="{{ tr("Ex.: Brasile") }}" 
+=======
+                    placeholder="Ex.: Brasile" 
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     value="{{ usuario.pais or '' }}"
                 >
             </div>
 
             <!-- DATA DE ADMISSÃO -->
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label for="inputEmail4" class="form-label">{{ tr("Data di assunzione") }}</label>
+=======
+                <label for="inputEmail4" class="form-label">Data di Assunzione</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                     type="date" 
                     name="data_assuncao" 
@@ -96,23 +138,40 @@
 
             <!-- CARGO -->
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label for="inputEmail4" class="form-label">{{ tr("Ruolo") }}</label>
+=======
+                <label for="inputEmail4" class="form-label">Ruolo</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 <input 
                 type="text" 
                 name="cargo"
                 class="form-control"
+<<<<<<< HEAD
                 placeholder="{{ tr("Ex.: Elettricista") }}"
+=======
+                placeholder="Ex.: Elettricista"
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 value="{{ usuario.cargo or '' }}">
             </div>
 
             <!-- FOTO -->
             <div class="col-md-6">
+<<<<<<< HEAD
                 <label class="form-label">{{ tr("Foto") }}</label>
                 <div class="d-flex align-items-center gap-3">
                     {% if usuario.foto_url %}
                         <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% else %}
                         <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+=======
+                <label class="form-label">Foto</label>
+                <div class="d-flex align-items-center gap-3">
+                    {% if usuario.foto_url %}
+                        <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="Foto do perfil" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     {% endif %}
                     <div class="flex-grow-1">
                         <input 
@@ -121,7 +180,11 @@
                             class="form-control"
                             accept="image/png, image/jpeg, image/webp"
                         >
+<<<<<<< HEAD
                         <small class="text-muted">{{ tr("PNG, JPG ou WEBP. Máx 3MB.") }}</small>
+=======
+                        <small class="text-muted">PNG, JPG o WEBP. Max 3MB.</small>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </div>
                 </div>
             </div>
@@ -132,11 +195,19 @@
             <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
 
                 <button type="submit" class="btn btn-primary px-4">
+<<<<<<< HEAD
                     <i class="fa fa-save me-2"></i> {{ tr("Salva modifiche") }}
                 </button>
 
                 <a href="{{ url_for('perfil_usuario') }}" class="btn btn-outline-secondary px-4">
                     <i class="fa fa-arrow-left me-2"></i>{{ tr("Tornare") }}
+=======
+                    <i class="fa fa-save me-2"></i> Salva modifiche
+                </button>
+
+                <a href="{{ url_for('perfil_usuario') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fa fa-arrow-left me-2"></i>Tornare
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </a>
 
             </div>

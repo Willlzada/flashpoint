@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Perfil | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Perfil | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -129,9 +133,15 @@
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-user me-2"></i>{{ tr("Profilo") }}
     </h4>
     <p>{{ tr("Consulta e modifica le informazioni del tuo profilo") }}</p>
+=======
+        <i class="fa fa-user me-2"></i>Profilo
+    </h4>
+    <p>Consulta e modifica le informazioni del tuo profilo</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 <hr class="my-4">
 <!-- CARD PERFIL PRINCIPAL -->
@@ -141,9 +151,15 @@
         <div class="col-12 col-md-4 text-center text-md-start mb-3 mb-md-0">
             <div class="profile_pic">
                 {% if usuario.foto_url %}
+<<<<<<< HEAD
                     <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto do perfil") }}">
                 {% else %}
                     <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto do perfil") }}">
+=======
+                    <img src="{{ url_for('static', filename='img/perfis/' ~ usuario.foto_url) }}" alt="Foto do perfil">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="Foto do perfil">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 {% endif %}
             </div>
         </div>
@@ -151,6 +167,7 @@
         <!-- INFORMAÇÕES + BADGES -->
         <div class="col-12 col-md-4 profile-info text-center text-md-start">
             <h1>{{ usuario.sobrenome }} {{ usuario.nome }}</h1>
+<<<<<<< HEAD
             <h2>{{ usuario.get("cargo", tr("Colaborador")) }}</h2>
 
             <!-- BADGES REFORMULADOS -->
@@ -158,6 +175,15 @@
                 <span class="badge text-bg-primary rounded-pill">{{ tr("Utente") }}</span>
                 {% if usuario.tipo == 'admin' %}
                 <span class="badge text-bg-info rounded-pill">{{ tr("Amministratore") }}</span>
+=======
+            <h2>{{ usuario.get("cargo", "Colaborador") }}</h2>
+
+            <!-- BADGES REFORMULADOS -->
+            <div class="mt-2">
+                <span class="badge text-bg-primary rounded-pill">Utente</span>
+                {% if usuario.tipo == 'admin' %}
+                <span class="badge text-bg-info rounded-pill">Amministratore</span>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 {% endif %}
             </div>
         </div>
@@ -166,14 +192,22 @@
         <!-- BOTÕES -->
         <div class="btn-group mt-2">
             <a href="/perfil/editar" class="btn btn-primary">
+<<<<<<< HEAD
                 <i class="fa fa-edit me-1"></i> {{ tr("Modifica Profilo") }}
             </a>
             <a href="{{ url_for('gerar_cartao_perfil') }}" class="btn btn-secondary">
                 <i class="fa fa-id-card me-1"></i> {{ tr("Genera tessera") }}
+=======
+                <i class="fa fa-edit me-1"></i> Modifica Profilo
+            </a>
+            <a href="{{ url_for('gerar_cartao_perfil') }}" class="btn btn-secondary">
+                <i class="fa fa-id-card me-1"></i> Genera tessera
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
     </div>
 
+<<<<<<< HEAD
     <div class="mt-4">
         <button class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center"
                 type="button" data-bs-toggle="collapse" data-bs-target="#profile-settings"
@@ -197,12 +231,18 @@
         </div>
     </div>
 
+=======
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     <!-- ===== MOBILE ADMIN ACTIONS ===== -->
     {% if usuario.tipo == 'admin' %}
     <div class="d-md-none mt-4">
 
         <h6 class="text-muted mb-3">
+<<<<<<< HEAD
             <i class="fa fa-shield me-1"></i> {{ tr("Area amministratore") }}
+=======
+            <i class="fa fa-shield me-1"></i> Area amministratore
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
         </h6>
 
         <div class="pontos-cards">
@@ -223,45 +263,77 @@
 
             <div class="ponto-card">
                 <div class="ponto-header">
+<<<<<<< HEAD
                     <div class="ponto-local">{{ tr("Gestione delle ore registrate") }}</div>
                 </div>
                 <div class="ponto-acoes">
                     <a href="/admin_pontos" class="btn btn-primary w-100">
                         <i class="fa fa-clock me-1"></i> {{ tr("Ore") }}
+=======
+                    <div class="ponto-local">Gestione delle ore registrate</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/admin_pontos" class="btn btn-primary w-100">
+                        <i class="fa fa-clock me-1"></i> Ore
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </a>
                 </div>
             </div>
 
             <div class="ponto-card">
                 <div class="ponto-header">
+<<<<<<< HEAD
                     <div class="ponto-local">{{ tr("Gestione dei cantieri") }}</div>
                 </div>
                 <div class="ponto-acoes">
                     <a href="/adm_locais" class="btn btn-primary w-100">
                         <i class="fa fa-institution me-1"></i> {{ tr("Cantieri") }}
+=======
+                    <div class="ponto-local">Gestione dei cantieri</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="/adm_locais" class="btn btn-primary w-100">
+                        <i class="fa fa-institution me-1"></i> Cantieri
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </a>
                 </div>
             </div>
 
             <div class="ponto-card">
                 <div class="ponto-header">
+<<<<<<< HEAD
                     <div class="ponto-local">{{ tr("Tesserini") }}</div>
+=======
+                    <div class="ponto-local">Tesserini</div>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </div>
 
                 <div class="ponto-acoes">
                     <a href="{{ url_for('admin_cartoes') }}" class="btn btn-primary w-100">
+<<<<<<< HEAD
                         <i class="fa fa-id-card me-1"></i> {{ tr("Tesserini") }}
+=======
+                        <i class="fa fa-id-card me-1"></i> Tesserini
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </a>
                 </div>
             </div>
 
             <div class="ponto-card">
                 <div class="ponto-header">
+<<<<<<< HEAD
                     <div class="ponto-local">{{ tr("Richeste degli utenti") }}</div>
                 </div>
                 <div class="ponto-acoes">
                     <a href="{{ url_for('admin_pedidos') }}" class="btn btn-primary w-100">
                         <i class="fa fa-folder me-1"></i> {{ tr("Richeste") }}
+=======
+                    <div class="ponto-local">Richeste degli utenti</div>
+                </div>
+                <div class="ponto-acoes">
+                    <a href="{{ url_for('admin_pedidos') }}" class="btn btn-primary w-100">
+                        <i class="fa fa-folder me-1"></i> Richeste
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                     </a>
                 </div>
             </div>

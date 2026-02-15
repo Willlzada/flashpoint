@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Admin • Cartões de Reconhecimento | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Admin • Cartões de Reconhecimento | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -82,9 +86,15 @@
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-id-card me-2"></i>{{ tr("Tesserini di riconoscimento") }}
     </h4>
     <p>{{ tr("Generazione e gestione dei cartellini") }}</p>
+=======
+        <i class="fa fa-id-card me-2"></i>Tesserini di riconoscimento
+    </h4>
+    <p>Generazione e gestione dei cartellini</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 
 <hr class="my-4">
@@ -114,23 +124,39 @@
 
         {% if completo %}
             <span class="status status-ok">
+<<<<<<< HEAD
                 {{ tr("Profilo completo") }}
+=======
+                Profilo completo
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </span>
 
             <div class="mt-3 d-grid">
                 <a href="{{ url_for('gerar_cartao', uid=u.uid) }}"
                    class="btn btn-success">
+<<<<<<< HEAD
                     <i class="fa fa-id-card"></i> {{ tr("Genera tesserino") }}
+=======
+                    <i class="fa fa-id-card"></i> Genera tesserino
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </a>
             </div>
         {% else %}
             <span class="status status-bad">
+<<<<<<< HEAD
                 {{ tr("Profilo incompleto") }}
+=======
+                Profilo incompleto
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </span>
 
             <div class="mt-3 d-grid">
                 <button class="btn btn-secondary" disabled>
+<<<<<<< HEAD
                     {{ tr("Profilo incompleto") }}
+=======
+                    Profilo incompleto
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                 </button>
             </div>
         {% endif %}
@@ -144,9 +170,15 @@
     <table class="table align-middle">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>{{ tr("Utente") }}</th>
                 <th>{{ tr("Stato profilo") }}</th>
                 <th class="text-center">{{ tr("Azione") }}</th>
+=======
+                <th>Utente</th>
+                <th>Stato profilo</th>
+                <th class="text-center">Azione</th>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -172,11 +204,19 @@
                 <td>
                     {% if completo %}
                         <span class="status status-ok">
+<<<<<<< HEAD
                             {{ tr("Completo") }}
                         </span>
                     {% else %}
                         <span class="status status-bad">
                             {{ tr("Incompleto") }}
+=======
+                            Completo
+                        </span>
+                    {% else %}
+                        <span class="status status-bad">
+                            Incompleto
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         </span>
                     {% endif %}
                 </td>
@@ -202,7 +242,11 @@
 
 {% else %}
 <p class="text-muted text-center mt-4">
+<<<<<<< HEAD
     {{ tr("Nessun utente registrato.") }}
+=======
+    Nessun utente registrato.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </p>
 {% endif %}
 

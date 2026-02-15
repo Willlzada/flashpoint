@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}{{ tr("Admin • Locais | FlashPoint") }}{% endblock %}
+=======
+{% block title %}Admin • Locais | FlashPoint{% endblock %}
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 
 {% block content %}
 
@@ -73,9 +77,15 @@
 <!-- HEADER -->
 <div class="page-header">
     <h4 class="text-dark">
+<<<<<<< HEAD
         <i class="fa fa-map-marker me-2"></i>{{ tr("Gestione dei locali") }}
     </h4>
     <p>{{ tr("Aggiungi e gestisci i luoghi disponibili") }}</p>
+=======
+        <i class="fa fa-map-marker me-2"></i>Gestione dei locali
+    </h4>
+    <p>Aggiungi e gestisci i luoghi disponibili</p>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </div>
 
 <hr class="my-4">
@@ -83,12 +93,20 @@
 <!-- NOVO LOCAL -->
 <div class="card-box">
     <h6 class="fw-bold mb-3">
+<<<<<<< HEAD
         <i class="fa fa-plus-circle me-1"></i> {{ tr("Aggiungi nuovo locale") }}
+=======
+        <i class="fa fa-plus-circle me-1"></i> Aggiungi nuovo locale
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
     </h6>
 
     <form method="POST" class="form-local">
         <div>
+<<<<<<< HEAD
             <label class="form-label">{{ tr("Nome del locale") }}</label>
+=======
+            <label class="form-label">Nome del locale</label>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <input type="text"
                    name="novo_local"
                    class="form-control"
@@ -97,11 +115,19 @@
 
         <div class="d-grid gap-2">
             <button type="submit" class="btn btn-primary">
+<<<<<<< HEAD
                 <i class="fa fa-plus"></i> {{ tr("Aggiungi") }}
             </button>
             <a href="{{ url_for('gerenciar_locais') }}"
                class="btn btn-secondary">
                 {{ tr("Cancella") }}
+=======
+                <i class="fa fa-plus"></i> Aggiungi
+            </button>
+            <a href="{{ url_for('gerenciar_locais') }}"
+               class="btn btn-secondary">
+                Cancella
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </a>
         </div>
     </form>
@@ -121,7 +147,11 @@
 
         <form method="POST"
               action="{{ url_for('excluir_local') }}"
+<<<<<<< HEAD
               onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local }}?');">
+=======
+              onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             <input type="hidden" name="nome" value="{{ local }}">
             <button class="btn btn-sm btn-danger">
                 <i class="fa fa-trash"></i>
@@ -137,8 +167,13 @@
     <table class="table align-middle">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>{{ tr("Locale") }}</th>
                 <th class="text-center">{{ tr("Azioni") }}</th>
+=======
+                <th>Locale</th>
+                <th class="text-center">Azioni</th>
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -149,7 +184,11 @@
                     <form method="POST"
                           action="{{ url_for('excluir_local') }}"
                           style="display:inline;"
+<<<<<<< HEAD
                           onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local }}?');">
+=======
+                          onsubmit="return confirm('Vuoi eliminare il locale {{ local }}?');">
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
                         <input type="hidden" name="nome" value="{{ local }}">
                         <button class="btn btn-sm btn-danger">
                             <i class="fa fa-trash"></i>
@@ -164,7 +203,11 @@
 
 {% else %}
 <p class="text-muted text-center mt-4">
+<<<<<<< HEAD
     {{ tr("Nessun locale registrato.") }}
+=======
+    Nessun locale registrato.
+>>>>>>> 159fc51131948277d68bb8d228ea8f721f893b03
 </p>
 {% endif %}
 
