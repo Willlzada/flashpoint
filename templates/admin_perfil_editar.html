@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ url_for('admin_perfil_editar', uid=usuario.uid) }}" class="row g-3" enctype="multipart/form-data">
+        <form method="POST" action="{{ url_for('admin_perfil_editar', uid=usuario.uid) }}" class="row g-3">
             
             <!-- NOME -->
             <div class="col-md-6">
@@ -128,21 +128,23 @@
                 <label class="form-label">{{ tr("Foto") }}</label>
                 <div class="d-flex align-items-center gap-3">
                     {% if usuario.foto_url %}
-                        <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto del profilo") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                        <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% else %}
-                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto del profilo") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% endif %}
                     <div class="flex-grow-1">
-                        <input 
-                            type="file" 
-                            name="foto"
+                        <input
+                            type="text"
+                            name="foto_url"
                             class="form-control"
-                            accept="image/png, image/jpeg, image/webp"
+                            placeholder="Ex.: anderson.png"
+                            value="{{ usuario.foto_url or '' }}"
                         >
-                        <small class="text-muted">{{ tr("PNG, JPG ou WEBP. Máx 3MB.") }}</small>
+                        <small class="text-muted">Ex.: anderson.png ou uma URL completa.</small>
                     </div>
                 </div>
             </div>
+
 
             <hr class="my-4">
 

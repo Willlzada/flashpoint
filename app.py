@@ -1588,18 +1588,16 @@ def perfil_editar():
     usuario = usuario_ref.get().to_dict()
 
     if request.method == "POST":
+        foto_input = (request.form.get("foto_url") or "").strip()
         update_data = {
             "nome": request.form.get("nome"),
             "sobrenome": request.form.get("sobrenome"),
             "data_nascimento": request.form.get("data_nascimento"),
             "pais": request.form.get("pais"),
             "data_assuncao": request.form.get("data_assuncao"),
-            "cargo": request.form.get("cargo")
+            "cargo": request.form.get("cargo"),
+            "foto_url": foto_input,
         }
-        foto_file = request.files.get("foto")
-        novo_nome = salvar_foto_perfil(foto_file, uid, usuario.get("foto_url"))
-        if novo_nome:
-            update_data["foto_url"] = novo_nome
 
         usuario_ref.update(update_data)
         return redirect("/perfil")
@@ -1640,18 +1638,16 @@ def admin_perfil_editar(uid):
     usuario["uid"] = uid
 
     if request.method == "POST":
+        foto_input = (request.form.get("foto_url") or "").strip()
         update_data = {
             "nome": request.form.get("nome"),
             "sobrenome": request.form.get("sobrenome"),
             "data_nascimento": request.form.get("data_nascimento"),
             "pais": request.form.get("pais"),
             "data_assuncao": request.form.get("data_assuncao"),
-            "cargo": request.form.get("cargo")
+            "cargo": request.form.get("cargo"),
+            "foto_url": foto_input,
         }
-        foto_file = request.files.get("foto")
-        novo_nome = salvar_foto_perfil(foto_file, uid, usuario.get("foto_url"))
-        if novo_nome:
-            update_data["foto_url"] = novo_nome
 
         usuario_ref.update(update_data)
         return redirect(url_for("admin_perfis"))
