@@ -145,7 +145,7 @@
                 {% if user.foto_url %}
                     <img src="{{ foto_url(user.foto_url) }}" class="foto">
                 {% else %}
-                    <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" class="foto">
+                    <img src="{{ url_for('static', filename='img/perfis/user.png') }}" class="foto">
                 {% endif %}
 
                 <div class="nome_card">
@@ -160,7 +160,9 @@
                 <p><strong>{{ user.cargo }}</strong></p>
 
                 <div class="info2">
-                    <p>{{ tr("Distaccato Presso") }}:</p>
+                    <p>
+                        {{ tr("Datore di Lavoro") if user.etichetta_azienda == "datore" else tr("Distaccato Presso") }}:
+                    </p>
                 </div>
 
                 <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo">
@@ -177,7 +179,7 @@
     <!-- AÇÕES -->
     <div class="acoes">
         <button onclick="window.print()" class="btn">{{ tr("Esporta PDF") }}</button>
-        <a href="{{ url_for('admin_cartoes') }}" class="btn">{{ tr("Indietro") }}</a>
+        <a href="{{ url_for('admin_perfis') }}" class="btn">{{ tr("Indietro") }}</a>
     </div>
 
 </div>

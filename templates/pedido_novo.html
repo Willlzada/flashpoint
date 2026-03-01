@@ -122,6 +122,11 @@
     margin-bottom: 10px; /* menos espaçamento */
     border-top: 1px dashed #ddd;
     padding-top: 6px;
+    white-space: pre-wrap;
+}
+
+.msg-pre {
+    white-space: pre-wrap;
 }
 
 /* AÇÕES */
@@ -225,7 +230,7 @@
                     <tr>
                         <th>{{ loop.index }}</th>
                         <td>{{ p.tipo }}</td>
-                        <td>{{ p.mensagem }}</td>
+                        <td><div class="msg-pre">{{ p.mensagem }}</div></td>
                         <td>
                             {% if p.status == "in sospeso" %}
                                 <span class="badge bg-warning">{{ tr("In sospeso") }}</span>
@@ -288,9 +293,7 @@
                 </div>
 
                 <!-- MESSAGGIO -->
-                <div class="ponto-notas">
-                    {{ p.mensagem or tr("Nessun messaggio inserito.") }}
-                </div>
+                <div class="ponto-notas">{{ p.mensagem or tr("Nessun messaggio inserito.") }}</div>
 
                 <!-- ATENDIDO -->
                 <div class="ponto-horas">

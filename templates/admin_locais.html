@@ -46,13 +46,24 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     border-left: 4px solid #041955;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .local-nome {
     font-weight: 700;
     color: #041955;
+}
+
+.local-meta {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.local-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
 }
 
 /* ===== DESKTOP ===== */
@@ -88,11 +99,39 @@
 
     <form method="POST" class="form-local">
         <div>
-            <label class="form-label">{{ tr("Nome del locale") }}</label>
+            <label class="form-label">{{ tr("Ragione Sociale") }}</label>
             <input type="text"
-                   name="novo_local"
+                   name="ragione_sociale"
                    class="form-control"
                    required>
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Responsabile tecnico") }}</label>
+            <input type="text"
+                   name="responsabile_tecnico"
+                   class="form-control">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Telefone") }}</label>
+            <input type="text"
+                   name="telefone"
+                   class="form-control">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Indirizzo") }}</label>
+            <input type="text"
+                   name="indirizzo"
+                   class="form-control">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("P.IVA") }}</label>
+            <input type="text"
+                   name="piva"
+                   class="form-control">
         </div>
 
         <div class="d-grid gap-2">
@@ -116,17 +155,26 @@
     <div class="local-card">
 
         <div class="local-nome">
-            <i class="fa fa-building me-1"></i>{{ local }}
+            <i class="fa fa-building me-1"></i>{{ local.ragione_sociale }}
         </div>
+        <div class="local-meta">{{ tr("Responsabile tecnico") }}: {{ local.responsabile_tecnico or "-" }}</div>
+        <div class="local-meta">{{ tr("Telefone") }}: {{ local.telefone or "-" }}</div>
+        <div class="local-meta">{{ tr("Indirizzo") }}: {{ local.indirizzo or "-" }}</div>
+        <div class="local-meta">{{ tr("P.IVA") }}: {{ local.piva or "-" }}</div>
 
-        <form method="POST"
-              action="{{ url_for('excluir_local') }}"
-              onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local }}?');">
-            <input type="hidden" name="nome" value="{{ local }}">
-            <button class="btn btn-sm btn-danger">
-                <i class="fa fa-trash"></i>
-            </button>
-        </form>
+        <div class="local-actions">
+            <a href="{{ url_for('editar_local', id=local.id) }}" class="btn btn-sm btn-outline-primary">
+                <i class="fa fa-edit"></i>
+            </a>
+            <form method="POST"
+                  action="{{ url_for('excluir_local') }}"
+                  onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local.ragione_sociale }}?');">
+                <input type="hidden" name="local_id" value="{{ local.id }}">
+                <button class="btn btn-sm btn-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </form>
+        </div>
 
     </div>
     {% endfor %}
@@ -137,20 +185,32 @@
     <table class="table align-middle">
         <thead>
             <tr>
-                <th>{{ tr("Locale") }}</th>
+                <th>{{ tr("Ragione Sociale") }}</th>
+                <th>{{ tr("Responsabile tecnico") }}</th>
+                <th>{{ tr("Telefone") }}</th>
+                <th>{{ tr("Indirizzo") }}</th>
+                <th>{{ tr("P.IVA") }}</th>
                 <th class="text-center">{{ tr("Azioni") }}</th>
             </tr>
         </thead>
         <tbody class="table-group-divider">
             {% for local in locais %}
             <tr>
-                <td class="fw-bold">{{ local }}</td>
+                <td class="fw-bold">{{ local.ragione_sociale }}</td>
+                <td>{{ local.responsabile_tecnico or "-" }}</td>
+                <td>{{ local.telefone or "-" }}</td>
+                <td>{{ local.indirizzo or "-" }}</td>
+                <td>{{ local.piva or "-" }}</td>
                 <td class="text-center">
+                    <a href="{{ url_for('editar_local', id=local.id) }}"
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="fa fa-edit"></i>
+                    </a>
                     <form method="POST"
                           action="{{ url_for('excluir_local') }}"
                           style="display:inline;"
-                          onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local }}?');">
-                        <input type="hidden" name="nome" value="{{ local }}">
+                          onsubmit="return confirm('{{ tr("Vuoi eliminare il locale") }} {{ local.ragione_sociale }}?');">
+                        <input type="hidden" name="local_id" value="{{ local.id }}">
                         <button class="btn btn-sm btn-danger">
                             <i class="fa fa-trash"></i>
                         </button>

@@ -123,6 +123,43 @@
                 value="{{ usuario.cargo or '' }}">
             </div>
 
+            <!-- TELEFONE -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Telefone") }}</label>
+                <input 
+                    type="tel" 
+                    name="telefone"
+                    class="form-control"
+                    placeholder="+39 000 000 0000"
+                    value="{{ usuario.telefone or '' }}"
+                >
+            </div>
+
+            <!-- TELEFONE DE EMERGÊNCIA -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Telefone de emergência") }}</label>
+                <input 
+                    type="tel" 
+                    name="telefone_emergencia"
+                    class="form-control"
+                    placeholder="+39 000 000 0000"
+                    value="{{ usuario.telefone_emergencia or '' }}"
+                >
+            </div>
+
+            <!-- ETICHETTA AZIENDA SUL TESSERINO -->
+            <div class="col-md-6">
+                <label class="form-label">{{ tr("Intestazione azienda") }}</label>
+                <select name="etichetta_azienda" class="form-select">
+                    <option value="distaccato" {% if usuario.etichetta_azienda != "datore" %}selected{% endif %}>
+                        {{ tr("Distaccato Presso") }}
+                    </option>
+                    <option value="datore" {% if usuario.etichetta_azienda == "datore" %}selected{% endif %}>
+                        {{ tr("Datore di Lavoro") }}
+                    </option>
+                </select>
+            </div>
+
             <!-- FOTO -->
             <div class="col-md-6">
                 <label class="form-label">{{ tr("Foto") }}</label>
@@ -130,7 +167,7 @@
                     {% if usuario.foto_url %}
                         <img src="{{ foto_url(usuario.foto_url) }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% else %}
-                        <img src="{{ url_for('static', filename='img/logo-mini2.png') }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
+                        <img src="{{ url_for('static', filename='img/perfis/user.png') }}" alt="{{ tr("Foto do perfil") }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid #c0c0c0;">
                     {% endif %}
                     <div class="flex-grow-1">
                         <input

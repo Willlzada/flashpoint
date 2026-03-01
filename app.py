@@ -8,14 +8,14 @@ import calendar
 import uuid
 from urllib.parse import quote, unquote, urlparse
 from firebase_admin import credentials, firestore, storage, initialize_app
-from datetime import datetime
+from datetime import datetime, date
 from flask import send_file, session, request
 from werkzeug.utils import secure_filename
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
 )
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from io import BytesIO, StringIO
@@ -86,7 +86,9 @@ TRANSLATIONS = {
         "register.have_account": "Já tem uma conta?",
         "register.sign_in": "Entrar",
         "register.footer": "© FlashPoint 2026 Todos os direitos reservados.",
-    },
+    
+        "Mostra": "Mostrar",
+        "nav.admin_stats": "Estat?sticas",},
     "en": {
         "language.label": "Language",
         "nav.home": "Home",
@@ -127,7 +129,9 @@ TRANSLATIONS = {
         "register.have_account": "Already have an account?",
         "register.sign_in": "Sign in",
         "register.footer": "© FlashPoint 2026 All Rights Reserved.",
-    },
+    
+        "Mostra": "Show",
+        "nav.admin_stats": "Statistics",},
     "it": {
         "language.label": "Lingua",
         "nav.home": "Home",
@@ -168,7 +172,9 @@ TRANSLATIONS = {
         "register.have_account": "Hai già un account?",
         "register.sign_in": "Accedi",
         "register.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
-    },
+    
+        "Mostra": "Mostra",
+        "nav.admin_stats": "Statistiche",},
 }
 
 TEXT_TRANSLATIONS = {
@@ -176,6 +182,7 @@ TEXT_TRANSLATIONS = {
         "Admin": "Admin",
         "Admin cria e designa atividades para os colaboradores": "Admin cria e designa atividades para os colaboradores",
         "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Cartões de Reconhecimento | FlashPoint",
+        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Limpeza | FlashPoint",
         "Admin • Locais | FlashPoint": "Admin • Locais | FlashPoint",
         "Admin • Modifica Profilo | FlashPoint": "Admin • Editar Perfil | FlashPoint",
         "Admin • Modifica Punto | FlashPoint": "Admin • Editar Ponto | FlashPoint",
@@ -282,6 +289,7 @@ TEXT_TRANSLATIONS = {
         "Nessun locale registrato.": "Nenhum local registrado.",
         "Nessun messaggio inserito.": "Nenhuma mensagem inserida.",
         "Nessun ordine registrato.": "Nenhum pedido registrado.",
+        "Nessuno": "Nenhum",
         "Nessun utente registrato.": "Nenhum usuário registrado.",
         "Nessuna nota inserita.": "Nenhuma nota inserida.",
         "Nessuna presenza registrata con questi filtri.": "Nenhuma presença registrada com esses filtros.",
@@ -360,11 +368,36 @@ TEXT_TRANSLATIONS = {
         "a": "em",
         "email non disponibile": "email não disponível",
         "opzionale": "opcional",
-    },
+    
+        "Mostra": "Mostrar",
+        "Telefone": "Telefone",
+        "Telefone de emergência": "Telefone de emergência",
+        "Ragione Sociale": "Raz?o social",
+        "Responsabile tecnico": "Respons?vel t?cnico",
+        "Indirizzo": "Endere?o",
+        "P.IVA": "P.IVA",
+        "Datore di Lavoro": "Empregador",
+        "Intestazione azienda": "T?tulo da empresa",
+        "Admin ? Statistiche | FlashPoint": "Admin ? Estat?sticas | FlashPoint",
+        "Statistiche amministrative": "Estat?sticas administrativas",
+        "Analisi ore per periodo e localit?": "An?lise de horas por per?odo e localidade",
+        "Periodo": "Per?odo",
+        "Trimestre": "Trimestre",
+        "Semestre": "Semestre",
+        "Anno": "Ano",
+        "Applica filtro": "Aplicar filtro",
+        "Ore del periodo": "Horas do per?odo",
+        "Ore dell'anno": "Horas do ano",
+        "Top localit?": "Top localidade",
+        "Ore per localit?": "Horas por localidade",
+        "Ore per mese": "Horas por m?s",
+        "Esporta statistiche in PDF": "Exportar estat?sticas em PDF",
+        "Seleziona un dipendente per esportare.": "Selecione um funcion?rio para exportar.",},
     "en": {
         "Admin": "Admin",
         "Admin cria e designa atividades para os colaboradores": "Admin creates and assigns activities to collaborators",
         "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Recognition Cards | FlashPoint",
+        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup & Cleanup | FlashPoint",
         "Admin • Locais | FlashPoint": "Admin • Locations | FlashPoint",
         "Admin • Modifica Profilo | FlashPoint": "Admin • Edit Profile | FlashPoint",
         "Admin • Modifica Punto | FlashPoint": "Admin • Edit Entry | FlashPoint",
@@ -471,6 +504,7 @@ TEXT_TRANSLATIONS = {
         "Nessun locale registrato.": "No location registered.",
         "Nessun messaggio inserito.": "No message provided.",
         "Nessun ordine registrato.": "No order registered.",
+        "Nessuno": "None",
         "Nessun utente registrato.": "No user registered.",
         "Nessuna nota inserita.": "No note provided.",
         "Nessuna presenza registrata con questi filtri.": "No attendance records for these filters.",
@@ -549,11 +583,36 @@ TEXT_TRANSLATIONS = {
         "a": "in",
         "email non disponibile": "email not available",
         "opzionale": "optional",
-    },
+    
+        "Mostra": "Show",
+        "Telefone": "Phone",
+        "Telefone de emergência": "Emergency phone",
+        "Ragione Sociale": "Company name",
+        "Responsabile tecnico": "Technical manager",
+        "Indirizzo": "Address",
+        "P.IVA": "VAT",
+        "Datore di Lavoro": "Employer",
+        "Intestazione azienda": "Company heading",
+        "Admin ? Statistiche | FlashPoint": "Admin ? Statistics | FlashPoint",
+        "Statistiche amministrative": "Administrative statistics",
+        "Analisi ore per periodo e localit?": "Hours analysis by period and location",
+        "Periodo": "Period",
+        "Trimestre": "Quarter",
+        "Semestre": "Semester",
+        "Anno": "Year",
+        "Applica filtro": "Apply filter",
+        "Ore del periodo": "Period hours",
+        "Ore dell'anno": "Year hours",
+        "Top localit?": "Top location",
+        "Ore per localit?": "Hours by location",
+        "Ore per mese": "Hours by month",
+        "Esporta statistiche in PDF": "Export statistics to PDF",
+        "Seleziona un dipendente per esportare.": "Select an employee to export.",},
     "it": {
         "Admin": "Admin",
         "Admin cria e designa atividades para os colaboradores": "L'amministratore crea e assegna le attività ai collaboratori",
         "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Tesserini di riconoscimento | FlashPoint",
+        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Pulizia | FlashPoint",
         "Admin • Locais | FlashPoint": "Admin • Locali | FlashPoint",
         "Admin • Modifica Profilo | FlashPoint": "Admin • Modifica profilo | FlashPoint",
         "Admin • Modifica Punto | FlashPoint": "Admin • Modifica punto | FlashPoint",
@@ -660,6 +719,7 @@ TEXT_TRANSLATIONS = {
         "Nessun locale registrato.": "Nessun locale registrato.",
         "Nessun messaggio inserito.": "Nessun messaggio inserito.",
         "Nessun ordine registrato.": "Nessun ordine registrato.",
+        "Nessuno": "Nessuno",
         "Nessun utente registrato.": "Nessun utente registrato.",
         "Nessuna nota inserita.": "Nessuna nota inserita.",
         "Nessuna presenza registrata con questi filtri.": "Nessuna presenza registrata con questi filtri.",
@@ -738,7 +798,31 @@ TEXT_TRANSLATIONS = {
         "a": "a",
         "email non disponibile": "email non disponibile",
         "opzionale": "opzionale",
-    },
+    
+        "Mostra": "Mostra",
+        "Telefone": "Telefono",
+        "Telefone de emergência": "Telefono di emergenza",
+        "Ragione Sociale": "Ragione sociale",
+        "Responsabile tecnico": "Responsabile tecnico",
+        "Indirizzo": "Indirizzo",
+        "P.IVA": "P.IVA",
+        "Datore di Lavoro": "Datore di Lavoro",
+        "Intestazione azienda": "Intestazione azienda",
+        "Admin ? Statistiche | FlashPoint": "Admin ? Statistiche | FlashPoint",
+        "Statistiche amministrative": "Statistiche amministrative",
+        "Analisi ore per periodo e localit?": "Analisi ore per periodo e localit?",
+        "Periodo": "Periodo",
+        "Trimestre": "Trimestre",
+        "Semestre": "Semestre",
+        "Anno": "Anno",
+        "Applica filtro": "Applica filtro",
+        "Ore del periodo": "Ore del periodo",
+        "Ore dell'anno": "Ore dell'anno",
+        "Top localit?": "Top localit?",
+        "Ore per localit?": "Ore per localit?",
+        "Ore per mese": "Ore per mese",
+        "Esporta statistiche in PDF": "Esporta statistiche in PDF",
+        "Seleziona un dipendente per esportare.": "Seleziona un dipendente per esportare.",},
 }
 
 # =========================
@@ -826,6 +910,39 @@ def safe_next_url(target):
     return target
 
 
+
+
+
+def _safe_int(value, default):
+    try:
+        return int(value)
+    except Exception:
+        return default
+
+
+def _period_range(periodo, anno, mese, trimestre, semestre):
+    if periodo == "month":
+        start = date(anno, mese, 1)
+        last_day = calendar.monthrange(anno, mese)[1]
+        end = date(anno, mese, last_day)
+    elif periodo == "quarter":
+        start_month = (trimestre - 1) * 3 + 1
+        end_month = start_month + 2
+        start = date(anno, start_month, 1)
+        last_day = calendar.monthrange(anno, end_month)[1]
+        end = date(anno, end_month, last_day)
+    elif periodo == "semester":
+        start_month = 1 if semestre == 1 else 7
+        end_month = 6 if semestre == 1 else 12
+        start = date(anno, start_month, 1)
+        last_day = calendar.monthrange(anno, end_month)[1]
+        end = date(anno, end_month, last_day)
+    else:
+        start = date(anno, 1, 1)
+        end = date(anno, 12, 31)
+
+    return start.isoformat(), end.isoformat()
+
 @app.context_processor
 def inject_i18n():
     return {
@@ -851,6 +968,10 @@ def formatar_data_somente_data(timestamp):
         # Se for datetime
         if isinstance(timestamp, datetime):
             return timestamp.strftime("%d/%m/%Y")
+        # Se for string no formato "YYYY-MM-DD"
+        if isinstance(timestamp, str) and len(timestamp) == 10 and "-" in timestamp:
+            dt = datetime.strptime(timestamp, "%Y-%m-%d")
+            return dt.strftime("%d/%m/%Y")
         # Se for string no formato "YYYY-MM-DD HH:MM:SS"
         dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
         return dt.strftime("%d/%m/%Y")
@@ -1017,7 +1138,7 @@ def salvar_foto_perfil(file_storage, uid, foto_anterior=None):
 
 def foto_url(value):
     if not value:
-        return url_for("static", filename="img/logo-mini2.png")
+        return url_for("static", filename="img/perfis/user.png")
     if is_remote_url(value):
         return value
     return url_for("static", filename=f"img/perfis/{value}")
@@ -1026,11 +1147,24 @@ def foto_url(value):
 app.jinja_env.globals["foto_url"] = foto_url
 
 
+def whatsapp_link(phone, message=""):
+    if not phone:
+        return ""
+    digits = "".join(ch for ch in str(phone) if ch.isdigit())
+    if not digits:
+        return ""
+    base = f"https://wa.me/{digits}"
+    if message:
+        return f"{base}?text={quote(message)}"
+    return base
+
+
+app.jinja_env.globals["whatsapp_link"] = whatsapp_link
+
+
 def decimal_para_hhmm(horas_decimal):
     """Converte decimal para hh:mm"""
-    h = int(horas_decimal)
-    m = int(round((horas_decimal - h) * 60))
-    return f"{h:02d}:{m:02d}"
+    return formatar_horas_hhmm(horas_decimal)
 
 def formatar_data(data_str):
     """Converte data yyyy-mm-dd para dd/mm/aaaa"""
@@ -1039,6 +1173,16 @@ def formatar_data(data_str):
         return dt.strftime("%d/%m/%Y")
     except:
         return data_str
+
+def formatar_horas_hhmm(horas_decimal):
+    """Converte horas em decimal para HH:MM."""
+    try:
+        total_min = int(round(float(horas_decimal) * 60))
+    except Exception:
+        return "00:00"
+    horas = total_min // 60
+    minutos = total_min % 60
+    return f"{horas:02d}:{minutos:02d}"
     
 @app.context_processor
 def inject_usuario():
@@ -1118,7 +1262,7 @@ def horas_por_mes(uid, ano, mes):
         if data.year == ano and data.month == mes:
             total += float(d["horas"])
 
-    return round(total, 1)
+    return total
 
 
 
@@ -1148,7 +1292,8 @@ def ranking_mensal(ano, mes, limite=5):
     for uid, horas in ranking_ordenado[:limite]:
         resultado.append({
             "nome": nomes.get(uid, "Usuário"),
-            "horas": round(horas, 1)
+            "horas": horas,
+            "horas_hhmm": formatar_horas_hhmm(horas)
         })
 
     return resultado
@@ -1174,7 +1319,7 @@ def horas_por_ano(uid, ano):
         if data.year == ano:
             total += float(d["horas"])
 
-    return round(total, 1)
+    return total
 
 
 
@@ -1435,9 +1580,9 @@ def dashboard():
     return render_template(
         "dashboard.html",
         usuario=usuario,
-        horas_mes_atual=horas_mes_atual,
-        horas_mes_anterior=horas_mes_anterior,
-        horas_ano=horas_ano,
+        horas_mes_atual=formatar_horas_hhmm(horas_mes_atual),
+        horas_mes_anterior=formatar_horas_hhmm(horas_mes_anterior),
+        horas_ano=formatar_horas_hhmm(horas_ano),
         ranking=ranking,
         posicao=posicao
     )
@@ -1475,13 +1620,65 @@ def home():
 
     return render_template(
     "home.html",
-    horas_mes_atual=horas_mes_atual,
-    horas_mes_anterior=horas_mes_anterior,
-    horas_ano=horas_ano,
+    horas_mes_atual=formatar_horas_hhmm(horas_mes_atual),
+    horas_mes_anterior=formatar_horas_hhmm(horas_mes_anterior),
+    horas_ano=formatar_horas_hhmm(horas_ano),
     ranking=ranking,
     posicao=posicao
 )
 
+
+
+# =========================
+# AJUDA / MANUAL
+# =========================
+
+@app.route("/help")
+def help_page():
+    if "uid" not in session:
+        return redirect("/")
+
+    usuario = get_usuario_logado() or {}
+    is_admin_user = usuario.get("tipo") == "admin"
+    return render_template("help.html", is_admin_user=is_admin_user)
+
+
+@app.route("/help/manuale/<tipo>")
+def help_manuale(tipo):
+    if "uid" not in session:
+        return redirect("/")
+
+    usuario = get_usuario_logado() or {}
+    is_admin_user = usuario.get("tipo") == "admin"
+
+    if tipo == "consigliato":
+        tipo = "admin" if is_admin_user else "dipendente"
+
+    if tipo == "admin" and not is_admin_user:
+        return redirect(url_for("help_manuale", tipo="dipendente"))
+
+    manuals = {
+        "dipendente": ("MANUALE_UTENTE_DIPENDENTE_IT.md", "Manuale Utente Dipendente"),
+        "admin": ("MANUALE_UTENTE_ADMIN_IT.md", "Manuale Utente Admin"),
+    }
+
+    if tipo not in manuals:
+        return redirect(url_for("help_page"))
+
+    filename, titolo = manuals[tipo]
+    manual_path = os.path.join(app.root_path, filename)
+    if not os.path.exists(manual_path):
+        return redirect(url_for("help_page"))
+
+    with open(manual_path, "r", encoding="utf-8") as handle:
+        contenuto = handle.read()
+
+    return render_template(
+        "help_manuale.html",
+        titolo=titolo,
+        contenuto=contenuto,
+        is_admin_user=is_admin_user
+    )
 
 
 # =========================
@@ -1529,6 +1726,7 @@ def register_usuario():
                 "email": email,
                 "data_nascimento": "",
                 "pais": "",
+                "foto_url": "user.png",
                 "tipo": "usuario"
             })
 
@@ -1564,7 +1762,7 @@ def perfil_usuario():
     usuario = db.collection("usuarios").document(uid).get().to_dict()
 
     ano_atual = datetime.now().year
-    total_horas_ano = horas_por_ano(uid, ano_atual)
+    total_horas_ano = formatar_horas_hhmm(horas_por_ano(uid, ano_atual))
 
     return render_template(
         "perfil.html",
@@ -1594,8 +1792,8 @@ def perfil_editar():
             "sobrenome": request.form.get("sobrenome"),
             "data_nascimento": request.form.get("data_nascimento"),
             "pais": request.form.get("pais"),
-            "data_assuncao": request.form.get("data_assuncao"),
-            "cargo": request.form.get("cargo"),
+            "telefone": request.form.get("telefone"),
+            "telefone_emergencia": request.form.get("telefone_emergencia"),
             "foto_url": foto_input,
         }
 
@@ -1603,6 +1801,122 @@ def perfil_editar():
         return redirect("/perfil")
 
     return render_template("perfil_editar.html", usuario=usuario)
+
+
+# =========================
+# ADMIN - ESTATISTICHE
+# =========================
+
+@app.route("/admin/estatisticas", methods=["GET"])
+def admin_estatisticas():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    hoje = datetime.now()
+    periodo = request.args.get("periodo", "month")
+    anno = _safe_int(request.args.get("anno"), hoje.year)
+    mese = _safe_int(request.args.get("mese"), hoje.month)
+    trimestre = _safe_int(request.args.get("trimestre"), ((hoje.month - 1) // 3) + 1)
+    semestre = _safe_int(request.args.get("semestre"), 1 if hoje.month <= 6 else 2)
+
+    if mese < 1 or mese > 12:
+        mese = hoje.month
+    if trimestre < 1 or trimestre > 4:
+        trimestre = ((hoje.month - 1) // 3) + 1
+    if semestre not in (1, 2):
+        semestre = 1 if hoje.month <= 6 else 2
+
+    start_date, end_date = _period_range(periodo, anno, mese, trimestre, semestre)
+
+    pontos_ref = db.collection("pontos")
+    manual_filter = False
+    try:
+        pontos_docs = list(pontos_ref.where("data", ">=", start_date).where("data", "<=", end_date).stream())
+    except Exception:
+        manual_filter = True
+        pontos_docs = list(db.collection("pontos").stream())
+
+    total_periodo = 0.0
+    horas_por_local = {}
+
+    for doc in pontos_docs:
+        p = doc.to_dict()
+        data_str = p.get("data", "")
+        if manual_filter and not (start_date <= data_str <= end_date):
+            continue
+
+        try:
+            horas_val = float(p.get("horas", 0))
+        except Exception:
+            horas_val = 0.0
+
+        total_periodo += horas_val
+        local = p.get("local", "-") or "-"
+        horas_por_local[local] = horas_por_local.get(local, 0.0) + horas_val
+
+    locais_ordenados = sorted(horas_por_local.items(), key=lambda x: x[1], reverse=True)
+    top_local_nome = locais_ordenados[0][0] if locais_ordenados else "-"
+    top_local_horas = formatar_horas_hhmm(locais_ordenados[0][1]) if locais_ordenados else "00:00"
+
+    locais_table = [
+        {"nome": nome, "horas": formatar_horas_hhmm(h)}
+        for nome, h in locais_ordenados
+    ]
+
+    top_locais_labels = [l[0] for l in locais_ordenados[:8]]
+    top_locais_values = [round(l[1], 2) for l in locais_ordenados[:8]]
+
+    # Totale anno + ore per mese
+    start_anno = f"{anno}-01-01"
+    end_anno = f"{anno}-12-31"
+    manual_filter_year = False
+    try:
+        pontos_anno = list(db.collection("pontos").where("data", ">=", start_anno).where("data", "<=", end_anno).stream())
+    except Exception:
+        manual_filter_year = True
+        pontos_anno = list(db.collection("pontos").stream())
+
+    total_anno = 0.0
+    ore_per_mese = [0.0] * 12
+    for doc in pontos_anno:
+        p = doc.to_dict()
+        data_str = p.get("data", "")
+        if manual_filter_year and not (start_anno <= data_str <= end_anno):
+            continue
+        try:
+            data_obj = datetime.strptime(data_str, "%Y-%m-%d")
+        except Exception:
+            continue
+        try:
+            horas_val = float(p.get("horas", 0))
+        except Exception:
+            horas_val = 0.0
+
+        total_anno += horas_val
+        ore_per_mese[data_obj.month - 1] += horas_val
+
+    mesi_labels = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
+
+    return render_template(
+        "admin_estatisticas.html",
+        periodo=periodo,
+        anno=anno,
+        mese=mese,
+        trimestre=trimestre,
+        semestre=semestre,
+        start_date=start_date,
+        end_date=end_date,
+        total_periodo=formatar_horas_hhmm(total_periodo),
+        total_anno=formatar_horas_hhmm(total_anno),
+        top_local_nome=top_local_nome,
+        top_local_horas=top_local_horas,
+        locais_table=locais_table,
+        locais_labels=json.dumps(top_locais_labels),
+        locais_values=json.dumps(top_locais_values),
+        mesi_labels=json.dumps(mesi_labels),
+        mesi_values=json.dumps([round(v, 2) for v in ore_per_mese]),
+    )
 
 
 # =========================
@@ -1646,6 +1960,9 @@ def admin_perfil_editar(uid):
             "pais": request.form.get("pais"),
             "data_assuncao": request.form.get("data_assuncao"),
             "cargo": request.form.get("cargo"),
+            "etichetta_azienda": request.form.get("etichetta_azienda", ""),
+            "telefone": request.form.get("telefone"),
+            "telefone_emergencia": request.form.get("telefone_emergencia"),
             "foto_url": foto_input,
         }
 
@@ -1679,8 +1996,9 @@ def registrar_ponto_usuario():
     locais = []  # opção padrão
     for doc in locais_docs:
         data = doc.to_dict()
-        if data.get("nome"):
-            locais.append({"nome": data["nome"]})
+        nome_local = data.get("ragione_sociale") or data.get("nome")
+        if nome_local:
+            locais.append({"nome": nome_local})
 
     mensagem = None
     error = None
@@ -1796,9 +2114,7 @@ def meus_pontos():
 
         # Horas HH:MM
         horas_totais = float(p.get("horas", 0))
-        horas_int = int(horas_totais)
-        minutos = int(round((horas_totais - horas_int) * 60))
-        horas_hhmm = f"{horas_int:02d}:{minutos:02d}"
+        horas_hhmm = formatar_horas_hhmm(horas_totais)
 
         pontos.append({
             "id": doc.id,
@@ -1818,7 +2134,7 @@ def meus_pontos():
     return render_template(
         "meus_pontos.html",
         pontos=pontos,
-        total_horas=round(total_horas, 1),
+        total_horas=formatar_horas_hhmm(total_horas),
         filtro_data=filtro_data,
         filtro_mes=filtro_mes
     )
@@ -1839,73 +2155,21 @@ def admin_pontos():
 
     uid = session["uid"]
 
-    # Usuário logado
+    # Usu?rio logado
     usuario_doc = db.collection("usuarios").document(uid).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
 
     if usuario.get("tipo") != "admin":
         return "Acesso negado"
 
-    filtro_usuario = ""
+    filtro_usuario = "__none__"
     filtro_mes = ""
+    filtro_local = ""
 
     if request.method == "POST":
-        filtro_usuario = request.form.get("filtro_usuario", "")
+        filtro_usuario = request.form.get("filtro_usuario", "__none__")
         filtro_mes = request.form.get("filtro_mes", "")
-
-    pontos_ref = db.collection("pontos").stream()
-    pontos_list = []
-
-    total_horas = 0
-
-    for doc in pontos_ref:
-        p = doc.to_dict()
-        p["id"] = doc.id
-
-        # Filtro usuário
-        if filtro_usuario and p.get("uid") != filtro_usuario:
-            continue
-
-        # Filtro mês (YYYY-MM)
-        if filtro_mes:
-            if not p.get("data", "").startswith(filtro_mes):
-                continue
-
-        # Soma horas
-        horas = float(p.get("horas", 0))
-        total_horas += horas
-
-        # =========================
-        # 📅 DATA (ORDENA + FORMATA)
-        # =========================
-        data_raw = p.get("data")
-        try:
-            data_obj = datetime.strptime(data_raw, "%Y-%m-%d")
-            p["data_ordem"] = data_obj              # usada só para ordenação
-            p["data_formatada"] = data_obj.strftime("%d/%m/%Y")
-        except Exception:
-            p["data_ordem"] = datetime.min
-            p["data_formatada"] = "-"
-
-        # ⏱️ Formata horas HH:MM
-        h = int(horas)
-        m = int(round((horas - h) * 60))
-        p["horas_formatadas"] = f"{h:02d}:{m:02d}"
-
-        # Nome usuário
-        usuario_p = db.collection("usuarios").document(p["uid"]).get()
-        if usuario_p.exists:
-            udata = usuario_p.to_dict()
-            p["usuario_nome"] = f"{udata.get('nome','')} {udata.get('sobrenome','')}"
-        else:
-            p["usuario_nome"] = "-"
-
-        pontos_list.append(p)
-
-    # =========================
-    # 🔥 ORDENA POR DATA (DESC)
-    # =========================
-    pontos_list.sort(key=lambda x: x["data_ordem"], reverse=False)
+        filtro_local = request.form.get("filtro_local", "")
 
     usuarios_ref = db.collection("usuarios").stream()
     usuarios = []
@@ -1916,23 +2180,266 @@ def admin_pontos():
             "nome": f"{ud.get('nome','')} {ud.get('sobrenome','')}"
         })
 
+    locais_ref = db.collection("locais").stream()
+    locais = []
+    for l in locais_ref:
+        l_data = l.to_dict()
+        if not l_data:
+            continue
+        nome_local = l_data.get("ragione_sociale") or l_data.get("nome")
+        if nome_local:
+            locais.append(nome_local)
+    locais.sort()
+
+    if filtro_usuario == "__none__":
+        return render_template(
+            "admin_pontos.html",
+            pontos=[],
+            total_horas=formatar_horas_hhmm(0),
+            usuarios=usuarios,
+            locais=locais,
+            filtro_usuario=filtro_usuario,
+            filtro_mes=filtro_mes,
+            filtro_local=filtro_local,
+            export_error=request.args.get("export_error")
+        )
+
+    pontos_ref = db.collection("pontos").stream()
+    pontos_list = []
+
+    total_horas = 0
+
+    for doc in pontos_ref:
+        p = doc.to_dict()
+        p["id"] = doc.id
+
+        # Filtro usu?rio
+        if filtro_usuario and filtro_usuario != "__none__" and p.get("uid") != filtro_usuario:
+            continue
+
+        # Filtro m?s (YYYY-MM)
+        if filtro_mes:
+            if not p.get("data", "").startswith(filtro_mes):
+                continue
+
+        # Filtro locale
+        if filtro_local:
+            if p.get("local", "") != filtro_local:
+                continue
+
+        # Soma horas
+        horas = float(p.get("horas", 0))
+        total_horas += horas
+
+        # =========================
+        # ?? DATA (ORDENA + FORMATA)
+        # =========================
+        data_raw = p.get("data")
+        try:
+            data_obj = datetime.strptime(data_raw, "%Y-%m-%d")
+            p["data_ordem"] = data_obj              # usada s? para ordena??o
+            p["data_formatada"] = data_obj.strftime("%d/%m/%Y")
+        except Exception:
+            p["data_ordem"] = datetime.min
+            p["data_formatada"] = "-"
+
+        # ?? Formata horas HH:MM
+        p["horas_formatadas"] = formatar_horas_hhmm(horas)
+
+        # Nome usu?rio
+        usuario_p = db.collection("usuarios").document(p["uid"]).get()
+        if usuario_p.exists:
+            udata = usuario_p.to_dict()
+            p["usuario_nome"] = f"{udata.get('nome','')} {udata.get('sobrenome','')}"
+        else:
+            p["usuario_nome"] = "-"
+
+        pontos_list.append(p)
+
+    # =========================
+    # ?? ORDENA POR DATA (DESC)
+    # =========================
+    pontos_list.sort(key=lambda x: x["data_ordem"], reverse=False)
+
     return render_template(
         "admin_pontos.html",
         pontos=pontos_list,
-        total_horas=f"{total_horas:.2f}",
+        total_horas=formatar_horas_hhmm(total_horas),
         usuarios=usuarios,
+        locais=locais,
         filtro_usuario=filtro_usuario,
         filtro_mes=filtro_mes,
-        backup_error=request.args.get("backup_error")
+        filtro_local=filtro_local
     )
 
+# =========================
+# ADMIN EXPORTAR PONTOS PDF
+# =========================
+
+@app.route("/admin_pontos/exportar_pdf")
+def admin_pontos_exportar_pdf():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid_admin = session["uid"]
+    usuario_doc = db.collection("usuarios").document(uid_admin).get()
+    usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+    if usuario.get("tipo") != "admin":
+        return "Acesso negado"
+
+    filtro_usuario = (request.args.get("filtro_usuario") or "").strip()
+    filtro_mes = (request.args.get("filtro_mes") or "").strip()
+    filtro_local = (request.args.get("filtro_local") or "").strip()
+
+    if not filtro_usuario or filtro_usuario == "__none__":
+        return redirect(url_for("admin_pontos", export_error="Seleziona un dipendente per esportare."))
+
+    usuario_ref = db.collection("usuarios").document(filtro_usuario).get()
+    if not usuario_ref.exists:
+        return redirect(url_for("admin_pontos", export_error="Seleziona un dipendente per esportare."))
+
+    udata = usuario_ref.to_dict()
+    nome_usuario = f"{udata.get('nome','')} {udata.get('sobrenome','')}".strip()
+
+    pontos_docs = db.collection("pontos").where("uid", "==", filtro_usuario).stream()
+
+    cell_style = ParagraphStyle(
+        "cell",
+        parent=getSampleStyleSheet()["Normal"],
+        fontSize=9,
+        leading=11
+    )
+    cell_style.wordWrap = "CJK"
+
+    dados = []
+    total_horas = 0.0
+
+    for doc in pontos_docs:
+        p = doc.to_dict()
+        data_str = p.get("data")
+        if not data_str:
+            continue
+
+        if filtro_mes and not data_str.startswith(filtro_mes):
+            continue
+
+        if filtro_local and p.get("local", "") != filtro_local:
+            continue
+
+        try:
+            horas_val = float(p.get("horas", 0))
+        except Exception:
+            horas_val = 0.0
+
+        total_horas += horas_val
+
+        dados.append([
+            formatar_data(data_str),
+            p.get("local", "-"),
+            formatar_horas_hhmm(horas_val),
+            Paragraph(p.get("notas", "") or "-", cell_style)
+        ])
+
+    if not dados:
+        return redirect(url_for("admin_pontos", export_error="Nessuna presenza trovata con questi filtri."))
+
+    buffer = BytesIO()
+    pdf = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm
+    )
+
+    styles = getSampleStyleSheet()
+    cell_style = ParagraphStyle(
+        "cell",
+        parent=styles["Normal"],
+        fontSize=9,
+        leading=11
+    )
+    cell_style.wordWrap = "CJK"
+    elementos = []
+
+    logo_path = os.path.join(
+        os.path.dirname(__file__), "static", "img", "logo-login.png"
+    )
+    if os.path.exists(logo_path):
+        elementos.append(Image(logo_path, width=5.5*cm, height=2.5*cm))
+        elementos.append(Spacer(1, 12))
+
+    elementos.append(Paragraph("Rapporto presenze", styles["Title"]))
+    elementos.append(Spacer(1, 12))
+
+    if filtro_mes and "-" in filtro_mes:
+        ano, mes = filtro_mes.split("-")
+        periodo = f"{mes}/{ano}"
+    else:
+        periodo = "Tutto il periodo"
+    if filtro_local:
+        periodo = f"{periodo} - {filtro_local}"
+
+    elementos.append(Paragraph(
+        f"<b>Collaboratore:</b> {nome_usuario}<br/>"
+        f"<b>Periodo:</b> {periodo}",
+        styles["Normal"]
+    ))
+
+    elementos.append(Spacer(1, 15))
+
+    tabela = Table(
+        [["Data", "Locale", "Ore", "Note"]] + dados,
+        colWidths=[4*cm, 4*cm, 2.5*cm, 5.5*cm]
+    )
+
+    tabela.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#041955")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (2, 1), (2, -1), "CENTER"),
+    ]))
+
+    elementos.append(tabela)
+    elementos.append(Spacer(1, 12))
+
+    elementos.append(Paragraph(
+        f"<b>Totale ore:</b> {formatar_horas_hhmm(total_horas)}",
+        styles["Heading2"]
+    ))
+    elementos.append(Spacer(1, 18))
+    elementos.append(Paragraph("Firma del collaboratore:", styles["Normal"]))
+    elementos.append(Spacer(1, 18))
+    elementos.append(Paragraph("_______________________________", styles["Normal"]))
+    elementos.append(Spacer(1, 12))
+    elementos.append(Paragraph("Firma responsabile azienda:", styles["Normal"]))
+    elementos.append(Spacer(1, 18))
+    elementos.append(Paragraph(
+        "_______________________________<br/>"
+        f"Data: {datetime.now().strftime('%d/%m/%Y')}",
+        styles["Normal"]
+    ))
+
+    pdf.build(elementos)
+    buffer.seek(0)
+
+    nome_arquivo = f"presenze_{nome_usuario.replace(' ', '_')}.pdf"
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=nome_arquivo,
+        mimetype="application/pdf"
+    )
 
 
 # =========================
 # ADMIN BACKUP/EXCLUIR PONTOS
 # =========================
 
-@app.route("/admin_pontos/backup", methods=["POST"])
+@app.route("/admin_pontos/backup", methods=["GET", "POST"])
 def admin_pontos_backup():
     if "uid" not in session:
         return redirect("/")
@@ -1944,6 +2451,22 @@ def admin_pontos_backup():
     if usuario.get("tipo") != "admin":
         return "Acesso negado"
 
+    if request.method == "GET":
+        usuarios_ref = db.collection("usuarios").stream()
+        usuarios = []
+        for u in usuarios_ref:
+            ud = u.to_dict()
+            usuarios.append({
+                "uid": u.id,
+                "nome": f"{ud.get('nome','')} {ud.get('sobrenome','')}"
+            })
+
+        return render_template(
+            "admin_backup_pontos.html",
+            usuarios=usuarios,
+            backup_error=request.args.get("backup_error")
+        )
+
     filtro_usuario = request.form.get("filtro_usuario", "").strip()
     mes_inicio = request.form.get("mes_inicio", "").strip()
     mes_fim = request.form.get("mes_fim", "").strip()
@@ -1951,7 +2474,7 @@ def admin_pontos_backup():
 
     start_date, end_date, erro, mes_inicio, mes_fim = parse_month_range(mes_inicio, mes_fim)
     if erro:
-        return redirect(url_for("admin_pontos", backup_error=erro))
+        return redirect(url_for("admin_pontos_backup", backup_error=erro))
 
     pontos_ref = db.collection("pontos")
 
@@ -1984,12 +2507,7 @@ def admin_pontos_backup():
         except Exception:
             horas_val = 0
 
-        h = int(horas_val)
-        m = int(round((horas_val - h) * 60))
-        if m == 60:
-            h += 1
-            m = 0
-        horas_hhmm = f"{h:02d}:{m:02d}"
+        horas_hhmm = formatar_horas_hhmm(horas_val)
 
         rows.append([
             usuarios_map.get(p.get("uid", ""), ""),
@@ -2000,7 +2518,7 @@ def admin_pontos_backup():
         doc_refs.append(doc.reference)
 
     if not rows:
-        return redirect(url_for("admin_pontos", backup_error="Nessuna presenza trovata per il periodo selezionato."))
+        return redirect(url_for("admin_pontos_backup", backup_error="Nessuna presenza trovata per il periodo selezionato."))
 
     output = StringIO(newline="")
     writer = csv.writer(output, delimiter=";")
@@ -2084,8 +2602,11 @@ def editar_ponto_admin(id):
 
     for l in locais_ref:
         l_data = l.to_dict()
-        if l_data and l_data.get("nome"):
-            locais.append(l_data["nome"])
+        if not l_data:
+            continue
+        nome_local = l_data.get("ragione_sociale") or l_data.get("nome")
+        if nome_local:
+            locais.append(nome_local)
 
     if "-" not in locais:
         locais.insert(0, "-")
@@ -2136,16 +2657,76 @@ def gerenciar_locais():
         return "Accesso negato!"         # retorna string simples
 
     if request.method == "POST":
-        novo_local = request.form.get("novo_local", "").strip()
-        if novo_local:
-            db.collection("locais").add({"nome": novo_local})
+        ragione_sociale = (request.form.get("ragione_sociale") or "").strip()
+        responsabile_tecnico = (request.form.get("responsabile_tecnico") or "").strip()
+        telefone = (request.form.get("telefone") or "").strip()
+        indirizzo = (request.form.get("indirizzo") or "").strip()
+        piva = (request.form.get("piva") or "").strip()
+        if ragione_sociale:
+            db.collection("locais").add({
+                "ragione_sociale": ragione_sociale,
+                "responsabile_tecnico": responsabile_tecnico,
+                "telefone": telefone,
+                "indirizzo": indirizzo,
+                "piva": piva,
+            })
             return redirect(url_for("gerenciar_locais"))
 
     locais_docs = db.collection("locais").stream()
-    locais = [doc.to_dict().get("nome","-") for doc in locais_docs]
+    locais = []
+    for doc in locais_docs:
+        data = doc.to_dict() or {}
+        locais.append({
+            "id": doc.id,
+            "ragione_sociale": data.get("ragione_sociale") or data.get("nome") or "-",
+            "responsabile_tecnico": data.get("responsabile_tecnico", ""),
+            "telefone": data.get("telefone", ""),
+            "indirizzo": data.get("indirizzo", ""),
+            "piva": data.get("piva", ""),
+        })
+    locais.sort(key=lambda x: x["ragione_sociale"].lower())
 
     return render_template("admin_locais.html", locais=locais)
 
+
+# =========================
+# EDITAR LOCAL (ADMIN)
+# =========================
+
+@app.route("/adm_locais/editar/<id>", methods=["GET", "POST"])
+def editar_local(id):
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return "Accesso negato!"
+
+    local_ref = db.collection("locais").document(id)
+    local_doc = local_ref.get()
+    if not local_doc.exists:
+        return "Locale non trovato"
+
+    local = local_doc.to_dict() or {}
+    local["id"] = id
+    if not local.get("ragione_sociale"):
+        local["ragione_sociale"] = local.get("nome", "")
+
+    if request.method == "POST":
+        ragione_sociale = (request.form.get("ragione_sociale") or "").strip()
+        responsabile_tecnico = (request.form.get("responsabile_tecnico") or "").strip()
+        telefone = (request.form.get("telefone") or "").strip()
+        indirizzo = (request.form.get("indirizzo") or "").strip()
+        piva = (request.form.get("piva") or "").strip()
+
+        update_data = {
+            "ragione_sociale": ragione_sociale,
+            "responsabile_tecnico": responsabile_tecnico,
+            "telefone": telefone,
+            "indirizzo": indirizzo,
+            "piva": piva,
+        }
+        local_ref.update(update_data)
+        return redirect(url_for("gerenciar_locais"))
+
+    return render_template("admin_locais_editar.html", local=local)
 
 
 # =========================
@@ -2158,14 +2739,17 @@ def excluir_local():
     if not usuario or usuario.get("tipo") != "admin":
         return "Accesso negato!"
 
+    local_id = request.form.get("local_id")
+    if local_id:
+        db.collection("locais").document(local_id).delete()
+        return redirect(url_for("gerenciar_locais"))
+
     nome = request.form.get("nome")
     if nome:
         locais_ref = db.collection("locais").where("nome", "==", nome).stream()
         for doc in locais_ref:
             db.collection("locais").document(doc.id).delete()
     return redirect(url_for("gerenciar_locais"))
-
-
 
 # =========================
 # ADMIN CARTÕES DE RECONHECIMENTO
@@ -2177,8 +2761,7 @@ def admin_cartoes():
     if not usuario or usuario.get("tipo") != "admin":
         return "Acesso negado!"
 
-    usuarios = get_all_users()
-    return render_template("admin_cartoes.html", usuarios=usuarios)
+    return redirect(url_for("admin_perfis"))
 
 
 
@@ -2416,6 +2999,15 @@ def exportar_relatorio():
     pontos_ref = db.collection("pontos").where("uid", "==", uid)
     pontos_docs = pontos_ref.stream()
 
+    styles = getSampleStyleSheet()
+    cell_style = ParagraphStyle(
+        "cell",
+        parent=styles["Normal"],
+        fontSize=9,
+        leading=11
+    )
+    cell_style.wordWrap = "CJK"
+
     dados = []
     total_horas_float = 0.0
 
@@ -2455,9 +3047,7 @@ def exportar_relatorio():
 
         # 🔹 horas (FLOAT → HH:MM)
         horas_totais = float(p.get("horas", 0))
-        horas_int = int(horas_totais)
-        minutos = int(round((horas_totais - horas_int) * 60))
-        horas_hhmm = f"{horas_int:02d}:{minutos:02d}"
+        horas_hhmm = formatar_horas_hhmm(horas_totais)
 
         total_horas_float += horas_totais
 
@@ -2465,13 +3055,11 @@ def exportar_relatorio():
             data_formatada,
             p.get("local", "-"),
             horas_hhmm,
-            p.get("notas", "")
+            Paragraph(p.get("notas", "") or "-", cell_style)
         ])
 
     # 🔹 TOTAL FINAL
-    total_int = int(total_horas_float)
-    total_min = int(round((total_horas_float - total_int) * 60))
-    total_horas = f"{total_int:02d}:{total_min:02d}"
+    total_horas = formatar_horas_hhmm(total_horas_float)
 
     # =========================
     # PDF
@@ -2487,7 +3075,6 @@ def exportar_relatorio():
         bottomMargin=2*cm
     )
 
-    styles = getSampleStyleSheet()
     elementos = []
 
     # LOGO
@@ -2502,7 +3089,13 @@ def exportar_relatorio():
     elementos.append(Paragraph("Rapporto presenze", styles["Title"]))
     elementos.append(Spacer(1, 12))
 
-    periodo = filtro_data or filtro_mes or "Tutto il periodo"
+    if filtro_data:
+        periodo = formatar_data(filtro_data)
+    elif filtro_mes and "-" in filtro_mes:
+        ano, mes = filtro_mes.split("-")
+        periodo = f"{mes}/{ano}"
+    else:
+        periodo = "Tutto il periodo"
 
     elementos.append(Paragraph(
         f"<b>Collaboratore:</b> {nome_usuario}<br/>"
@@ -2537,9 +3130,13 @@ def exportar_relatorio():
 
     elementos.append(Spacer(1, 30))
 
-    # ASSINATURA
+    # FIRME
     elementos.append(Paragraph("Firma del collaboratore:", styles["Normal"]))
-    elementos.append(Spacer(1, 20))
+    elementos.append(Spacer(1, 18))
+    elementos.append(Paragraph("_______________________________", styles["Normal"]))
+    elementos.append(Spacer(1, 12))
+    elementos.append(Paragraph("Firma responsabile azienda:", styles["Normal"]))
+    elementos.append(Spacer(1, 18))
     elementos.append(Paragraph(
         "_______________________________<br/>"
         f"Data: {datetime.now().strftime('%d/%m/%Y')}",
@@ -2559,6 +3156,178 @@ def exportar_relatorio():
     )
 
 
+
+
+# =========================
+# EXPORTAR ESTATISTICAS EM PDF (ADMIN)
+# =========================
+
+@app.route("/admin/estatisticas/pdf")
+def exportar_estatisticas_pdf():
+    usuario = get_usuario_logado()
+    if not usuario or usuario.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    periodo = request.args.get("periodo", "month")
+    anno = _safe_int(request.args.get("anno"), datetime.now().year)
+    mese = _safe_int(request.args.get("mese"), datetime.now().month)
+    trimestre = _safe_int(request.args.get("trimestre"), ((datetime.now().month - 1) // 3) + 1)
+    semestre = _safe_int(request.args.get("semestre"), 1 if datetime.now().month <= 6 else 2)
+
+    if mese < 1 or mese > 12:
+        mese = datetime.now().month
+    if trimestre < 1 or trimestre > 4:
+        trimestre = ((datetime.now().month - 1) // 3) + 1
+    if semestre not in (1, 2):
+        semestre = 1 if datetime.now().month <= 6 else 2
+
+    start_date, end_date = _period_range(periodo, anno, mese, trimestre, semestre)
+
+    pontos_ref = db.collection("pontos")
+    manual_filter = False
+    try:
+        pontos_docs = list(pontos_ref.where("data", ">=", start_date).where("data", "<=", end_date).stream())
+    except Exception:
+        manual_filter = True
+        pontos_docs = list(db.collection("pontos").stream())
+
+    total_periodo = 0.0
+    horas_por_local = {}
+
+    for doc in pontos_docs:
+        p = doc.to_dict()
+        data_str = p.get("data", "")
+        if manual_filter and not (start_date <= data_str <= end_date):
+            continue
+
+        try:
+            horas_val = float(p.get("horas", 0))
+        except Exception:
+            horas_val = 0.0
+
+        total_periodo += horas_val
+        local = p.get("local", "-") or "-"
+        horas_por_local[local] = horas_por_local.get(local, 0.0) + horas_val
+
+    locais_ordenados = sorted(horas_por_local.items(), key=lambda x: x[1], reverse=True)
+
+    # Totale anno
+    start_anno = f"{anno}-01-01"
+    end_anno = f"{anno}-12-31"
+    manual_filter_year = False
+    try:
+        pontos_anno = list(db.collection("pontos").where("data", ">=", start_anno).where("data", "<=", end_anno).stream())
+    except Exception:
+        manual_filter_year = True
+        pontos_anno = list(db.collection("pontos").stream())
+
+    total_anno = 0.0
+    ore_per_mese = [0.0] * 12
+    for doc in pontos_anno:
+        p = doc.to_dict()
+        data_str = p.get("data", "")
+        if manual_filter_year and not (start_anno <= data_str <= end_anno):
+            continue
+        try:
+            data_obj = datetime.strptime(data_str, "%Y-%m-%d")
+        except Exception:
+            continue
+        try:
+            horas_val = float(p.get("horas", 0))
+        except Exception:
+            horas_val = 0.0
+
+        total_anno += horas_val
+        ore_per_mese[data_obj.month - 1] += horas_val
+
+    # PDF
+    buffer = BytesIO()
+    pdf = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm
+    )
+
+    styles = getSampleStyleSheet()
+    elementos = []
+
+    logo_path = os.path.join(os.path.dirname(__file__), "static", "img", "logo-login.png")
+    if os.path.exists(logo_path):
+        elementos.append(Image(logo_path, width=5.5*cm, height=2.5*cm))
+        elementos.append(Spacer(1, 12))
+
+    elementos.append(Paragraph("Statistiche amministrative", styles["Title"]))
+    elementos.append(Spacer(1, 12))
+
+    periodo_label = {
+        "month": "Mese",
+        "quarter": "Trimestre",
+        "semester": "Semestre",
+        "year": "Anno",
+    }.get(periodo, "Anno")
+
+    elementos.append(Paragraph(
+        f"<b>Periodo:</b> {periodo_label} &nbsp;&nbsp; <b>Dal:</b> {formatar_data(start_date)} &nbsp;&nbsp; <b>Al:</b> {formatar_data(end_date)}",
+        styles["Normal"]
+    ))
+    elementos.append(Spacer(1, 12))
+
+    elementos.append(Paragraph(
+        f"<b>Ore del periodo:</b> {formatar_horas_hhmm(total_periodo)}<br/>"
+        f"<b>Ore dell'anno:</b> {formatar_horas_hhmm(total_anno)}",
+        styles["Normal"]
+    ))
+    elementos.append(Spacer(1, 12))
+
+    tabela_local = [["Locale", "Ore"]]
+    for nome, horas in locais_ordenados:
+        tabela_local.append([nome, formatar_horas_hhmm(horas)])
+
+    table = Table(tabela_local, colWidths=[10*cm, 4*cm])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#041955")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+    ]))
+
+    elementos.append(Paragraph("Ore per localit?", styles["Heading3"]))
+    elementos.append(Spacer(1, 6))
+    elementos.append(table)
+    elementos.append(Spacer(1, 12))
+
+    tabela_mesi = [["Mese", "Ore"]]
+    mesi_labels = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
+    for idx, horas in enumerate(ore_per_mese):
+        tabela_mesi.append([mesi_labels[idx], formatar_horas_hhmm(horas)])
+
+    table_mesi = Table(tabela_mesi, colWidths=[6*cm, 4*cm])
+    table_mesi.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#041955")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+    ]))
+
+    elementos.append(Paragraph("Ore per mese", styles["Heading3"]))
+    elementos.append(Spacer(1, 6))
+    elementos.append(table_mesi)
+
+    pdf.build(elementos)
+    buffer.seek(0)
+
+    nome_arquivo = f"statistiche_{periodo}_{anno}.pdf"
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=nome_arquivo,
+        mimetype="application/pdf"
+    )
 
 
 # =========================

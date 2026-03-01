@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin • Locais | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.form-local {
+    display: grid;
+    gap: 16px;
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-pen me-2"></i>{{ tr("Modifica") }} {{ tr("Locale") }}
+    </h4>
+    <p>{{ tr("Gestione dei locali") }}</p>
+</div>
+
+<hr class="my-4">
+
+<div class="card-box">
+    <form method="POST" class="form-local">
+        <div>
+            <label class="form-label">{{ tr("Ragione Sociale") }}</label>
+            <input type="text"
+                   name="ragione_sociale"
+                   class="form-control"
+                   value="{{ local.ragione_sociale or '' }}"
+                   required>
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Responsabile tecnico") }}</label>
+            <input type="text"
+                   name="responsabile_tecnico"
+                   class="form-control"
+                   value="{{ local.responsabile_tecnico or '' }}">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Telefone") }}</label>
+            <input type="text"
+                   name="telefone"
+                   class="form-control"
+                   value="{{ local.telefone or '' }}">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("Indirizzo") }}</label>
+            <input type="text"
+                   name="indirizzo"
+                   class="form-control"
+                   value="{{ local.indirizzo or '' }}">
+        </div>
+
+        <div>
+            <label class="form-label">{{ tr("P.IVA") }}</label>
+            <input type="text"
+                   name="piva"
+                   class="form-control"
+                   value="{{ local.piva or '' }}">
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save me-1"></i> {{ tr("Salva modifiche") }}
+            </button>
+            <a href="{{ url_for('gerenciar_locais') }}" class="btn btn-secondary">
+                {{ tr("Cancella") }}
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

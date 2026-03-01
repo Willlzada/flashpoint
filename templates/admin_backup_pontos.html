@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin • Backup e Pulizia | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.page-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin: 15px 0 10px;
+}
+
+.alert-warning {
+    border-radius: 12px;
+}
+
+.backup-panel {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin: 15px 0 25px;
+}
+
+.backup-panel h6 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.filtros {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin: 15px 0 25px;
+}
+.filtros form {
+    display: grid;
+    gap: 18px;
+}
+
+@media (min-width: 768px) {
+    .filtros form {
+        grid-template-columns: repeat(4, 1fr);
+        align-items: end;
+    }
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-download me-2"></i>{{ tr("Backup e pulizia") }}
+    </h4>
+    <p>{{ tr("Amministrazione e controllo delle ore") }}</p>
+</div>
+
+<div class="page-actions">
+    <a href="{{ url_for('admin_pontos') }}" class="btn btn-secondary btn-sm">
+        <i class="fa fa-arrow-left me-1"></i>{{ tr("Indietro") }}
+    </a>
+</div>
+
+<hr class="my-3">
+
+<div class="alert alert-warning">
+    <strong>{{ tr("Backup e pulizia") }}:</strong>
+    {{ tr("Il backup viene salvato sul tuo PC, non sul server.") }}
+</div>
+
+{% if backup_error %}
+<div class="alert alert-danger">
+    {{ backup_error }}
+</div>
+{% endif %}
+
+<div class="backup-panel">
+    <h6>{{ tr("Backup e pulizia") }}</h6>
+    <p class="text-muted mb-3">
+        {{ tr("Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?") }}
+    </p>
+
+    <button class="btn btn-outline-primary btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#backup-form" aria-expanded="false" aria-controls="backup-form">
+        <i class="fa fa-eye me-1"></i>{{ tr("Mostra") }}
+    </button>
+
+    <div class="collapse" id="backup-form">
+        <div class="filtros">
+            <form method="POST" action="{{ url_for('admin_pontos_backup') }}">
+
+                <div>
+                    <label class="form-label">{{ tr("Dipendente") }}</label>
+                    <select name="filtro_usuario" class="form-control">
+                        <option value="">{{ tr("Tutti") }}</option>
+                        {% for u in usuarios %}
+                            <option value="{{ u.uid }}">{{ u.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label">{{ tr("Mese iniziale") }}</label>
+                    <input type="month"
+                           name="mes_inicio"
+                           class="form-control">
+                </div>
+
+                <div>
+                    <label class="form-label">{{ tr("Mese finale") }}</label>
+                    <input type="month"
+                           name="mes_fim"
+                           class="form-control">
+                </div>
+
+                <div>
+                    <label class="form-label">{{ tr("Backup e pulizia") }}</label>
+                    <button type="submit"
+                            name="acao"
+                            value="exportar"
+                            class="btn btn-success w-100">
+                        <i class="fa fa-download"></i> {{ tr("Scarica backup") }}
+                    </button>
+                    <button type="submit"
+                            name="acao"
+                            value="exportar_excluir"
+                            class="btn btn-danger w-100 mt-2"
+                            onclick="return confirm('{{ tr("Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?") }}');">
+                        <i class="fa fa-trash"></i> {{ tr("Scarica + elimina") }}
+                    </button>
+                    <small class="text-muted d-block mt-2">
+                        {{ tr("Il backup viene salvato sul tuo PC, non sul server.") }}
+                    </small>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

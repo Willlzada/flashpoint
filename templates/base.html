@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}FlowWork{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo-login.png') }}">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -164,13 +165,6 @@
                 <i class="fa fa-folder-open me-2"></i> {{ t('nav.my_requests') }}
             </a>
         </li>
-    <!-- ===== SIDEBAR DESKTOP ===== 
-        <li>
-            <a href="{{ url_for('work_management') }}" class="nav-link {% if request.path == '/work_management' %}active{% endif %}">
-                <i class="fa fa-briefcase me-2"></i> Minhas Atividades
-            </a>
-        </li>
-    -->
 
 
         <li>
@@ -179,96 +173,73 @@
             </a>
         </li>
 
-        <!-- ===== ITEM ADMIN COLLAPSIBLE ===== -->
         {% if usuario.tipo == 'admin' %}
+
         <li class="border-top my-3"></li>
 
-        <!-- Administração -->
-        <li class="mb-1">
-            <button class="btn btn-toggle d-flex align-items-center w-100 rounded border-0 px-2"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#admin-collapse"
-                    aria-expanded="false">
+        <li class="text-uppercase text-muted small px-2 mb-1">
 
-                <!-- Ícone + texto -->
-                <span class="d-flex align-items-center gap-2">
-                    <i class="fa fa-desktop"></i>
-                    {{ t('nav.admin') }}
-                </span>
+            {{ t('nav.admin') }}
 
-                <!-- Seta à direita -->
-                <i class="fa fa-angle-right ms-auto"></i>
-            </button>
-
-            <div class="collapse" id="admin-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
-
-                    <li>
-                        <a href="{{ url_for('admin_pontos') }}"
-                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
-                            <i class="fa fa-users"></i>
-                            {{ t('nav.admin_hours') }}
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/adm_locais"
-                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
-                            <i class="fa fa-institution"></i>
-                            {{ t('nav.admin_sites') }}
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('admin_cartoes') }}"
-                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
-                            <i class="fa fa-id-badge"></i>
-                            {{ t('nav.admin_badges') }}
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('admin_perfis') }}"
-                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
-                            <i class="fa fa-user-pen"></i>
-                            {{ t('nav.admin_profiles') }}
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('admin_pedidos') }}"
-                        class="link-body-emphasis d-inline-flex align-items-center gap-2 text-decoration-none rounded">
-                            <i class="fa fa-folder"></i>
-                            {{ t('nav.admin_requests') }}
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
         </li>
+
+
+
+        <li>
+            <a href="{{ url_for('admin_pontos') }}" class="nav-link {% if request.path == '/admin_pontos' %}active{% endif %}">
+                <i class="fa fa-users me-2"></i> {{ t('nav.admin_hours') }}
+            </a>
+        </li>
+
+
+        <li>
+            <a href="/adm_locais" class="nav-link {% if request.path == '/adm_locais' %}active{% endif %}">
+                <i class="fa fa-institution me-2"></i> {{ t('nav.admin_sites') }}
+            </a>
+        </li>
+
+
+        <li>
+            <a href="{{ url_for('admin_perfis') }}" class="nav-link {% if request.path == '/admin/perfis' %}active{% endif %}">
+                <i class="fa fa-user-pen me-2"></i> {{ t('nav.admin_profiles') }}
+            </a>
+        </li>
+
+
+        <li>
+
+            <a href="{{ url_for('admin_pedidos') }}" class="nav-link {% if request.path == '/admin/pedidos' %}active{% endif %}">
+
+                <i class="fa fa-folder me-2"></i> {{ t('nav.admin_requests') }}
+
+            </a>
+
+        </li>
+
+        <li>
+            <a href="{{ url_for('admin_pontos_backup') }}" class="nav-link {% if request.path == '/admin_pontos/backup' %}active{% endif %}">
+                <i class="fa fa-database me-2"></i> {{ tr("Backup e pulizia") }}
+            </a>
+        </li>
+
+        
+        <li>
+            <a href="{{ url_for('admin_estatisticas') }}" class="nav-link {% if request.path == '/admin/estatisticas' %}active{% endif %}">
+                <i class="fa fa-chart-bar me-2"></i> {{ t('nav.admin_stats') }}
+            </a>
+        </li>
+
         {% endif %}
 
-        <!-- ===== ITEM ACCOUNT COLLAPSIBLE ===== -->
-        <script>
-        document.querySelectorAll('.btn-toggle').forEach(btn => {
-            const icon = btn.querySelector('.fa-angle-right, .fa-angle-down');
-            const target = document.querySelector(btn.dataset.bsTarget);
 
-            target.addEventListener('show.bs.collapse', () => {
-                icon.classList.remove('fa-angle-right');
-                icon.classList.add('fa-angle-down');
-            });
-
-            target.addEventListener('hide.bs.collapse', () => {
-                icon.classList.remove('fa-angle-down');
-                icon.classList.add('fa-angle-right');
-            });
-        });
-        </script>
 
     </ul>
 
     <hr>
+
+    <a href="{{ url_for('help_page') }}" class="btn btn-outline-primary btn-sm mb-2 {% if request.path.startswith('/help') %}active{% endif %}">
+        <i class="fa fa-circle-question"></i> Aiuto
+    </a>
 
     <a href="/logout" class="btn btn-outline-secondary btn-sm mb-3">
         <i class="fa fa-sign-out-alt"></i> {{ t('nav.logout') }}
@@ -316,6 +287,11 @@
         <li class="nav-item flex-fill">
             <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.profile') }}">
                 <i class="fa fa-user d-block" width="30" height="30"></i>
+            </a>
+        </li>
+        <li class="nav-item flex-fill">
+            <a href="{{ url_for('help_page') }}" class="nav-link py-3 {% if request.path.startswith('/help') %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Aiuto">
+                <i class="fa fa-circle-question d-block" width="30" height="30"></i>
             </a>
         </li>
     </ul>

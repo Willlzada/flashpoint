@@ -62,6 +62,11 @@
     margin: 8px 0;
     border-top: 1px dashed #ddd;
     padding-top: 6px;
+    white-space: pre-wrap;
+}
+
+.msg-pre {
+    white-space: pre-wrap;
 }
 
 /* STATUS */
@@ -117,9 +122,7 @@
             <div class="pedido-tipo">{{ p.tipo }}</div>
         </div>
 
-        <div class="pedido-msg">
-            {{ p.mensagem }}
-        </div>
+        <div class="pedido-msg">{{ p.mensagem }}</div>
 
         <div class="pedido-status">
             {% if p.status == "in sospeso" %}
@@ -179,7 +182,7 @@
             <tr>
                 <td>{{ p.nome }}</td>
                 <td>{{ p.tipo }}</td>
-                <td>{{ p.mensagem }}</td>
+                <td><div class="msg-pre">{{ p.mensagem }}</div></td>
                 <td>{{ formatar_data_pedido(p.criado_em) }}</td>
                 <td>
                     {% if p.status == "in sospeso" %}

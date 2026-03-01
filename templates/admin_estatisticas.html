@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin • Statistiche | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.stats-cards {
+    display: grid;
+    gap: 14px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #041955, #3450a1);
+    color: #fff;
+    padding: 16px;
+    border-radius: 16px;
+}
+.stat-card span {
+    font-size: 12px;
+    opacity: 0.9;
+}
+.stat-card strong {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.chart-box {
+    background: #fff;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.table-desktop {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 10px;
+}
+
+@media (min-width: 768px) {
+    .stats-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-chart-bar me-2"></i>{{ tr("Statistiche amministrative") }}
+    </h4>
+    <p>{{ tr("Analisi ore per periodo e località") }}</p>
+</div>
+
+<hr class="my-4">
+
+<div class="card-box">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-12 col-md-3">
+            <label class="form-label">{{ tr("Periodo") }}</label>
+            <select name="periodo" id="periodo" class="form-select">
+                <option value="month" {% if periodo == "month" %}selected{% endif %}>{{ tr("Mese") }}</option>
+                <option value="quarter" {% if periodo == "quarter" %}selected{% endif %}>{{ tr("Trimestre") }}</option>
+                <option value="semester" {% if periodo == "semester" %}selected{% endif %}>{{ tr("Semestre") }}</option>
+                <option value="year" {% if periodo == "year" %}selected{% endif %}>{{ tr("Anno") }}</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label class="form-label">{{ tr("Anno") }}</label>
+            <input type="number" name="anno" class="form-control" value="{{ anno }}">
+        </div>
+
+        <div class="col-12 col-md-2" id="field-mese">
+            <label class="form-label">{{ tr("Mese") }}</label>
+            <input type="month" class="form-control" value="{{ anno }}-{{ '%02d'|format(mese) }}"
+                   onchange="document.getElementById('mese').value = this.value.split('-')[1];">
+            <input type="hidden" name="mese" id="mese" value="{{ mese }}">
+        </div>
+
+        <div class="col-12 col-md-2" id="field-trimestre">
+            <label class="form-label">{{ tr("Trimestre") }}</label>
+            <select name="trimestre" class="form-select">
+                <option value="1" {% if trimestre == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if trimestre == 2 %}selected{% endif %}>2</option>
+                <option value="3" {% if trimestre == 3 %}selected{% endif %}>3</option>
+                <option value="4" {% if trimestre == 4 %}selected{% endif %}>4</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-md-2" id="field-semestre">
+            <label class="form-label">{{ tr("Semestre") }}</label>
+            <select name="semestre" class="form-select">
+                <option value="1" {% if semestre == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if semestre == 2 %}selected{% endif %}>2</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-md-3">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-filter me-1"></i>{{ tr("Applica filtro") }}
+            </button>
+        </div>
+        <div class="col-12 col-md-3">
+            <a class="btn btn-outline-secondary w-100"
+               href="{{ url_for('exportar_estatisticas_pdf', periodo=periodo, anno=anno, mese=mese, trimestre=trimestre, semestre=semestre) }}">
+                <i class="fa fa-file-pdf me-1"></i>{{ tr("Esporta statistiche in PDF") }}
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="stats-cards mb-4">
+    <div class="stat-card">
+        <span>{{ tr("Ore del periodo") }}</span>
+        <strong>{{ total_periodo }}</strong>
+        <div class="small mt-1">{{ start_date|formatar_data }} → {{ end_date|formatar_data }}</div>
+    </div>
+    <div class="stat-card">
+        <span>{{ tr("Ore dell'anno") }}</span>
+        <strong>{{ total_anno }}</strong>
+        <div class="small mt-1">{{ tr("Anno") }} {{ anno }}</div>
+    </div>
+    <div class="stat-card">
+        <span>{{ tr("Top località") }}</span>
+        <strong>{{ top_local_nome }}</strong>
+        <div class="small mt-1">{{ top_local_horas }}</div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-6">
+        <div class="chart-box">
+            <h6 class="fw-bold mb-3">{{ tr("Ore per località") }}</h6>
+            <canvas id="chartLocais" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="chart-box">
+            <h6 class="fw-bold mb-3">{{ tr("Ore per mese") }}</h6>
+            <canvas id="chartMesi" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="table-desktop">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>{{ tr("Locale") }}</th>
+                <th class="text-end">{{ tr("Ore") }}</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for l in locais_table %}
+            <tr>
+                <td>{{ l.nome }}</td>
+                <td class="text-end fw-bold">{{ l.horas }}</td>
+            </tr>
+            {% endfor %}
+            {% if not locais_table %}
+            <tr>
+                <td colspan="2" class="text-center text-muted">{{ tr("Nessuna presenza trovata con questi filtri.") }}</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const periodoSelect = document.getElementById("periodo");
+const fieldMese = document.getElementById("field-mese");
+const fieldTrimestre = document.getElementById("field-trimestre");
+const fieldSemestre = document.getElementById("field-semestre");
+
+function toggleFields() {
+    const val = periodoSelect.value;
+    fieldMese.style.display = (val === "month") ? "block" : "none";
+    fieldTrimestre.style.display = (val === "quarter") ? "block" : "none";
+    fieldSemestre.style.display = (val === "semester") ? "block" : "none";
+}
+toggleFields();
+periodoSelect.addEventListener("change", toggleFields);
+
+const locaisLabels = {{ locais_labels|safe }};
+const locaisValues = {{ locais_values|safe }};
+const mesiLabels = {{ mesi_labels|safe }};
+const mesiValues = {{ mesi_values|safe }};
+
+function decToHHMM(val) {
+    const totalMin = Math.round(val * 60);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+
+new Chart(document.getElementById("chartLocais"), {
+    type: "bar",
+    data: {
+        labels: locaisLabels,
+        datasets: [{
+            label: "{{ tr('Ore per località') }}",
+            data: locaisValues,
+            backgroundColor: "#3450a1"
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => decToHHMM(ctx.parsed.y)
+                }
+            }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    callback: (value) => decToHHMM(value)
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("chartMesi"), {
+    type: "line",
+    data: {
+        labels: mesiLabels,
+        datasets: [{
+            label: "{{ tr('Ore per mese') }}",
+            data: mesiValues,
+            borderColor: "#041955",
+            backgroundColor: "rgba(4,25,85,0.12)",
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => decToHHMM(ctx.parsed.y)
+                }
+            }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    callback: (value) => decToHHMM(value)
+                }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

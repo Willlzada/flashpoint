@@ -147,13 +147,10 @@
     }
 
     .filtros form {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         align-items: end;
     }
 
-    .filtros.backup form {
-        grid-template-columns: repeat(4, 1fr);
-    }
 }
 </style>
 
@@ -167,9 +164,9 @@
 
 <hr class="my-4">
 
-{% if backup_error %}
+{% if export_error %}
 <div class="alert alert-danger">
-    {{ backup_error }}
+    {{ tr(export_error) }}
 </div>
 {% endif %}
 
@@ -180,7 +177,8 @@
         <div>
             <label class="form-label">{{ tr("Dipendente") }}</label>
             <select name="filtro_usuario" class="form-control">
-                <option value="">{{ tr("Tutti") }}</option>
+                <option value="__none__" {% if filtro_usuario == "__none__" %}selected{% endif %}>{{ tr("Nessuno") }}</option>
+                <option value="" {% if filtro_usuario == "" %}selected{% endif %}>{{ tr("Tutti") }}</option>
                 {% for u in usuarios %}
                     <option value="{{ u.uid }}"
                         {% if filtro_usuario == u.uid %}selected{% endif %}>
@@ -199,6 +197,19 @@
         </div>
 
         <div>
+            <label class="form-label">{{ tr("Locale") }}</label>
+            <select name="filtro_local" class="form-control">
+                <option value="">{{ tr("Tutti") }}</option>
+                {% for l in locais %}
+                    <option value="{{ l }}"
+                        {% if filtro_local == l %}selected{% endif %}>
+                        {{ l }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
             <button type="submit" class="btn btn-primary w-100">
                 <i class="fa fa-filter"></i> {{ tr("Filtra") }}
             </button>
@@ -210,54 +221,15 @@
     </form>
 </div>
 
-<!-- BACKUP/ARCHIVIO -->
-<div class="filtros backup">
-    <form method="POST" action="{{ url_for('admin_pontos_backup') }}">
-
-        <div>
-            <label class="form-label">{{ tr("Dipendente") }}</label>
-            <select name="filtro_usuario" class="form-control">
-                <option value="">{{ tr("Tutti") }}</option>
-                {% for u in usuarios %}
-                    <option value="{{ u.uid }}">{{ u.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div>
-            <label class="form-label">{{ tr("Mese iniziale") }}</label>
-            <input type="month"
-                   name="mes_inicio"
-                   class="form-control">
-        </div>
-
-        <div>
-            <label class="form-label">{{ tr("Mese finale") }}</label>
-            <input type="month"
-                   name="mes_fim"
-                   class="form-control">
-        </div>
-
-        <div>
-            <label class="form-label">{{ tr("Backup e pulizia") }}</label>
-            <button type="submit"
-                    name="acao"
-                    value="exportar"
-                    class="btn btn-success w-100">
-                <i class="fa fa-download"></i> {{ tr("Scarica backup") }}
-            </button>
-            <button type="submit"
-                    name="acao"
-                    value="exportar_excluir"
-                    class="btn btn-danger w-100 mt-2"
-                    onclick="return confirm('{{ tr("Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?") }}');">
-                <i class="fa fa-trash"></i> {{ tr("Scarica + elimina") }}
-            </button>
-            <small class="text-muted d-block mt-2">
-                {{ tr("Il backup viene salvato sul tuo PC, non sul server.") }}
-            </small>
-        </div>
-
+<div class="filtros">
+    <form method="GET" action="{{ url_for('admin_pontos_exportar_pdf') }}">
+        <input type="hidden" name="filtro_usuario" value="{{ filtro_usuario }}">
+        <input type="hidden" name="filtro_mes" value="{{ filtro_mes }}">
+        <input type="hidden" name="filtro_local" value="{{ filtro_local }}">
+        <button type="submit" class="btn btn-outline-secondary w-100"
+                {% if filtro_usuario == "__none__" or filtro_usuario == "" %}disabled{% endif %}>
+            <i class="fa fa-file-pdf"></i> {{ tr("Esporta PDF") }}
+        </button>
     </form>
 </div>
 
