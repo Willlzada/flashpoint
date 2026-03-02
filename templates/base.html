@@ -191,6 +191,12 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ url_for('admin_registrar_ponto') }}" class="nav-link {% if request.path == '/admin/registrar_ponto' %}active{% endif %}">
+                <i class="fa fa-plus-square me-2"></i> {{ tr("Registra presenza per dipendente") }}
+            </a>
+        </li>
+
 
         <li>
             <a href="/adm_locais" class="nav-link {% if request.path == '/adm_locais' %}active{% endif %}">
@@ -287,11 +293,6 @@
         <li class="nav-item flex-fill">
             <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.profile') }}">
                 <i class="fa fa-user d-block" width="30" height="30"></i>
-            </a>
-        </li>
-        <li class="nav-item flex-fill">
-            <a href="{{ url_for('help_page') }}" class="nav-link py-3 {% if request.path.startswith('/help') %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Aiuto">
-                <i class="fa fa-circle-question d-block" width="30" height="30"></i>
             </a>
         </li>
     </ul>

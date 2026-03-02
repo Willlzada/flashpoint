@@ -164,6 +164,12 @@
 
 <hr class="my-4">
 
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ url_for('admin_registrar_ponto') }}" class="btn btn-primary">
+        <i class="fa fa-plus-square me-1"></i> {{ tr("Registra presenza per dipendente") }}
+    </a>
+</div>
+
 {% if export_error %}
 <div class="alert alert-danger">
     {{ tr(export_error) }}

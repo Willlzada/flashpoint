@@ -1979,6 +1979,110 @@ def admin_perfil_editar(uid):
 from datetime import datetime, timedelta
 from flask import render_template, redirect, session, request, url_for
 
+@app.route("/admin/registrar_ponto", methods=["GET", "POST"])
+def admin_registrar_ponto():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid_admin = session["uid"]
+    admin_doc = db.collection("usuarios").document(uid_admin).get()
+    admin_user = admin_doc.to_dict() if admin_doc.exists else {}
+    if admin_user.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    usuarios = []
+    for doc in db.collection("usuarios").stream():
+        udata = doc.to_dict() or {}
+        if (udata.get("tipo") or "").lower() == "admin":
+            continue
+
+        nome_completo = f"{udata.get('nome', '')} {udata.get('sobrenome', '')}".strip()
+        usuarios.append({
+            "uid": doc.id,
+            "nome": nome_completo or udata.get("email") or doc.id
+        })
+    usuarios.sort(key=lambda u: u["nome"].lower())
+
+    locais = []
+    for doc in db.collection("locais").stream():
+        ldata = doc.to_dict() or {}
+        nome_local = ldata.get("ragione_sociale") or ldata.get("nome")
+        if nome_local and nome_local not in locais:
+            locais.append(nome_local)
+    locais.sort()
+
+    mensagem = None
+    error = None
+
+    if request.method == "POST":
+        uid_funcionario = (request.form.get("uid_usuario") or "").strip()
+        data_ponto = (request.form.get("data") or "").strip()
+        local_selecionado = (request.form.get("local") or "").strip()
+        horas_input = (request.form.get("horas") or "").strip().replace(",", ".")
+        notas_input = (request.form.get("notas") or "").strip()
+
+        if not uid_funcionario or not data_ponto or not local_selecionado or not horas_input:
+            error = "Compila tutti i campi obbligatori."
+
+        funcionario_doc = None
+        funcionario = {}
+        if not error:
+            funcionario_doc = db.collection("usuarios").document(uid_funcionario).get()
+            if not funcionario_doc.exists:
+                error = "Dipendente non trovato."
+            else:
+                funcionario = funcionario_doc.to_dict() or {}
+                if (funcionario.get("tipo") or "").lower() == "admin":
+                    error = "Seleziona un dipendente valido."
+
+        horas = 0.0
+        if not error:
+            try:
+                horas = float(horas_input)
+                if horas <= 0:
+                    raise ValueError()
+            except Exception:
+                error = "Inserisci un numero valido di ore!"
+
+        if not error:
+            try:
+                datetime.strptime(data_ponto, "%Y-%m-%d")
+            except Exception:
+                error = "Data non valida."
+
+        if not error:
+            pontos_existentes = db.collection("pontos") \
+                .where("uid", "==", uid_funcionario) \
+                .where("data", "==", data_ponto) \
+                .stream()
+
+            if any(pontos_existentes):
+                error = f"Il dipendente ha già una presenza registrata per {data_ponto}."
+
+        if not error:
+            agora_italia = datetime.utcnow() + timedelta(hours=1)
+            nome_funcionario = f"{funcionario.get('nome', '')} {funcionario.get('sobrenome', '')}".strip()
+
+            db.collection("pontos").add({
+                "uid": uid_funcionario,
+                "nome": nome_funcionario or funcionario.get("nome") or "Desconhecido",
+                "local": local_selecionado,
+                "data": data_ponto,
+                "horas": horas,
+                "notas": notas_input,
+                "criado_em": agora_italia,
+                "registrado_por_admin_uid": uid_admin,
+            })
+            mensagem = "Presenza registrata con successo."
+
+    return render_template(
+        "admin_registrar_ponto.html",
+        usuarios=usuarios,
+        locais=locais,
+        mensagem=mensagem,
+        error=error,
+    )
+
 @app.route("/registrar_ponto", methods=["GET", "POST"])
 def registrar_ponto_usuario():
     if "uid" not in session:

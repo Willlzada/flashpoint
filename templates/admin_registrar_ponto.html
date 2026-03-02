@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin • Registrar ponto para dipendente | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+
+            <div class="row border-0 pt-4 text-center">
+                <h4 class="fw-bold mb-1 text-dark">
+                    <i class="fa fa-clock me-2"></i>{{ tr("Registrare presenza per dipendente") }}
+                </h4>
+                <p class="text-muted mb-0">
+                    {{ tr("L'amministratore può registrare ore per qualsiasi dipendente.") }}
+                </p>
+            </div>
+            <hr class="my-4">
+
+            <div class="card-body px-4 pb-4">
+
+                {% if error %}
+                <div class="alert alert-danger text-center rounded-3">
+                    {{ tr(error) }}
+                </div>
+                {% endif %}
+
+                {% if mensagem %}
+                <div class="alert alert-success text-center rounded-3">
+                    {{ tr(mensagem) }}
+                </div>
+                {% endif %}
+
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">{{ tr("Dipendente") }}</label>
+                            <select name="uid_usuario" class="form-select" required>
+                                <option value="" disabled {% if not request.form.get('uid_usuario') %}selected{% endif %}>
+                                    {{ tr("Seleziona il dipendente") }}
+                                </option>
+                                {% for u in usuarios %}
+                                <option value="{{ u.uid }}" {% if request.form.get('uid_usuario') == u.uid %}selected{% endif %}>
+                                    {{ u.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{ tr("Locale") }}</label>
+                            <select name="local" class="form-select" required>
+                                <option value="" disabled {% if not request.form.get('local') %}selected{% endif %}>
+                                    {{ tr("Seleziona il luogo") }}
+                                </option>
+                                {% for local in locais %}
+                                <option value="{{ local }}" {% if request.form.get('local') == local %}selected{% endif %}>
+                                    {{ local }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{ tr("Data") }}</label>
+                            <input type="date" name="data" id="data" class="form-control" value="{{ request.form.get('data', '') }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">{{ tr("Ore lavorate") }}</label>
+                            <input type="number" step="0.25" min="0.25" name="horas" class="form-control" value="{{ request.form.get('horas', '') }}" required>
+                            <div class="form-text">
+                                {{ tr("Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15") }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                {{ tr("Osservazioni") }} <span class="text-muted">({{ tr("opzionale") }})</span>
+                            </label>
+                            <textarea name="notas" rows="3" class="form-control"
+                                      placeholder="{{ tr("Aggiungi un'osservazione rilevante...") }}">{{ request.form.get('notas', '') }}</textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-check me-2"></i>{{ tr("Registrar") }}
+                        </button>
+                        <a href="{{ url_for('admin_pontos') }}" class="btn btn-outline-secondary px-4">
+                            <i class="fa fa-arrow-left me-2"></i>{{ tr("Tornare") }}
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const campoData = document.getElementById("data");
+    if (campoData && !campoData.value) {
+        const hoje = new Date();
+        campoData.value = hoje.toISOString().split("T")[0];
+    }
+});
+</script>
+
+{% endblock %}

@@ -183,6 +183,15 @@
                 <i class="fa fa-id-card me-1"></i> {{ tr("Genera tessera") }}
             </a>
         </div>
+
+        <div class="btn-group mt-2 d-md-none">
+            <a href="{{ url_for('help_page') }}" class="btn btn-outline-primary">
+                <i class="fa fa-circle-question me-1"></i> {{ tr("Aiuto") }}
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">
+                <i class="fa fa-sign-out-alt me-1"></i> {{ t('nav.logout') }}
+            </a>
+        </div>
     </div>
 
     <div class="mt-4">
@@ -216,55 +225,31 @@
             <i class="fa fa-shield me-1"></i> {{ tr("Area amministratore") }}
         </h6>
 
-        <div class="pontos-cards">
-
-
-            <!-- ===== MOBILE ADMIN ACTIONS ===== 
-            <div class="ponto-card">
-                <div class="ponto-header">
-                    <div class="ponto-local">Gestione delle Ativita</div>
-                </div>
-                <div class="ponto-acoes">
-                    <a href="{{ url_for('work_management') }}" class="btn btn-primary w-100">
-                        <i class="fa fa-plus-square me-1"></i> Ativita
-                    </a>
-                </div>
-            </div>
-            -->
-
-            <div class="ponto-card">
-                <div class="ponto-header">
-                    <div class="ponto-local">{{ tr("Gestione delle ore registrate") }}</div>
-                </div>
-                <div class="ponto-acoes">
-                    <a href="/admin_pontos" class="btn btn-primary w-100">
-                        <i class="fa fa-clock me-1"></i> {{ tr("Ore") }}
-                    </a>
-                </div>
-            </div>
-
-            <div class="ponto-card">
-                <div class="ponto-header">
-                    <div class="ponto-local">{{ tr("Gestione dei cantieri") }}</div>
-                </div>
-                <div class="ponto-acoes">
-                    <a href="/adm_locais" class="btn btn-primary w-100">
-                        <i class="fa fa-institution me-1"></i> {{ tr("Cantieri") }}
-                    </a>
-                </div>
-            </div>
-
-            <div class="ponto-card">
-                <div class="ponto-header">
-                    <div class="ponto-local">{{ tr("Richeste degli utenti") }}</div>
-                </div>
-                <div class="ponto-acoes">
-                    <a href="{{ url_for('admin_pedidos') }}" class="btn btn-primary w-100">
-                        <i class="fa fa-folder me-1"></i> {{ tr("Richeste") }}
-                    </a>
-                </div>
-            </div>
-
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('admin_pontos') }}" class="btn btn-outline-primary">
+                <i class="fa fa-users me-1"></i> {{ t('nav.admin_hours') }}
+            </a>
+            <a href="{{ url_for('admin_registrar_ponto') }}" class="btn btn-outline-primary">
+                <i class="fa fa-plus-square me-1"></i> {{ tr("Registra presenza per dipendente") }}
+            </a>
+            <a href="/adm_locais" class="btn btn-outline-primary">
+                <i class="fa fa-institution me-1"></i> {{ t('nav.admin_sites') }}
+            </a>
+            <a href="{{ url_for('admin_perfis') }}" class="btn btn-outline-primary">
+                <i class="fa fa-user-pen me-1"></i> {{ t('nav.admin_profiles') }}
+            </a>
+            <a href="{{ url_for('admin_cartoes') }}" class="btn btn-outline-primary">
+                <i class="fa fa-id-badge me-1"></i> {{ t('nav.admin_badges') }}
+            </a>
+            <a href="{{ url_for('admin_pedidos') }}" class="btn btn-outline-primary">
+                <i class="fa fa-folder me-1"></i> {{ t('nav.admin_requests') }}
+            </a>
+            <a href="{{ url_for('admin_pontos_backup') }}" class="btn btn-outline-primary">
+                <i class="fa fa-database me-1"></i> {{ tr("Backup e pulizia") }}
+            </a>
+            <a href="{{ url_for('admin_estatisticas') }}" class="btn btn-outline-primary">
+                <i class="fa fa-chart-bar me-1"></i> {{ t('nav.admin_stats') }}
+            </a>
         </div>
     </div>
     {% endif %}
