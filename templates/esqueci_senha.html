@@ -1,0 +1,50 @@
+{% extends "base_login.html" %}
+{% block title %}{{ tr("Recupera password | FlashPoint") }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100"
+     style="background: linear-gradient(135deg, #2A3F54 0%, #34495e 100%);">
+    <div class="row justify-content-center w-100">
+        <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='img/logo-login.png') }}"
+                             alt="FlashPoint"
+                             style="width: 230px;">
+                    </div>
+
+                    <h5 class="fw-bold text-center mb-2">{{ tr("Hai dimenticato la password?") }}</h5>
+                    <p class="text-muted text-center mb-4">
+                        {{ tr("Inserisci la tua email per ricevere il link di recupero.") }}
+                    </p>
+
+                    {% if error %}
+                    <div class="alert alert-danger">{{ tr(error) }}</div>
+                    {% endif %}
+
+                    {% if mensagem %}
+                    <div class="alert alert-success">{{ tr(mensagem) }}</div>
+                    {% endif %}
+
+                    <form method="POST" class="d-grid gap-3">
+                        <div>
+                            <label class="form-label">{{ tr("Email") }}</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-paper-plane me-1"></i>{{ tr("Invia link") }}
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('login') }}" class="text-decoration-none">
+                            <i class="fa fa-arrow-left me-1"></i>{{ tr("Tornare") }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

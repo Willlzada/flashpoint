@@ -60,6 +60,17 @@
     font-size: 0.9rem;
     vertical-align: middle;
 }
+
+.ranking-scroll {
+    max-height: 430px; /* ~10 linhas visíveis */
+    overflow-y: auto;
+}
+
+.ranking-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 </style>
 
 <!-- ===== HEADER ===== -->
@@ -129,7 +140,7 @@
             {{ tr("Classifica mensile ore lavorate") }}
         </h5>
 
-        <div class="table-responsive">
+        <div class="table-responsive ranking-scroll">
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>

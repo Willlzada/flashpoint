@@ -7,7 +7,7 @@ import csv
 import calendar
 import uuid
 from urllib.parse import quote, unquote, urlparse
-from firebase_admin import credentials, firestore, storage, initialize_app
+from firebase_admin import credentials, firestore, storage, initialize_app, auth as admin_auth
 from datetime import datetime, date
 from flask import send_file, session, request
 from werkzeug.utils import secure_filename
@@ -87,6 +87,7 @@ TRANSLATIONS = {
         "register.sign_in": "Entrar",
         "register.footer": "© FlashPoint 2026 Todos os direitos reservados.",
     
+        "clock_in.contact_admin_if_site_missing": "Se o local nao estiver na lista, entre em contato com a administracao.",
         "Mostra": "Mostrar",
         "nav.admin_stats": "Estat?sticas",},
     "en": {
@@ -130,6 +131,7 @@ TRANSLATIONS = {
         "register.sign_in": "Sign in",
         "register.footer": "© FlashPoint 2026 All Rights Reserved.",
     
+        "clock_in.contact_admin_if_site_missing": "If the work site is not listed, contact administration.",
         "Mostra": "Show",
         "nav.admin_stats": "Statistics",},
     "it": {
@@ -173,6 +175,7 @@ TRANSLATIONS = {
         "register.sign_in": "Accedi",
         "register.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
     
+        "clock_in.contact_admin_if_site_missing": "Se il cantiere non e presente, contatta l'amministrazione.",
         "Mostra": "Mostra",
         "nav.admin_stats": "Statistiche",},
 }
@@ -1266,7 +1269,7 @@ def horas_por_mes(uid, ano, mes):
 
 
 
-def ranking_mensal(ano, mes, limite=5):
+def ranking_mensal(ano, mes, limite=None):
     pontos = db.collection("pontos").stream()
     ranking = defaultdict(float)
     nomes = {}
@@ -1289,7 +1292,8 @@ def ranking_mensal(ano, mes, limite=5):
     ranking_ordenado = sorted(ranking.items(), key=lambda x: x[1], reverse=True)
 
     resultado = []
-    for uid, horas in ranking_ordenado[:limite]:
+    ranking_filtrado = ranking_ordenado if limite is None else ranking_ordenado[:limite]
+    for uid, horas in ranking_filtrado:
         resultado.append({
             "nome": nomes.get(uid, "Usuário"),
             "horas": horas,
@@ -1685,6 +1689,29 @@ def help_manuale(tipo):
 # LOGIN
 # =========================
 
+@app.route("/esqueci_senha", methods=["GET", "POST"])
+def esqueci_senha():
+    mensagem = None
+    error = None
+
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip()
+
+        if not email:
+            error = "Inserisci un indirizzo email valido."
+        else:
+            try:
+                auth.send_password_reset_email(email)
+                mensagem = "Se l'email esiste, riceverai un link per recuperare la password."
+            except Exception:
+                mensagem = "Se l'email esiste, riceverai un link per recuperare la password."
+
+    return render_template(
+        "esqueci_senha.html",
+        mensagem=mensagem,
+        error=error
+    )
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     error = None
@@ -1694,6 +1721,7 @@ def login():
         try:
             user = auth.sign_in_with_email_and_password(email, password)
             session["uid"] = user["localId"]  # Armazena somente UID
+            session["email"] = user.get("email", email)
             return redirect("/home")
         except:
             error = "Email ou senha inválidos"
@@ -1801,6 +1829,63 @@ def perfil_editar():
         return redirect("/perfil")
 
     return render_template("perfil_editar.html", usuario=usuario)
+
+
+# =========================
+# PERFIL - TROCAR SENHA
+# =========================
+
+@app.route("/perfil/trocar_senha", methods=["GET", "POST"])
+def perfil_trocar_senha():
+    if "uid" not in session:
+        return redirect("/")
+
+    uid = session["uid"]
+    usuario_doc = db.collection("usuarios").document(uid).get()
+    usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+
+    mensagem = None
+    error = None
+
+    if request.method == "POST":
+        senha_atual = (request.form.get("senha_atual") or "").strip()
+        nova_senha = (request.form.get("nova_senha") or "").strip()
+        confirmar_senha = (request.form.get("confirmar_senha") or "").strip()
+
+        if not senha_atual or not nova_senha or not confirmar_senha:
+            error = "Compila tutti i campi."
+        elif len(nova_senha) < 6:
+            error = "La nuova password deve avere almeno 6 caratteri."
+        elif nova_senha != confirmar_senha:
+            error = "La conferma della nuova password non coincide."
+
+        email_usuario = (
+            (session.get("email") or "").strip()
+            or (usuario.get("email") or "").strip()
+        )
+
+        if not error and not email_usuario:
+            error = "Email utente non disponibile. Contatta l'amministratore."
+
+        if not error:
+            try:
+                auth.sign_in_with_email_and_password(email_usuario, senha_atual)
+            except Exception:
+                error = "Password attuale non valida."
+
+        if not error:
+            try:
+                admin_auth.update_user(uid, password=nova_senha)
+                mensagem = "Password aggiornata con successo."
+            except Exception:
+                error = "Errore durante l'aggiornamento della password. Riprova."
+
+    return render_template(
+        "perfil_trocar_senha.html",
+        usuario=usuario,
+        mensagem=mensagem,
+        error=error,
+    )
 
 
 # =========================
@@ -2109,9 +2194,12 @@ def registrar_ponto_usuario():
 
     if request.method == "POST":
         data_ponto = request.form.get("data")
-        local_selecionado = request.form.get("local")
+        local_selecionado = (request.form.get("local") or "").strip()
         horas_input = request.form.get("horas")
         notas_input = request.form.get("notas", "")
+
+        if not local_selecionado:
+            local_selecionado = "-"
 
         # Validar horas
         try:
@@ -2312,6 +2400,15 @@ def admin_pontos():
     pontos_list = []
 
     total_horas = 0
+    dias_semana = {
+        0: "LUN",
+        1: "MAR",
+        2: "MER",
+        3: "GIO",
+        4: "VEN",
+        5: "SAB",
+        6: "DOM",
+    }
 
     for doc in pontos_ref:
         p = doc.to_dict()
@@ -2342,7 +2439,8 @@ def admin_pontos():
         try:
             data_obj = datetime.strptime(data_raw, "%Y-%m-%d")
             p["data_ordem"] = data_obj              # usada s? para ordena??o
-            p["data_formatada"] = data_obj.strftime("%d/%m/%Y")
+            dia_semana = dias_semana.get(data_obj.weekday(), "")
+            p["data_formatada"] = f"{data_obj.strftime('%d/%m/%Y')} • {dia_semana}"
         except Exception:
             p["data_ordem"] = datetime.min
             p["data_formatada"] = "-"

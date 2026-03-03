@@ -37,7 +37,7 @@
                         </div>
                     {% endif %}
 
-                    <form method="POST" class="needs-validation" novalidate>
+                    <form method="POST" class="needs-validation" novalidate id="registrar-ponto-form">
 
                         <div class="row g-3">
 
@@ -46,8 +46,8 @@
                                 <label class="form-label fw-semibold">
                                     {{ tr("Locale") }}
                                 </label>
-                                <select name="local" class="form-select" required>
-                                    <option value="" disabled selected>{{ tr("Seleziona il luogo") }}</option>
+                                <select name="local" id="local" class="form-select">
+                                    <option value="" selected>{{ tr("Seleziona il luogo") }}</option>
                                     {% for local in locais %}
                                         <option value="{{ local.nome }}">{{ local.nome }}</option>
                                     {% endfor %}
@@ -115,13 +115,63 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirmNoLocalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-triangle-exclamation text-warning me-2"></i>{{ tr("Conferma registrazione") }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ tr('Chiudi') }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ tr("Non hai selezionato alcun luogo. Vuoi davvero registrare le ore senza indicare un locale?") }}
+                <div class="mt-2 small text-muted">
+                    {{ t("clock_in.contact_admin_if_site_missing") }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ tr("Annulla") }}</button>
+                <button type="button" id="confirm-no-local-submit" class="btn btn-primary">{{ tr("Conferma e registra") }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registrar-ponto-form");
+    const campoLocal = document.getElementById("local");
     const campoData = document.getElementById("data");
+    const modalEl = document.getElementById("confirmNoLocalModal");
+    const confirmBtn = document.getElementById("confirm-no-local-submit");
+    let confirmWithoutLocal = false;
 
     if (campoData) {
         const hoje = new Date();
         campoData.value = hoje.toISOString().split('T')[0];
+    }
+
+    if (form && campoLocal && modalEl && confirmBtn && window.bootstrap) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        form.addEventListener("submit", function (event) {
+            const localVazio = !(campoLocal.value || "").trim();
+            if (!confirmWithoutLocal && localVazio) {
+                event.preventDefault();
+                modal.show();
+            }
+        });
+
+        confirmBtn.addEventListener("click", function () {
+            confirmWithoutLocal = true;
+            modal.hide();
+            form.requestSubmit();
+        });
+
+        modalEl.addEventListener("hidden.bs.modal", function () {
+            confirmWithoutLocal = false;
+        });
     }
 });
 </script>
@@ -129,3 +179,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 {% endblock %}
+
+
