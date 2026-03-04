@@ -219,10 +219,22 @@
         </div>
 
         <div class="ponto-horas">
+            {% if ponto.tipo_registro == "malattia" %}
+            <span>{{ tr("Tipo") }}</span>
+            <strong class="text-danger">
+                <i class="fa fa-heartbeat me-1"></i>{{ t("clock_in.sick_status") }}
+            </strong>
+            {% elif ponto.tipo_registro == "ferie" %}
+            <span>{{ tr("Tipo") }}</span>
+            <strong class="text-primary">
+                <i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}
+            </strong>
+            {% else %}
             <span>{{ tr("Ore lavorate") }}</span>
             <strong>
                 <i class="fa fa-clock-o me-1"></i>{{ ponto.horas_hhmm }}
             </strong>
+            {% endif %}
         </div>
 
         <div class="ponto-notas">
@@ -257,7 +269,15 @@
             <tr>
                 <td>{{ ponto.data_formatada }}</td>
                 <td>{{ ponto.local }}</td>
-                <td class="fw-bold">{{ ponto.horas_hhmm }}</td>
+                <td class="fw-bold">
+                    {% if ponto.tipo_registro == "malattia" %}
+                    <span class="text-danger"><i class="fa fa-heartbeat me-1"></i>{{ t("clock_in.sick_status") }}</span>
+                    {% elif ponto.tipo_registro == "ferie" %}
+                    <span class="text-primary"><i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}</span>
+                    {% else %}
+                    {{ ponto.horas_hhmm }}
+                    {% endif %}
+                </td>
                 <td>{{ ponto.notas or "—" }}</td>
                 <td class="text-center">
                     <a href="{{ url_for('editar_ponto_admin', id=ponto.id) }}"

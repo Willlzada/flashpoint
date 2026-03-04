@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Profilo incompleto") }} | FlashPoint{% endblock %}
+
+{% block content %}
+<style>
+.incomplete-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.incomplete-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(4, 25, 85, 0.10);
+    border: 1px solid #e8ecf5;
+    overflow: hidden;
+}
+
+.incomplete-header {
+    background: linear-gradient(135deg, #f9fafc, #eef2f9);
+    border-bottom: 1px solid #e5eaf3;
+    padding: 22px 20px 18px;
+}
+
+.incomplete-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #041955;
+    margin: 0 0 6px;
+}
+
+.incomplete-subtitle {
+    margin: 0;
+    color: #4d5566;
+    font-size: 0.95rem;
+}
+
+.incomplete-body {
+    padding: 18px 20px 20px;
+}
+
+.employee-line {
+    color: #1f2a44;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.missing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.missing-item {
+    border: 1px solid #e5eaf3;
+    border-left: 4px solid #d9534f;
+    border-radius: 10px;
+    background: #fcfcfd;
+    padding: 10px 12px;
+    color: #24324d;
+    font-weight: 600;
+}
+
+.incomplete-actions {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+</style>
+
+<div class="incomplete-wrap mt-3 mt-md-4">
+    <div class="incomplete-card">
+        <div class="incomplete-header">
+            <h1 class="incomplete-title">
+                <i class="fa fa-exclamation-triangle text-danger"></i>
+                {{ tr("Profilo incompleto") }}
+            </h1>
+            <p class="incomplete-subtitle">
+                {{ tr("Nao e possivel gerar o cartao enquanto existirem dados obrigatorios em falta.") }}
+            </p>
+        </div>
+
+        <div class="incomplete-body">
+            <div class="employee-line">
+                {{ tr("Utente") }}:
+                <span class="text-dark">
+                    {{ (user.sobrenome or "") }} {{ (user.nome or "") }}
+                </span>
+            </div>
+
+            <p class="text-muted mb-2">{{ tr("Campi da completare") }}:</p>
+
+            <div class="missing-grid">
+                {% for campo in missing_fields %}
+                    <div class="missing-item">
+                        <i class="fa fa-times-circle text-danger me-1"></i>{{ tr(campo.label) }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="incomplete-actions">
+                <a href="{{ edit_url }}" class="btn btn-primary">
+                    <i class="fa fa-edit me-1"></i> {{ tr(edit_label) }}
+                </a>
+                <a href="{{ back_url }}" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left me-1"></i> {{ tr(back_label) }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

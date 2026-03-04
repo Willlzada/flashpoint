@@ -146,7 +146,6 @@
                     <tr>
                         <th>#</th>
                         <th>{{ tr("Utente") }}</th>
-                        <th>{{ tr("Ore") }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,7 +153,6 @@
                     <tr {% if r.nome == usuario.nome %}class="fw-semibold"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ r.nome }}</td>
-                        <td>{{ r.horas_hhmm }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

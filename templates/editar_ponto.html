@@ -1,112 +1,208 @@
-{% extends "base.html" %}
-
+﻿{% extends "base.html" %}
 {% block title %}{{ tr("Admin • Modifica Punto | FlashPoint") }}{% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col-md-8 col-sm-12 mx-auto">
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
 
-        <!-- TÍTULO -->
-        <div class="page-title">
-            <div class="title_left">
-                <h3>{{ tr("Modifica ore") }}</h3>
+.edit-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .edit-card {
+        padding: 16px;
+    }
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-pen-to-square me-2"></i>{{ tr("Modifica ore") }}
+    </h4>
+    <p>{{ tr("Dati del punto") }}</p>
+</div>
+
+<hr class="my-4">
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="edit-card">
+
+            {% if error %}
+            <div class="alert alert-danger text-center rounded-3">
+                {{ tr(error) }}
             </div>
+            {% endif %}
+
+            <form method="POST" class="row g-3" id="editar-ponto-form">
+                <div class="col-12">
+                    <label class="form-label fw-semibold">{{ t("edit.record_type_label") }}</label>
+                    <select name="tipo_registro" id="tipo_registro" class="form-select" required>
+                        <option value="presenza" {% if (ponto.tipo_registro or 'presenza') == 'presenza' %}selected{% endif %}>
+                            {{ t("clock_in.presence_status") }}
+                        </option>
+                        <option value="malattia" {% if ponto.tipo_registro == 'malattia' %}selected{% endif %}>
+                            {{ t("clock_in.sick_status") }}
+                        </option>
+                        <option value="ferie" {% if ponto.tipo_registro == 'ferie' %}selected{% endif %}>
+                            {{ t("clock_in.vacation_status") }}
+                        </option>
+                    </select>
+                    <div class="form-text">{{ t("edit.record_type_help") }}</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">{{ tr("Data") }}</label>
+                    <input type="date" name="data" value="{{ ponto.data }}" class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">{{ tr("Locale") }}</label>
+                    <select name="local" id="local" class="form-select" required>
+                        {% for l in locais %}
+                        <option value="{{ l }}" {% if l == ponto.local %}selected{% endif %}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">{{ tr("Ore") }}</label>
+                    <input type="number"
+                           name="horas"
+                           id="horas"
+                           step="0.25"
+                           min="0"
+                           value="{{ ponto.horas }}"
+                           class="form-control"
+                           required>
+                    <div class="form-text">{{ tr("Usa valori decimali (es: 1.50 = 1h30)") }}</div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">{{ tr("Note") }}</label>
+                    <textarea name="notas"
+                              rows="4"
+                              class="form-control"
+                              placeholder="{{ tr("Osservazioni aggiuntive...") }}">{{ ponto.notas }}</textarea>
+                </div>
+
+                <div class="col-12 d-flex flex-column flex-md-row gap-2 justify-content-end mt-3">
+                    <a href="{{ url_for('admin_pontos') if is_admin_user else url_for('meus_pontos') }}" class="btn btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-1"></i>{{ tr("Annulla") }}
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save me-1"></i>{{ tr("Salva modifiche") }}
+                    </button>
+                </div>
+            </form>
+
         </div>
-
-        <!-- FORMULÁRIO -->
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>{{ tr("Dati del punto") }}</h2>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="x_content">
-
-                <form method="POST" class="form-horizontal form-label-left">
-
-                    <!-- DATA -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            {{ tr("Data") }}
-                        </label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="date"
-                                   name="data"
-                                   value="{{ ponto.data }}"
-                                   class="form-control"
-                                   required>
-                        </div>
-                    </div>
-
-                    <!-- LOCALE -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            {{ tr("Locale") }}
-                        </label>
-                        <div class="col-md-9 col-sm-9">
-                            <select name="local" class="form-control" required>
-                                {% for l in locais %}
-                                    <option value="{{ l }}"
-                                        {% if l == ponto.local %}selected{% endif %}>
-                                        {{ l }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- ORE -->
-                    <div class="form-group row mb-3">
-                        <label class="control-label col-md-3 col-sm-3">
-                            {{ tr("Ore") }}
-                        </label>
-                        <div class="col-md-9 col-sm-9">
-                            <input type="number"
-                                   name="horas"
-                                   step="0.25"
-                                   value="{{ ponto.horas }}"
-                                   class="form-control"
-                                   required>
-                            <small class="text-muted">
-                                {{ tr("Usa valori decimali (es: 1.50 = 1h30)") }}
-                            </small>
-                        </div>
-                    </div>
-
-                    <!-- NOTE -->
-                    <div class="form-group row mb-4">
-                        <label class="control-label col-md-3 col-sm-3">
-                            {{ tr("Note") }}
-                        </label>
-                        <div class="col-md-9 col-sm-9">
-                            <textarea name="notas"
-                                      rows="4"
-                                      class="form-control"
-                                      placeholder="{{ tr("Osservazioni aggiuntive...") }}">{{ ponto.notas }}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="ln_solid"></div>
-
-                    <!-- AÇÕES -->
-                    <div class="form-group row">
-                        <div class="col-md-9 col-sm-9 offset-md-3">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fa fa-save"></i> {{ tr("Salva modifiche") }}
-                            </button>
-                            <a href="/meus_pontos" class="btn btn-secondary">
-                                {{ tr("Annulla") }}
-                            </a>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
     </div>
 </div>
 
+<div class="modal fade" id="confirmNoLocalModalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-triangle-exclamation text-warning me-2"></i>{{ tr("Conferma registrazione") }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ tr('Chiudi') }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ tr("Non hai selezionato alcun luogo. Vuoi davvero registrare le ore senza indicare un locale?") }}
+                <div class="mt-2 small text-muted">
+                    {{ t("clock_in.contact_admin_if_site_missing") }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ tr("Annulla") }}</button>
+                <button type="button" id="confirm-no-local-submit-edit" class="btn btn-primary">{{ tr("Conferma e registra") }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("editar-ponto-form");
+    const tipoSelect = document.getElementById("tipo_registro");
+    const localField = document.getElementById("local");
+    const horasField = document.getElementById("horas");
+    const modalEl = document.getElementById("confirmNoLocalModalEdit");
+    const confirmBtn = document.getElementById("confirm-no-local-submit-edit");
+    let confirmWithoutLocal = false;
+
+    function applyRecordTypeMode() {
+        if (!tipoSelect || !localField || !horasField) return;
+
+        const tipo = (tipoSelect.value || "presenza").toLowerCase();
+        const isAbsence = tipo === "malattia" || tipo === "ferie";
+
+        if (isAbsence) {
+            localField.value = "-";
+            localField.disabled = true;
+            horasField.value = "0";
+            horasField.readOnly = true;
+            horasField.required = false;
+            horasField.classList.add("bg-light");
+        } else {
+            localField.disabled = false;
+            horasField.readOnly = false;
+            horasField.required = true;
+            horasField.classList.remove("bg-light");
+            if ((horasField.value || "").trim() === "0") {
+                horasField.value = "";
+            }
+        }
+    }
+
+    if (tipoSelect) {
+        tipoSelect.addEventListener("change", applyRecordTypeMode);
+        applyRecordTypeMode();
+    }
+
+    if (form && tipoSelect && localField && modalEl && confirmBtn && window.bootstrap) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        form.addEventListener("submit", function (event) {
+            const tipo = (tipoSelect.value || "presenza").toLowerCase();
+            const local = (localField.value || "").trim();
+            const semLocal = !local || local === "-";
+
+            if (tipo === "presenza" && semLocal && !confirmWithoutLocal) {
+                event.preventDefault();
+                modal.show();
+            }
+        });
+
+        confirmBtn.addEventListener("click", function () {
+            confirmWithoutLocal = true;
+            modal.hide();
+            form.requestSubmit();
+        });
+
+        modalEl.addEventListener("hidden.bs.modal", function () {
+            confirmWithoutLocal = false;
+        });
+    }
+});
+</script>
+
 {% endblock %}
+

@@ -262,10 +262,22 @@
         </div>
 
         <div class="ponto-horas">
+            {% if p.tipo_registro == "malattia" %}
+            <span>{{ tr("Tipo") }}</span>
+            <strong class="text-danger">
+                <i class="fa fa-heartbeat me-1"></i>{{ t("clock_in.sick_status") }}
+            </strong>
+            {% elif p.tipo_registro == "ferie" %}
+            <span>{{ tr("Tipo") }}</span>
+            <strong class="text-primary">
+                <i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}
+            </strong>
+            {% else %}
             <span>{{ tr("Ore lavorate") }}</span>
             <strong>
                 <i class="fa fa-clock-o me-1"></i>{{ p.horas_formatadas }}
             </strong>
+            {% endif %}
         </div>
 
         <div class="ponto-notas">
@@ -310,7 +322,15 @@
                 <td>{{ p.usuario_nome }}</td>
                 <td>{{ p.local }}</td>
                 <td>{{ p.data_formatada }}</td>
-                <td class="fw-bold">{{ p.horas_formatadas }}</td>
+                <td class="fw-bold">
+                    {% if p.tipo_registro == "malattia" %}
+                    <span class="text-danger"><i class="fa fa-heartbeat me-1"></i>{{ t("clock_in.sick_status") }}</span>
+                    {% elif p.tipo_registro == "ferie" %}
+                    <span class="text-primary"><i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}</span>
+                    {% else %}
+                    {{ p.horas_formatadas }}
+                    {% endif %}
+                </td>
                 <td>{{ p.notas or "—" }}</td>
                 <td class="text-center">
 

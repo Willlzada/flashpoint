@@ -15,7 +15,8 @@
 
     .cartao {
         width: 253px;
-        height: 390px;
+        min-height: 390px;
+        height: auto;
         background: #fff;
         border-radius: 12px;
 
@@ -29,6 +30,7 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
     }
 
 
@@ -48,17 +50,13 @@
     }
 
 
-    .info h2 {
-        font-size: 20px;
-        font-weight: bold;
-        margin: 0;
-        text-align: center;
-    }
-
     .info p {
         font-size: 14px;
         margin: 2px 0;
         color: #333;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
     }
 
     .info2 p {
@@ -67,11 +65,28 @@
         
     }
 
-    .nome_card p {
-        font-size: 20px;
+    .nome_card .nome-text {
+        font-size: 19px;
         margin-top: 10px;
+        margin-bottom: 8px;
         text-align: center;
-        
+        line-height: 1.2;
+        overflow-wrap: normal;
+        word-break: normal;
+        hyphens: none;
+    }
+
+    .nome-token {
+        white-space: nowrap;
+    }
+
+    .cargo-text {
+        font-size: 14px;
+        line-height: 1.25;
+        margin-bottom: 8px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
     }
 
     .logo {
@@ -84,6 +99,9 @@
         font-size: 11px;
         text-align: center;
         color: #333;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .acoes {
@@ -149,7 +167,12 @@
                 {% endif %}
 
                 <div class="nome_card">
-                <p><strong>{{ user.sobrenome }} {{ user.nome }}</strong></p>
+                <p class="nome-text">
+                    <strong>
+                        <span class="nome-token">{{ user.sobrenome }}</span>
+                        <span class="nome-token">{{ user.nome }}</span>
+                    </strong>
+                </p>
                 </div>
 
 
@@ -157,7 +180,7 @@
                 <p>{{ tr("Data Assunzione") }}: <strong>{{ format_ddmmyyyy(user.data_assuncao) }}</strong></p>
 
                 <p>{{ tr("Ruolo / Mansione") }}:</p>
-                <p><strong>{{ user.cargo }}</strong></p>
+                <p class="cargo-text"><strong>{{ user.cargo }}</strong></p>
 
                 <div class="info2">
                     <p>

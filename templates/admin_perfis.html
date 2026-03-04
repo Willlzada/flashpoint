@@ -91,6 +91,19 @@
 
 <hr class="my-4">
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 {% if usuarios %}
 
 <!-- ===== MOBILE ===== -->
@@ -118,6 +131,14 @@
             <a href="{{ url_for('gerar_cartao', uid=u.uid) }}" class="btn btn-outline-secondary">
                 <i class="fa fa-id-card me-1"></i> {{ tr("Tesserini") }}
             </a>
+            <button type="button"
+                    class="btn btn-outline-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteUserModal"
+                    data-uid="{{ u.uid }}"
+                    data-nome="{{ u.nome }} {{ u.sobrenome }}">
+                <i class="fa fa-trash me-1"></i> {{ tr("Elimina utente") }}
+            </button>
         </div>
     </div>
     {% endfor %}
@@ -160,6 +181,14 @@
                             <i class="fa-brands fa-whatsapp"></i>
                         </a>
                         {% endif %}
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteUserModal"
+                                data-uid="{{ u.uid }}"
+                                data-nome="{{ u.nome }} {{ u.sobrenome }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -173,5 +202,69 @@
     {{ tr("Nessun utente registrato.") }}
 </p>
 {% endif %}
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('admin_perfil_excluir') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="fa fa-exclamation-triangle me-2"></i>{{ tr("Conferma eliminazione") }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="uid" id="delete-user-uid">
+
+                    <p class="mb-2">
+                        {{ tr("Stai per eliminare definitivamente l'utente") }}
+                        <strong id="delete-user-name">-</strong>.
+                    </p>
+                    <p class="text-muted small mb-3">
+                        {{ tr("Questa azione non puo essere annullata.") }}
+                    </p>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="delete-user-hours" name="excluir_pontos">
+                        <label class="form-check-label" for="delete-user-hours">
+                            {{ tr("Elimina anche tutte le ore registrate di questo utente") }}
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        {{ tr("Annulla") }}
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash me-1"></i> {{ tr("Elimina utente") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteModal = document.getElementById("deleteUserModal");
+    if (!deleteModal) return;
+
+    deleteModal.addEventListener("show.bs.modal", function (event) {
+        const trigger = event.relatedTarget;
+        if (!trigger) return;
+
+        const uid = trigger.getAttribute("data-uid") || "";
+        const nome = trigger.getAttribute("data-nome") || "-";
+
+        const uidInput = document.getElementById("delete-user-uid");
+        const nomeLabel = document.getElementById("delete-user-name");
+        const hoursCheck = document.getElementById("delete-user-hours");
+
+        if (uidInput) uidInput.value = uid;
+        if (nomeLabel) nomeLabel.textContent = nome.trim() || "-";
+        if (hoursCheck) hoursCheck.checked = false;
+    });
+});
+</script>
 
 {% endblock %}
