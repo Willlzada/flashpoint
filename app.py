@@ -2240,9 +2240,26 @@ def admin_registrar_ponto():
         local_selecionado = (request.form.get("local") or "").strip()
         horas_input = (request.form.get("horas") or "").strip().replace(",", ".")
         notas_input = (request.form.get("notas") or "").strip()
+        is_sick = (request.form.get("is_sick") or "").lower() in {"1", "on", "true", "yes"}
+        is_vacation = (request.form.get("is_vacation") or "").lower() in {"1", "on", "true", "yes"}
+        tipo_registro = "presenza"
 
-        if not uid_funcionario or not data_ponto or not local_selecionado or not horas_input:
+        if is_sick and is_vacation:
+            error = translate("clock_in.only_one_absence_type")
+
+        if is_sick:
+            tipo_registro = "malattia"
+        elif is_vacation:
+            tipo_registro = "ferie"
+
+        if not uid_funcionario or not data_ponto:
             error = "Compila tutti i campi obbligatori."
+
+        if not error and tipo_registro == "presenza" and not local_selecionado:
+            error = "Seleziona il luogo."
+
+        if not local_selecionado:
+            local_selecionado = "-"
 
         funcionario_doc = None
         funcionario = {}
@@ -2257,12 +2274,16 @@ def admin_registrar_ponto():
 
         horas = 0.0
         if not error:
-            try:
-                horas = float(horas_input)
-                if horas <= 0:
-                    raise ValueError()
-            except Exception:
-                error = "Inserisci un numero valido di ore!"
+            if tipo_registro in {"malattia", "ferie"}:
+                horas = 0.0
+                local_selecionado = "-"
+            else:
+                try:
+                    horas = float(horas_input)
+                    if horas <= 0:
+                        raise ValueError()
+                except Exception:
+                    error = "Inserisci un numero valido di ore!"
 
         if not error:
             try:
@@ -2290,11 +2311,16 @@ def admin_registrar_ponto():
                 "data": data_ponto,
                 "horas": horas,
                 "notas": notas_input,
-                "tipo_registro": "presenza",
+                "tipo_registro": tipo_registro,
                 "criado_em": agora_italia,
                 "registrado_por_admin_uid": uid_admin,
             })
-            mensagem = "Presenza registrata con successo."
+            if tipo_registro == "malattia":
+                mensagem = translate("clock_in.sick_registered_success")
+            elif tipo_registro == "ferie":
+                mensagem = translate("clock_in.vacation_registered_success")
+            else:
+                mensagem = "Presenza registrata con successo."
 
     return render_template(
         "admin_registrar_ponto.html",
@@ -2419,8 +2445,15 @@ def meus_pontos():
 
     agora = agora_italia()
 
-    filtro_data = request.form.get("filtro_data")
-    filtro_mes = request.form.get("filtro_mes")
+    filtro_data = (request.form.get("filtro_data") or "").strip()
+    filtro_mes = (request.form.get("filtro_mes") or "").strip()
+
+    # Padrao: carregar apenas o mes atual.
+    # Se houver data especifica, ela tem prioridade sobre o filtro mensal.
+    if filtro_data:
+        filtro_mes = ""
+    elif not filtro_mes:
+        filtro_mes = agora.strftime("%Y-%m")
 
     pontos_ref = db.collection("pontos").where("uid", "==", uid)
     pontos_docs = pontos_ref.stream()
@@ -2453,9 +2486,12 @@ def meus_pontos():
             continue
 
         if filtro_mes:
-            ano, mes = map(int, filtro_mes.split("-"))
-            if data_obj.year != ano or data_obj.month != mes:
-                continue
+            try:
+                ano, mes = map(int, filtro_mes.split("-"))
+                if data_obj.year != ano or data_obj.month != mes:
+                    continue
+            except Exception:
+                pass
 
         # Dia da semana + data
         dia_semana = dias_semana[data_obj.weekday()]
