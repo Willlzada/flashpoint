@@ -223,6 +223,12 @@
         </li>
 
         <li>
+            <a href="{{ url_for('admin_kits') }}" class="nav-link {% if request.path == '/admin/kits' %}active{% endif %}">
+                <i class="fa fa-toolbox me-2"></i> {{ t('nav.admin_kits') }}
+            </a>
+        </li>
+
+        <li>
             <a href="{{ url_for('admin_pontos_backup') }}" class="nav-link {% if request.path == '/admin_pontos/backup' %}active{% endif %}">
                 <i class="fa fa-database me-2"></i> {{ tr("Backup e pulizia") }}
             </a>

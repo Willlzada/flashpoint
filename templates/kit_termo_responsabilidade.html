@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+<meta charset="UTF-8">
+<title>{{ tr("Termine di responsabilita kit") }}</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f3f5f8;
+        color: #1f2937;
+        margin: 0;
+        padding: 24px;
+    }
+
+    .documento {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .topo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        background: linear-gradient(120deg, #f8fafc, #eef2ff);
+    }
+
+    .logo {
+        height: 54px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .titulo {
+        text-align: right;
+    }
+
+    .titulo h1 {
+        margin: 0;
+        font-size: 20px;
+        color: #111827;
+    }
+
+    .titulo .sub {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #4b5563;
+    }
+
+    .conteudo {
+        padding: 22px 24px 24px 24px;
+    }
+
+    .meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 18px;
+        margin-bottom: 16px;
+        font-size: 13px;
+    }
+
+    .box {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 14px;
+        background: #ffffff;
+    }
+
+    .box h3 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #0f172a;
+    }
+
+    .itens {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .itens th,
+    .itens td {
+        border: 1px solid #e5e7eb;
+        padding: 8px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .itens th {
+        background: #f8fafc;
+        font-weight: 700;
+    }
+
+    .clausole {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .assinaturas {
+        margin-top: 26px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .assinatura-sezione {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .assinatura-sezione h4 {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: #0f172a;
+    }
+
+    .assinatura-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .assinatura-bloco {
+        font-size: 13px;
+    }
+
+    .linha {
+        margin-top: 40px;
+        border-top: 1px solid #111827;
+        padding-top: 6px;
+        text-align: center;
+    }
+
+    .acoes {
+        max-width: 900px;
+        margin: 14px auto 0 auto;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-print {
+        background: #0f766e;
+    }
+
+    .btn-back {
+        background: #334155;
+    }
+
+    @media print {
+        body {
+            background: #fff;
+            padding: 0;
+        }
+
+        .documento {
+            box-shadow: none;
+            border: 0;
+            border-radius: 0;
+            max-width: 100%;
+        }
+
+        .acoes {
+            display: none;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="documento">
+    <div class="topo">
+        <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo" alt="Logo">
+        <div class="titulo">
+            <h1>{{ tr("Termine di responsabilita per attrezzatura aziendale") }}</h1>
+        </div>
+    </div>
+
+    <div class="conteudo">
+        <div class="meta">
+            <div><strong>{{ tr("Nome dipendente") }}:</strong> {{ responsavel.nome }}</div>
+            <div><strong>{{ tr("Ruolo/Mansione") }}:</strong> {{ responsavel.cargo }}</div>
+            <div><strong>{{ tr("Kit") }}:</strong> {{ kit.nome }}</div>
+        </div>
+
+        <div class="box">
+            <h3>{{ tr("Lista attrezzature consegnate") }}</h3>
+            <table class="itens">
+                <thead>
+                    <tr>
+                        <th style="width: 48px;">#</th>
+                        <th style="width: 160px;">{{ tr("Codice") }}</th>
+                        <th>{{ tr("Descrizione") }}</th>
+                        <th style="width: 90px;">{{ tr("Quantita") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in kit.itens %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ item.codigo or "-" }}</td>
+                        <td>{{ item.descricao or "-" }}</td>
+                        <td>{{ item.quantidade or 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <h3>{{ tr("Dichiarazione di responsabilita") }}</h3>
+            <ol class="clausole">
+                <li>{{ tr("Il dipendente dichiara di aver ricevuto il kit sopra descritto e di custodirlo con cura.") }}</li>
+                <li>{{ tr("In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sull'utilizzatore.") }}</li>
+                <li>{{ tr("In caso di normale usura da utilizzo regolare, l'azienda provvedera alla sostituzione dell'attrezzatura.") }}</li>
+                <li>{{ tr("Il dipendente si impegna a comunicare immediatamente eventuali anomalie, guasti o mancanze all'amministrazione.") }}</li>
+            </ol>
+        </div>
+
+        <div class="assinaturas">
+            <div class="assinatura-sezione">
+                <h4>{{ tr("Consegna del kit") }}</h4>
+                <div class="assinatura-grid">
+                    <div class="assinatura-bloco">
+                        <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
+                        <div class="linha">{{ tr("Firma del dipendente") }}</div>
+                    </div>
+                    <div class="assinatura-bloco">
+                        <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
+                        <div class="linha">{{ tr("Firma del responsabile") }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assinatura-sezione">
+                <h4>{{ tr("Riconsegna / Restituzione del kit") }}</h4>
+                <div class="assinatura-grid">
+                    <div class="assinatura-bloco">
+                        <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
+                        <div class="linha">{{ tr("Firma del dipendente") }}</div>
+                    </div>
+                    <div class="assinatura-bloco">
+                        <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
+                        <div class="linha">{{ tr("Firma del responsabile") }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="acoes">
+    <button onclick="window.print()" class="btn btn-print">{{ tr("Stampa / Esporta PDF") }}</button>
+    <a href="{{ url_for('admin_kits') }}" class="btn btn-back">{{ tr("Indietro") }}</a>
+</div>
+
+</body>
+</html>

@@ -59,6 +59,7 @@ TRANSLATIONS = {
         "nav.admin_badges": "CrachÃ¡s",
         "nav.admin_profiles": "Perfis de usuÃ¡rios",
         "nav.admin_requests": "SolicitaÃ§Ãµes dos funcionÃ¡rios",
+        "nav.admin_kits": "Kits de ferramentas",
         "nav.logout": "Sair",
         "nav.mobile.new_point": "Novo ponto",
         "nav.mobile.my_points": "Meus pontos",
@@ -115,6 +116,7 @@ TRANSLATIONS = {
         "nav.admin_badges": "Badges",
         "nav.admin_profiles": "User profiles",
         "nav.admin_requests": "Employee requests",
+        "nav.admin_kits": "Tool kits",
         "nav.logout": "Sign out",
         "nav.mobile.new_point": "New entry",
         "nav.mobile.my_points": "My entries",
@@ -171,6 +173,7 @@ TRANSLATIONS = {
         "nav.admin_badges": "Tesserini",
         "nav.admin_profiles": "Profili utenti",
         "nav.admin_requests": "Richieste dei dipendenti",
+        "nav.admin_kits": "Kit attrezzi",
         "nav.logout": "Esci",
         "nav.mobile.new_point": "Nuovo punto",
         "nav.mobile.my_points": "I miei punti",
@@ -228,6 +231,25 @@ TEXT_TRANSLATIONS = {
         "Admin â€¢ Ordini | FlashPoint": "Admin â€¢ Pedidos | FlashPoint",
         "Admin â€¢ Pontos | FlashPoint": "Admin â€¢ Pontos | FlashPoint",
         "Admin â€¢ Profili Utenti | FlashPoint": "Admin â€¢ Perfis de UsuÃ¡rios | FlashPoint",
+        "Termine di responsabilita kit": "Termo de responsabilidade do kit",
+        "Termine di responsabilita per attrezzatura aziendale": "Termo de responsabilidade por equipamentos da empresa",
+        "Nome dipendente": "Nome do funcionario",
+        "Ruolo/Mansione": "Cargo/Funcao",
+        "Lista attrezzature consegnate": "Lista de equipamentos entregues",
+        "Dichiarazione di responsabilita": "Declaracao de responsabilidade",
+        "Il dipendente dichiara di aver ricevuto il kit sopra descritto e di custodirlo con cura.": "O funcionario declara que recebeu o kit acima descrito e se compromete a zelar por ele.",
+        "In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sull'utilizzatore.": "Em caso de perda, furto ou dano nao usual por mau uso, a responsabilidade e do utilizador.",
+        "In caso di normale usura da utilizzo regolare, l'azienda provvedera alla sostituzione dell'attrezzatura.": "Em caso de desgaste normal por uso regular, a empresa fara a substituicao do equipamento.",
+        "Il dipendente si impegna a comunicare immediatamente eventuali anomalie, guasti o mancanze all'amministrazione.": "O funcionario compromete-se a comunicar imediatamente quaisquer anomalias, avarias ou faltas a administracao.",
+        "Consegna del kit": "Retirada do kit",
+        "Riconsegna / Restituzione del kit": "Entrega / Devolucao do kit",
+        "Dipendente responsabile": "Funcionario responsavel",
+        "Responsabile aziendale": "Responsavel da empresa",
+        "Firma del dipendente": "Assinatura do funcionario",
+        "Firma del responsabile": "Assinatura do responsavel",
+        "Stampa / Esporta PDF": "Imprimir / Exportar PDF",
+        "Item del kit": "Itens do kit",
+        "Nessun item registrato per questo kit.": "Nenhum item registrado para este kit.",
         "Aggiungi": "Adicionar",
         "Aggiungi e gestisci i luoghi disponibili": "Adicione e gerencie os locais disponÃ­veis",
         "Aggiungi nuovo locale": "Adicionar novo local",
@@ -409,6 +431,7 @@ TEXT_TRANSLATIONS = {
         "opzionale": "opcional",
     
         "Mostra": "Mostrar",
+        "Visualizza": "Visualizar",
         "Telefone": "Telefone",
         "Telefone de emergÃªncia": "Telefone de emergÃªncia",
         "Ragione Sociale": "Raz?o social",
@@ -443,6 +466,25 @@ TEXT_TRANSLATIONS = {
         "Admin â€¢ Ordini | FlashPoint": "Admin â€¢ Orders | FlashPoint",
         "Admin â€¢ Pontos | FlashPoint": "Admin â€¢ Time Logs | FlashPoint",
         "Admin â€¢ Profili Utenti | FlashPoint": "Admin â€¢ User Profiles | FlashPoint",
+        "Termine di responsabilita kit": "Kit responsibility term",
+        "Termine di responsabilita per attrezzatura aziendale": "Company equipment responsibility agreement",
+        "Nome dipendente": "Employee name",
+        "Ruolo/Mansione": "Role/Position",
+        "Lista attrezzature consegnate": "List of delivered equipment",
+        "Dichiarazione di responsabilita": "Responsibility statement",
+        "Il dipendente dichiara di aver ricevuto il kit sopra descritto e di custodirlo con cura.": "The employee declares that they received the kit listed above and will keep it with care.",
+        "In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sull'utilizzatore.": "In case of loss, theft or unusual damage caused by misuse, responsibility lies with the user.",
+        "In caso di normale usura da utilizzo regolare, l'azienda provvedera alla sostituzione dell'attrezzatura.": "In case of normal wear from regular use, the company will replace the equipment.",
+        "Il dipendente si impegna a comunicare immediatamente eventuali anomalie, guasti o mancanze all'amministrazione.": "The employee agrees to immediately report any anomalies, faults or missing items to administration.",
+        "Consegna del kit": "Kit handover",
+        "Riconsegna / Restituzione del kit": "Kit return",
+        "Dipendente responsabile": "Responsible employee",
+        "Responsabile aziendale": "Company representative",
+        "Firma del dipendente": "Employee signature",
+        "Firma del responsabile": "Representative signature",
+        "Stampa / Esporta PDF": "Print / Export PDF",
+        "Item del kit": "Kit items",
+        "Nessun item registrato per questo kit.": "No items registered for this kit.",
         "Aggiungi": "Add",
         "Aggiungi e gestisci i luoghi disponibili": "Add and manage available locations",
         "Aggiungi nuovo locale": "Add new location",
@@ -624,6 +666,7 @@ TEXT_TRANSLATIONS = {
         "opzionale": "optional",
     
         "Mostra": "Show",
+        "Visualizza": "View",
         "Telefone": "Phone",
         "Telefone de emergÃªncia": "Emergency phone",
         "Ragione Sociale": "Company name",
@@ -839,6 +882,7 @@ TEXT_TRANSLATIONS = {
         "opzionale": "opzionale",
     
         "Mostra": "Mostra",
+        "Visualizza": "Visualizza",
         "Telefone": "Telefono",
         "Telefone de emergÃªncia": "Telefono di emergenza",
         "Ragione Sociale": "Ragione sociale",
@@ -918,13 +962,36 @@ def get_current_language():
     return DEFAULT_LANGUAGE
 
 
+def _fix_mojibake_text(text):
+    """Corrige texto com encoding quebrado (ex.: 'usuÃ¡rios' -> 'usuários')."""
+    if not isinstance(text, str):
+        return text
+
+    fixed = text
+    markers = ("Ã", "Â", "â", "€", "™", "œ", "ž", "¢")
+
+    # Tenta 2 passadas para cobrir casos de dupla conversão.
+    for _ in range(2):
+        if not any(m in fixed for m in markers):
+            break
+        try:
+            candidate = fixed.encode("latin-1").decode("utf-8")
+        except UnicodeError:
+            break
+        if candidate == fixed:
+            break
+        fixed = candidate
+
+    return fixed
+
+
 def translate(key):
     lang = get_current_language()
     if lang in TRANSLATIONS and key in TRANSLATIONS[lang]:
-        return TRANSLATIONS[lang][key]
+        return _fix_mojibake_text(TRANSLATIONS[lang][key])
     if key in TRANSLATIONS.get(DEFAULT_LANGUAGE, {}):
-        return TRANSLATIONS[DEFAULT_LANGUAGE][key]
-    return key
+        return _fix_mojibake_text(TRANSLATIONS[DEFAULT_LANGUAGE][key])
+    return _fix_mojibake_text(key)
 
 
 # Garante que a funcao de traducao exista no Jinja mesmo sem context processor.
@@ -934,10 +1001,30 @@ app.add_template_global(translate, name="t")
 def translate_text(text):
     lang = get_current_language()
     translations = TEXT_TRANSLATIONS.get(lang, {})
-    return translations.get(text, text)
+    return _fix_mojibake_text(translations.get(text, text))
 
 
 app.add_template_global(translate_text, name="tr")
+
+
+@app.after_request
+def fix_mojibake_in_html_response(response):
+    """Normaliza textos quebrados em todas as respostas HTML."""
+    try:
+        content_type = response.headers.get("Content-Type", "")
+        if "text/html" not in content_type.lower():
+            return response
+        if getattr(response, "direct_passthrough", False):
+            return response
+
+        original = response.get_data(as_text=True)
+        fixed = _fix_mojibake_text(original)
+        if fixed != original:
+            response.set_data(fixed)
+    except Exception:
+        return response
+
+    return response
 
 
 def safe_next_url(target):
@@ -984,10 +1071,14 @@ def _period_range(periodo, anno, mese, trimestre, semestre):
 
 @app.context_processor
 def inject_i18n():
+    language_options = [
+        {"code": lang["code"], "label": _fix_mojibake_text(lang["label"])}
+        for lang in SUPPORTED_LANGUAGES
+    ]
     return {
         "t": translate,
         "current_lang": get_current_language(),
-        "language_options": SUPPORTED_LANGUAGES,
+        "language_options": language_options,
     }
 
 
@@ -1063,6 +1154,93 @@ def get_all_users():
         data["uid"] = u.id
         usuarios.append(data)
     return usuarios
+
+
+def get_non_admin_users():
+    usuarios = []
+    for u in db.collection("usuarios").stream():
+        data = u.to_dict() or {}
+        uid_auth = (data.get("uid") or "").strip() or u.id
+        nome = f"{data.get('nome', '')} {data.get('sobrenome', '')}".strip()
+        usuarios.append({
+            "uid": uid_auth,
+            "uid_doc": u.id,
+            "nome": nome or data.get("email") or u.id,
+        })
+    usuarios.sort(key=lambda item: item["nome"].lower())
+    return usuarios
+
+
+def get_kits_by_responsavel(uid_responsavel):
+    kits = []
+    if not uid_responsavel:
+        return kits
+
+    candidate_ids = {uid_responsavel}
+    try:
+        usuario_ref = db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1).stream()
+        for usuario_doc in usuario_ref:
+            candidate_ids.add(usuario_doc.id)
+            break
+    except Exception:
+        pass
+
+    for doc in db.collection("kits").stream():
+        data = doc.to_dict() or {}
+        responsavel_uid = (data.get("responsavel_uid") or "").strip()
+        responsavel_doc_id = (data.get("responsavel_doc_id") or "").strip()
+        if responsavel_uid not in candidate_ids and responsavel_doc_id not in candidate_ids:
+            continue
+
+        assegnato_em = data.get("assegnato_em")
+        if hasattr(assegnato_em, "strftime"):
+            assegnato_em_fmt = assegnato_em.strftime("%d/%m/%Y %H:%M")
+        else:
+            assegnato_em_fmt = "-"
+
+        itens = data.get("itens")
+        if not isinstance(itens, list):
+            itens = []
+        if not itens and (data.get("descricao") or "").strip():
+            itens = [{
+                "codigo": "",
+                "descricao": (data.get("descricao") or "").strip(),
+                "quantidade": 1,
+            }]
+
+        itens_norm = []
+        for item in itens:
+            if not isinstance(item, dict):
+                continue
+            codigo = (item.get("codigo") or "").strip()
+            descricao = (item.get("descricao") or "").strip()
+            if not codigo and not descricao:
+                continue
+            try:
+                quantidade = int(float(item.get("quantidade", 0)))
+                if quantidade <= 0:
+                    quantidade = 1
+            except Exception:
+                quantidade = 1
+
+            itens_norm.append({
+                "codigo": codigo,
+                "descricao": descricao,
+                "quantidade": quantidade,
+            })
+
+        kits.append({
+            "id": doc.id,
+            "nome": data.get("nome", ""),
+            "itens": itens_norm,
+            "total_itens": len(itens_norm),
+            "status": (data.get("status") or "").strip().lower(),
+            "assegnato_em_fmt": assegnato_em_fmt,
+        })
+
+    kits.sort(key=lambda k: k.get("nome", "").lower())
+    return kits
+
 
 def get_user_by_id(uid):
     doc = db.collection("usuarios").document(uid).get()
@@ -1650,6 +1828,7 @@ def dashboard():
 
     # Ranking mensal
     ranking = ranking_mensal(hoje.year, hoje.month)
+    kits_responsabilidade = get_kits_by_responsavel(uid)
 
     # PosiÃ§Ã£o do usuÃ¡rio no ranking (CORRIGIDO)
     posicao = "-"
@@ -1665,7 +1844,8 @@ def dashboard():
         horas_mes_anterior=formatar_horas_hhmm(horas_mes_anterior),
         horas_ano=formatar_horas_hhmm(horas_ano),
         ranking=ranking,
-        posicao=posicao
+        posicao=posicao,
+        kits_responsabilidade=kits_responsabilidade,
     )
 
 
@@ -2097,6 +2277,361 @@ def admin_perfis():
         key=lambda u: f"{u.get('nome','')} {u.get('sobrenome','')}".strip().lower()
     )
     return render_template("admin_perfis.html", usuarios=usuarios)
+
+
+@app.route("/admin/kits", methods=["GET", "POST"])
+def admin_kits():
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    def _buscar_funcionario(uid_funcionario):
+        if not uid_funcionario:
+            return None, "Seleziona un utente."
+        funcionario = None
+        funcionario_doc_id = ""
+
+        funcionario_doc = db.collection("usuarios").document(uid_funcionario).get()
+        if funcionario_doc.exists:
+            funcionario = funcionario_doc.to_dict() or {}
+            funcionario_doc_id = funcionario_doc.id
+        else:
+            candidatos = db.collection("usuarios").where("uid", "==", uid_funcionario).limit(1).stream()
+            for cand in candidatos:
+                funcionario = cand.to_dict() or {}
+                funcionario_doc_id = cand.id
+                break
+
+        if not funcionario:
+            return None, "Utente non trovato."
+
+        uid_auth = (funcionario.get("uid") or "").strip() or funcionario_doc_id
+        nome = f"{funcionario.get('nome', '')} {funcionario.get('sobrenome', '')}".strip()
+        return {
+            "uid": uid_auth,
+            "doc_id": funcionario_doc_id,
+            "nome": nome or funcionario.get("email") or uid_auth,
+        }, None
+
+    if request.method == "POST":
+        acao = (request.form.get("acao") or "").strip().lower()
+        kit_id = (request.form.get("kit_id") or "").strip()
+        agora_italia = datetime.utcnow() + timedelta(hours=1)
+
+        if acao == "novo":
+            nome = (request.form.get("nome") or "").strip()
+            uid_responsavel = (request.form.get("uid_responsavel") or "").strip()
+            item_codigos = request.form.getlist("item_codigo[]")
+            item_descricoes = request.form.getlist("item_descricao[]")
+            item_quantidades = request.form.getlist("item_quantidade[]")
+
+            if not nome:
+                flash("Compila i campi obbligatori del kit.", "danger")
+                return redirect(url_for("admin_kits"))
+
+            itens = []
+            total_linhas = max(len(item_codigos), len(item_descricoes), len(item_quantidades))
+            for idx in range(total_linhas):
+                item_codigo = (item_codigos[idx] if idx < len(item_codigos) else "").strip()
+                item_descricao = (item_descricoes[idx] if idx < len(item_descricoes) else "").strip()
+                item_quantidade_raw = (item_quantidades[idx] if idx < len(item_quantidades) else "").strip()
+
+                if not item_codigo and not item_descricao and not item_quantidade_raw:
+                    continue
+
+                if not item_codigo and not item_descricao:
+                    flash("Compila codice o descrizione per ogni item del kit.", "danger")
+                    return redirect(url_for("admin_kits"))
+
+                try:
+                    item_quantidade = int(float(item_quantidade_raw))
+                    if item_quantidade <= 0:
+                        raise ValueError()
+                except Exception:
+                    flash("Quantita item non valida. Usa un numero maggiore di zero.", "danger")
+                    return redirect(url_for("admin_kits"))
+
+                itens.append({
+                    "codigo": item_codigo,
+                    "descricao": item_descricao,
+                    "quantidade": item_quantidade,
+                })
+
+            if not itens:
+                flash("Inserisci almeno un item per il kit.", "danger")
+                return redirect(url_for("admin_kits"))
+
+            kit_data = {
+                "nome": nome,
+                "itens": itens,
+                "status": "disponibile",
+                "responsavel_uid": "",
+                "responsavel_doc_id": "",
+                "responsavel_nome": "",
+                "assegnato_em": None,
+                "creato_em": agora_italia,
+                "atualizado_em": agora_italia,
+                "registrado_por_admin_uid": session.get("uid"),
+            }
+
+            if uid_responsavel:
+                funcionario, erro_funcionario = _buscar_funcionario(uid_responsavel)
+                if erro_funcionario:
+                    flash(erro_funcionario, "danger")
+                    return redirect(url_for("admin_kits"))
+                kit_data.update({
+                    "status": "assegnato",
+                    "responsavel_uid": funcionario["uid"],
+                    "responsavel_doc_id": funcionario["doc_id"],
+                    "responsavel_nome": funcionario["nome"],
+                    "assegnato_em": agora_italia,
+                })
+
+            db.collection("kits").add(kit_data)
+            flash("Kit registrato con successo.", "success")
+            return redirect(url_for("admin_kits"))
+
+        if not kit_id:
+            flash("Kit non valido.", "danger")
+            return redirect(url_for("admin_kits"))
+
+        kit_ref = db.collection("kits").document(kit_id)
+        kit_doc = kit_ref.get()
+        if not kit_doc.exists:
+            flash("Kit non trovato.", "danger")
+            return redirect(url_for("admin_kits"))
+
+        if acao == "attribuisci":
+            uid_responsavel = (request.form.get("uid_responsavel") or "").strip()
+            funcionario, erro_funcionario = _buscar_funcionario(uid_responsavel)
+            if erro_funcionario:
+                flash(erro_funcionario, "danger")
+                return redirect(url_for("admin_kits"))
+
+            kit_ref.update({
+                "status": "assegnato",
+                "responsavel_uid": funcionario["uid"],
+                "responsavel_doc_id": funcionario["doc_id"],
+                "responsavel_nome": funcionario["nome"],
+                "assegnato_em": agora_italia,
+                "atualizado_em": agora_italia,
+            })
+            flash("Kit assegnato con successo.", "success")
+            return redirect(url_for("admin_kits"))
+
+        if acao == "rilascia":
+            kit_ref.update({
+                "status": "disponibile",
+                "responsavel_uid": "",
+                "responsavel_doc_id": "",
+                "responsavel_nome": "",
+                "assegnato_em": None,
+                "atualizado_em": agora_italia,
+            })
+            flash("Kit rilasciato e tornato disponibile.", "success")
+            return redirect(url_for("admin_kits"))
+
+        if acao == "elimina":
+            kit_ref.delete()
+            flash("Kit eliminato con successo.", "success")
+            return redirect(url_for("admin_kits"))
+
+        flash("Azione non valida.", "danger")
+        return redirect(url_for("admin_kits"))
+
+    kits = []
+    for doc in db.collection("kits").stream():
+        data = doc.to_dict() or {}
+        status = (data.get("status") or "").strip().lower()
+        if status not in {"disponibile", "assegnato"}:
+            status = "assegnato" if (data.get("responsavel_uid") or data.get("responsavel_doc_id")) else "disponibile"
+
+        itens = data.get("itens")
+        if not isinstance(itens, list):
+            itens = []
+        if not itens and (data.get("descricao") or "").strip():
+            itens = [{
+                "codigo": "",
+                "descricao": (data.get("descricao") or "").strip(),
+                "quantidade": 1,
+            }]
+
+        assegnato_em = data.get("assegnato_em")
+        if hasattr(assegnato_em, "strftime"):
+            assegnato_em_fmt = assegnato_em.strftime("%d/%m/%Y %H:%M")
+        else:
+            assegnato_em_fmt = "-"
+
+        kits.append({
+            "id": doc.id,
+            "nome": data.get("nome", ""),
+            "itens": itens,
+            "status": status,
+            "responsavel_uid": data.get("responsavel_uid", "") or data.get("responsavel_doc_id", ""),
+            "responsavel_nome": data.get("responsavel_nome", ""),
+            "assegnato_em_fmt": assegnato_em_fmt,
+        })
+
+    kits.sort(key=lambda k: k.get("nome", "").lower())
+
+    return render_template(
+        "admin_kits.html",
+        kits=kits,
+        usuarios=get_non_admin_users(),
+    )
+
+
+@app.route("/admin/kits/termo/<kit_id>", methods=["GET"])
+def admin_kits_termo(kit_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    kit_ref = db.collection("kits").document(kit_id)
+    kit_doc = kit_ref.get()
+    if not kit_doc.exists:
+        flash("Kit non trovato.", "danger")
+        return redirect(url_for("admin_kits"))
+
+    kit_data = kit_doc.to_dict() or {}
+
+    responsavel_uid = (kit_data.get("responsavel_uid") or "").strip()
+    responsavel_doc_id = (kit_data.get("responsavel_doc_id") or "").strip()
+    responsavel_nome = (kit_data.get("responsavel_nome") or "").strip()
+
+    if not responsavel_uid and not responsavel_doc_id:
+        flash("Assegna il kit a un utente prima di generare il termine.", "danger")
+        return redirect(url_for("admin_kits"))
+
+    responsavel = None
+    if responsavel_doc_id:
+        doc = db.collection("usuarios").document(responsavel_doc_id).get()
+        if doc.exists:
+            responsavel = doc.to_dict() or {}
+            responsavel["uid_doc"] = doc.id
+
+    if not responsavel and responsavel_uid:
+        candidatos = db.collection("usuarios").where("uid", "==", responsavel_uid).limit(1).stream()
+        for cand in candidatos:
+            responsavel = cand.to_dict() or {}
+            responsavel["uid_doc"] = cand.id
+            break
+
+    if responsavel:
+        nome_composto = f"{responsavel.get('nome', '')} {responsavel.get('sobrenome', '')}".strip()
+        responsavel_nome = nome_composto or responsavel_nome or responsavel.get("email", "") or "-"
+        responsavel_cargo = (responsavel.get("cargo") or "").strip() or "-"
+    else:
+        responsavel_cargo = "-"
+        responsavel_nome = responsavel_nome or "-"
+
+    itens = kit_data.get("itens")
+    if not isinstance(itens, list):
+        itens = []
+    if not itens and (kit_data.get("descricao") or "").strip():
+        itens = [{
+            "codigo": "",
+            "descricao": (kit_data.get("descricao") or "").strip(),
+            "quantidade": 1,
+        }]
+
+    return render_template(
+        "kit_termo_responsabilidade.html",
+        kit={
+            "id": kit_id,
+            "nome": kit_data.get("nome", ""),
+            "itens": itens,
+        },
+        responsavel={
+            "nome": responsavel_nome,
+            "cargo": responsavel_cargo,
+        },
+    )
+
+
+@app.route("/admin/kits/editar/<kit_id>", methods=["GET", "POST"])
+def admin_kits_editar(kit_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+        return redirect("/dashboard")
+
+    kit_ref = db.collection("kits").document(kit_id)
+    kit_doc = kit_ref.get()
+    if not kit_doc.exists:
+        flash("Kit non trovato.", "danger")
+        return redirect(url_for("admin_kits"))
+
+    kit_data = kit_doc.to_dict() or {}
+
+    if request.method == "POST":
+        nome = (request.form.get("nome") or "").strip()
+        item_codigos = request.form.getlist("item_codigo[]")
+        item_descricoes = request.form.getlist("item_descricao[]")
+        item_quantidades = request.form.getlist("item_quantidade[]")
+
+        if not nome:
+            flash("Compila i campi obbligatori del kit.", "danger")
+            return redirect(url_for("admin_kits_editar", kit_id=kit_id))
+
+        itens = []
+        total_linhas = max(len(item_codigos), len(item_descricoes), len(item_quantidades))
+        for idx in range(total_linhas):
+            item_codigo = (item_codigos[idx] if idx < len(item_codigos) else "").strip()
+            item_descricao = (item_descricoes[idx] if idx < len(item_descricoes) else "").strip()
+            item_quantidade_raw = (item_quantidades[idx] if idx < len(item_quantidades) else "").strip()
+
+            if not item_codigo and not item_descricao and not item_quantidade_raw:
+                continue
+
+            if not item_codigo and not item_descricao:
+                flash("Compila codice o descrizione per ogni item del kit.", "danger")
+                return redirect(url_for("admin_kits_editar", kit_id=kit_id))
+
+            try:
+                item_quantidade = int(float(item_quantidade_raw))
+                if item_quantidade <= 0:
+                    raise ValueError()
+            except Exception:
+                flash("Quantita item non valida. Usa un numero maggiore di zero.", "danger")
+                return redirect(url_for("admin_kits_editar", kit_id=kit_id))
+
+            itens.append({
+                "codigo": item_codigo,
+                "descricao": item_descricao,
+                "quantidade": item_quantidade,
+            })
+
+        if not itens:
+            flash("Inserisci almeno un item per il kit.", "danger")
+            return redirect(url_for("admin_kits_editar", kit_id=kit_id))
+
+        kit_ref.update({
+            "nome": nome,
+            "itens": itens,
+            "atualizado_em": datetime.utcnow() + timedelta(hours=1),
+        })
+        flash("Kit aggiornato con successo.", "success")
+        return redirect(url_for("admin_kits"))
+
+    itens = kit_data.get("itens")
+    if not isinstance(itens, list):
+        itens = []
+    if not itens and (kit_data.get("descricao") or "").strip():
+        itens = [{
+            "codigo": "",
+            "descricao": (kit_data.get("descricao") or "").strip(),
+            "quantidade": 1,
+        }]
+    if not itens:
+        itens = [{"codigo": "", "descricao": "", "quantidade": 1}]
+
+    kit = {
+        "id": kit_id,
+        "nome": kit_data.get("nome", ""),
+        "itens": itens,
+    }
+
+    return render_template("admin_kits_editar.html", kit=kit)
 
 
 @app.route("/admin/perfis/editar/<uid>", methods=["GET", "POST"])

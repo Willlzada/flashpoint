@@ -71,6 +71,32 @@
     top: 0;
     z-index: 1;
 }
+
+.kits-card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.kit-box {
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+.kit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.kit-title {
+    font-weight: 700;
+    color: #041955;
+}
 </style>
 
 <!-- ===== HEADER ===== -->
@@ -130,6 +156,71 @@
         </div>
     </div>
 
+</div>
+
+<div class="card kits-card mb-4">
+    <div class="card-body">
+        <h5 class="mb-3 fw-semibold">
+            <i class="fa fa-toolbox me-2 text-secondary"></i>
+            {{ tr("Kit sotto la tua responsabilita") }}
+        </h5>
+
+        {% if kits_responsabilidade %}
+            <div>
+                {% for kit in kits_responsabilidade %}
+                <div class="kit-box">
+                    <div class="kit-header">
+                        <div>
+                            <div class="kit-title">
+                                <i class="fa fa-toolbox me-1"></i>{{ kit.nome or "-" }}
+                            </div>
+                            <div class="small text-muted">{{ tr("Assegnato il") }}: {{ kit.assegnato_em_fmt }}</div>
+                        </div>
+                        {% if kit.itens %}
+                        <button class="btn btn-sm btn-outline-secondary"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#kit-items-{{ loop.index }}"
+                                aria-expanded="false"
+                                aria-controls="kit-items-{{ loop.index }}">
+                            <i class="fa fa-list me-1"></i>{{ tr("Visualizza") }}
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    {% if kit.itens %}
+                    <div class="collapse mt-2" id="kit-items-{{ loop.index }}">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 140px;">{{ tr("Codice") }}</th>
+                                        <th>{{ tr("Descrizione") }}</th>
+                                        <th style="width: 110px;">{{ tr("Quantita") }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in kit.itens %}
+                                    <tr>
+                                        <td>{{ item.codigo or "-" }}</td>
+                                        <td>{{ item.descricao or "-" }}</td>
+                                        <td>{{ item.quantidade or 0 }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="small text-muted mb-0 mt-2">{{ tr("Nessun item registrato per questo kit.") }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">{{ tr("Nessun kit attualmente assegnato.") }}</p>
+        {% endif %}
+    </div>
 </div>
 
 <!-- ===== RANKING ===== -->
