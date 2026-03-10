@@ -228,13 +228,13 @@
 </div>
 
 <div class="filtros">
-    <form method="GET" action="{{ url_for('admin_pontos_exportar_pdf') }}">
+    <form method="GET" action="{{ url_for('admin_pontos_exportar_pdf') }}" target="_blank">
         <input type="hidden" name="filtro_usuario" value="{{ filtro_usuario }}">
         <input type="hidden" name="filtro_mes" value="{{ filtro_mes }}">
         <input type="hidden" name="filtro_local" value="{{ filtro_local }}">
         <button type="submit" class="btn btn-outline-secondary w-100"
                 {% if filtro_usuario == "__none__" or filtro_usuario == "" %}disabled{% endif %}>
-            <i class="fa fa-file-pdf"></i> {{ tr("Esporta PDF") }}
+            <i class="fa fa-file-pdf"></i> {{ tr("Stampa / Esporta PDF") }}
         </button>
     </form>
 </div>
