@@ -9,7 +9,7 @@
         background: #f3f5f8;
         color: #1f2937;
         margin: 0;
-        padding: 24px;
+        padding: 12px;
     }
 
     .documento {
@@ -33,7 +33,7 @@
     }
 
     .logo {
-        height: 54px;
+        height: 56px;
         width: auto;
         object-fit: contain;
     }
@@ -44,12 +44,12 @@
 
     .titulo h1 {
         margin: 0;
-        font-size: 20px;
+        font-size: 21px;
         color: #111827;
     }
 
     .conteudo {
-        padding: 22px 24px 24px 24px;
+        padding: 18px 24px 22px 24px;
     }
 
     .meta {
@@ -57,7 +57,7 @@
         grid-template-columns: 1fr 1fr;
         gap: 8px 18px;
         margin-bottom: 16px;
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .box {
@@ -66,11 +66,12 @@
         padding: 12px;
         margin-bottom: 14px;
         background: #ffffff;
+        break-inside: avoid;
     }
 
     .box h3 {
         margin: 0 0 8px 0;
-        font-size: 14px;
+        font-size: 15px;
         color: #0f172a;
     }
 
@@ -97,15 +98,16 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
     }
 
     .assinaturas {
-        margin-top: 22px;
+        margin-top: 20px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
+        break-inside: avoid;
     }
 
     .assinatura-bloco {
@@ -113,7 +115,7 @@
     }
 
     .linha {
-        margin-top: 40px;
+        margin-top: 38px;
         border-top: 1px solid #111827;
         padding-top: 6px;
         text-align: center;
@@ -148,6 +150,11 @@
     }
 
     @media print {
+        @page {
+            size: A4;
+            margin: 11mm;
+        }
+
         body {
             background: #fff;
             padding: 0;
@@ -162,6 +169,19 @@
 
         .acoes {
             display: none;
+        }
+
+        .tabela {
+            font-size: 12px;
+        }
+
+        .tabela th,
+        .tabela td {
+            padding: 7px;
+        }
+
+        .assinaturas {
+            margin-top: 14px;
         }
     }
 </style>
@@ -183,7 +203,6 @@
         <div class="meta">
             <div><strong>{{ tr("Collaboratore") }}:</strong> {{ nome_usuario }}</div>
             <div><strong>{{ tr("Periodo") }}:</strong> {{ periodo }}</div>
-            <div><strong>{{ tr("Data") }}:</strong> {{ data_emissao }}</div>
         </div>
 
         <div class="box">
