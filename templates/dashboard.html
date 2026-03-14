@@ -223,6 +223,65 @@
     </div>
 </div>
 
+<div class="card kits-card mb-4">
+    <div class="card-body">
+        <h5 class="mb-3 fw-semibold">
+            <i class="fa fa-briefcase me-2 text-secondary"></i>
+            {{ tr("Cassetta attrezzi personale") }}
+        </h5>
+
+        {% if mala_responsabilidade %}
+            <div class="kit-box">
+                <div class="kit-header">
+                    <div>
+                        <div class="kit-title">
+                            <i class="fa fa-briefcase me-1"></i>{{ tr("Cassetta attrezzi") }}
+                        </div>
+                        <div class="small text-muted">{{ tr("Assegnato il") }}: {{ mala_responsabilidade.assegnato_em_fmt }}</div>
+                    </div>
+                    {% if mala_responsabilidade.itens %}
+                    <button class="btn btn-sm btn-outline-secondary"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#cassetta-items"
+                            aria-expanded="false"
+                            aria-controls="cassetta-items">
+                        <i class="fa fa-list me-1"></i>{{ tr("Visualizza") }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                {% if mala_responsabilidade.itens %}
+                <div class="collapse mt-2" id="cassetta-items">
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{ tr("Descrizione") }}</th>
+                                <th style="width: 110px;">{{ tr("Quantita") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in mala_responsabilidade.itens %}
+                            <tr>
+                                <td>{{ item.descricao or "-" }}</td>
+                                <td>{{ item.quantidade or 0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0 mt-2">{{ tr("Nessun item registrato per questa cassetta.") }}</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">{{ tr("Nessuna cassetta assegnata.") }}</p>
+        {% endif %}
+    </div>
+</div>
+
 <!-- ===== RANKING ===== -->
 <div class="card ranking-card">
     <div class="card-body">

@@ -173,7 +173,7 @@
             </a>
         </li>
 
-        {% if usuario.tipo == 'admin' %}
+        {% if usuario.tipo in ['admin', 'developer'] %}
 
         <li class="border-top my-3"></li>
 
@@ -223,8 +223,29 @@
         </li>
 
         <li>
+            <a href="{{ url_for('admin_estatisticas') }}" class="nav-link {% if request.path == '/admin/estatisticas' %}active{% endif %}">
+                <i class="fa fa-chart-bar me-2"></i> {{ t('nav.admin_stats') }}
+            </a>
+        </li>
+
+        {% if usuario.tipo == 'developer' %}
+
+        <li class="border-top my-3"></li>
+
+        <li class="text-uppercase text-muted small px-2 mb-1">
+
+            {{ t('nav.developer') }}
+
+        </li>
+
+        <li>
             <a href="{{ url_for('admin_kits') }}" class="nav-link {% if request.path == '/admin/kits' %}active{% endif %}">
                 <i class="fa fa-toolbox me-2"></i> {{ t('nav.admin_kits') }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_malas') }}" class="nav-link {% if request.path == '/admin/malas' %}active{% endif %}">
+                <i class="fa fa-briefcase me-2"></i> {{ t('nav.admin_bags') }}
             </a>
         </li>
 
@@ -234,12 +255,7 @@
             </a>
         </li>
 
-        
-        <li>
-            <a href="{{ url_for('admin_estatisticas') }}" class="nav-link {% if request.path == '/admin/estatisticas' %}active{% endif %}">
-                <i class="fa fa-chart-bar me-2"></i> {{ t('nav.admin_stats') }}
-            </a>
-        </li>
+        {% endif %}
 
         {% endif %}
 

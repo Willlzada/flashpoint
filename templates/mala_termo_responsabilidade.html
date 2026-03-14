@@ -2,7 +2,7 @@
 <html lang="{{ current_lang }}">
 <head>
 <meta charset="UTF-8">
-<title>{{ tr("Termine di responsabilita kit") }}</title>
+<title>{{ tr("Termine di responsabilita cassetta attrezzi") }}</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -46,12 +46,6 @@
         margin: 0;
         font-size: 20px;
         color: #111827;
-    }
-
-    .titulo .sub {
-        margin-top: 4px;
-        font-size: 12px;
-        color: #4b5563;
     }
 
     .conteudo {
@@ -108,24 +102,6 @@
 
     .assinaturas {
         margin-top: 26px;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .assinatura-sezione {
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 12px;
-    }
-
-    .assinatura-sezione h4 {
-        margin: 0 0 8px 0;
-        font-size: 13px;
-        color: #0f172a;
-    }
-
-    .assinatura-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
@@ -286,18 +262,6 @@
 
         .assinaturas {
             margin-top: 15px;
-            gap: 14px;
-        }
-
-        .assinatura-sezione {
-            padding: 11px;
-        }
-
-        .assinatura-sezione h4 {
-            font-size: 13.5px;
-        }
-
-        .assinatura-grid {
             gap: 16px;
         }
 
@@ -310,9 +274,9 @@
         }
 
         .box,
-        .assinatura-sezione,
         table,
-        tr {
+        tr,
+        .assinatura-bloco {
             page-break-inside: avoid;
         }
 
@@ -334,7 +298,7 @@
     <canvas id="signature-pad" class="signature-pad"></canvas>
     <div class="signature-actions">
         <button type="button" class="btn btn-back" id="clear-signature">{{ tr("Pulisci") }}</button>
-        <button type="button" class="btn btn-print" id="save-signature" data-url="{{ url_for('admin_kits_termo_assinar', kit_id=kit.id) }}">
+        <button type="button" class="btn btn-print" id="save-signature" data-url="{{ url_for('admin_malas_termo_assinar', mala_id=mala.id) }}">
             {{ tr("Salva firma") }}
         </button>
     </div>
@@ -344,7 +308,7 @@
     <div class="topo">
         <img src="{{ url_for('static', filename='img/logo-login.png') }}" class="logo" alt="Logo">
         <div class="titulo">
-            <h1>{{ tr("Termine di responsabilita per attrezzatura aziendale") }}</h1>
+            <h1>{{ tr("Termine di responsabilita per cassetta attrezzi personale") }}</h1>
         </div>
     </div>
 
@@ -352,7 +316,6 @@
         <div class="meta">
             <div><strong>{{ tr("Nome dipendente") }}:</strong> {{ responsavel.nome }}</div>
             <div><strong>{{ tr("Ruolo/Mansione") }}:</strong> {{ responsavel.cargo }}</div>
-            <div><strong>{{ tr("Kit") }}:</strong> {{ kit.nome }}</div>
         </div>
 
         <div class="box">
@@ -361,16 +324,14 @@
                 <thead>
                     <tr>
                         <th style="width: 48px;">#</th>
-                        <th style="width: 160px;">{{ tr("Codice") }}</th>
                         <th>{{ tr("Descrizione") }}</th>
                         <th style="width: 90px;">{{ tr("Quantita") }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in kit.itens %}
+                    {% for item in mala.itens %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ item.codigo or "-" }}</td>
                         <td>{{ item.descricao or "-" }}</td>
                         <td>{{ item.quantidade or 0 }}</td>
                     </tr>
@@ -382,43 +343,25 @@
         <div class="box">
             <h3>{{ tr("Dichiarazione di responsabilita") }}</h3>
             <ol class="clausole">
-                <li>{{ tr("Il dipendente dichiara di aver ricevuto il kit sopra descritto e di custodirlo con cura.") }}</li>
-                <li>{{ tr("In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sull'utilizzatore.") }}</li>
+                <li>{{ tr("Il dipendente dichiara di aver ricevuto la cassetta personale descritta e di custodirla con cura.") }}</li>
+                <li>{{ tr("La cassetta e assegnata in modo permanente al dipendente e non e prevista restituzione.") }}</li>
+                <li>{{ tr("In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sul dipendente.") }}</li>
                 <li>{{ tr("In caso di normale usura da utilizzo regolare, l'azienda provvedera alla sostituzione dell'attrezzatura.") }}</li>
                 <li>{{ tr("Il dipendente si impegna a comunicare immediatamente eventuali anomalie, guasti o mancanze all'amministrazione.") }}</li>
             </ol>
         </div>
 
         <div class="assinaturas">
-            <div class="assinatura-sezione">
-                <h4>{{ tr("Consegna del kit") }}</h4>
-                <div class="assinatura-grid">
-                    <div class="assinatura-bloco">
-                        <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
-                        {% if firma_dipendente %}
-                        <img src="{{ firma_dipendente }}" class="signature-img" alt="{{ tr('Firma del dipendente') }}">
-                        {% endif %}
-                        <div class="linha">{{ tr("Firma del dipendente") }}</div>
-                    </div>
-                    <div class="assinatura-bloco">
-                        <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
-                        <div class="linha">{{ tr("Firma del responsabile") }}</div>
-                    </div>
-                </div>
+            <div class="assinatura-bloco">
+                <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
+                {% if firma_dipendente %}
+                <img src="{{ firma_dipendente }}" class="signature-img" alt="{{ tr('Firma del dipendente') }}">
+                {% endif %}
+                <div class="linha">{{ tr("Firma del dipendente") }}</div>
             </div>
-
-            <div class="assinatura-sezione">
-                <h4>{{ tr("Riconsegna / Restituzione del kit") }}</h4>
-                <div class="assinatura-grid">
-                    <div class="assinatura-bloco">
-                        <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
-                        <div class="linha">{{ tr("Firma del dipendente") }}</div>
-                    </div>
-                    <div class="assinatura-bloco">
-                        <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
-                        <div class="linha">{{ tr("Firma del responsabile") }}</div>
-                    </div>
-                </div>
+            <div class="assinatura-bloco">
+                <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
+                <div class="linha">{{ tr("Firma del responsabile") }}</div>
             </div>
         </div>
     </div>
@@ -426,7 +369,7 @@
 
 <div class="acoes">
     <button onclick="window.print()" class="btn btn-print">{{ tr("Stampa / Esporta PDF") }}</button>
-    <a href="{{ url_for('admin_kits') }}" class="btn btn-back">{{ tr("Indietro") }}</a>
+    <a href="{{ url_for('admin_malas') }}" class="btn btn-back">{{ tr("Indietro") }}</a>
 </div>
 
 <script>

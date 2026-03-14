@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tr("Modifica cassetta | FlashPoint") }}{% endblock %}
+
+{% block content %}
+<style>
+.page-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.page-header h4 {
+    color: #000;
+    font-weight: 700;
+}
+.page-header p {
+    color: #555;
+    margin-top: 5px;
+}
+
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-pen-to-square me-2"></i>{{ tr("Modifica cassetta") }}
+    </h4>
+    <p>{{ tr("Aggiorna i dati della cassetta") }}</p>
+</div>
+
+<hr class="my-4">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ tr(message) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="card-box">
+    <form method="POST" class="row g-3">
+        <div class="col-12 col-md-6">
+            <label class="form-label">{{ tr("Responsabile") }}</label>
+            <select name="uid_responsavel" class="form-select" required>
+                <option value="" disabled>{{ tr("Seleziona utente") }}</option>
+                {% for u in usuarios %}
+                <option value="{{ u.uid }}" {% if mala.responsavel_uid == u.uid %}selected{% endif %}>{{ u.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-semibold">{{ tr("Item della cassetta") }}</label>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-2">
+                    <thead>
+                        <tr>
+                            <th>{{ tr("Descrizione") }}</th>
+                            <th style="width: 120px;">{{ tr("Quantita") }}</th>
+                            <th style="width: 70px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-rows">
+                        {% for item in mala.itens %}
+                        <tr class="item-row">
+                            <td><input type="text" name="item_descricao[]" class="form-control form-control-sm" value="{{ item.descricao or '' }}"></td>
+                            <td><input type="number" name="item_quantidade[]" min="1" step="1" value="{{ item.quantidade or 1 }}" class="form-control form-control-sm"></td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-item-row">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="add-item-row" class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-plus me-1"></i>{{ tr("Aggiungi item") }}
+            </button>
+        </div>
+
+        <div class="col-12 d-grid d-md-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save me-1"></i>{{ tr("Salva modifiche") }}
+            </button>
+            <a href="{{ url_for('admin_malas') }}" class="btn btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i>{{ tr("Indietro") }}
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const addBtn = document.getElementById("add-item-row");
+    const rowsWrap = document.getElementById("item-rows");
+    if (!addBtn || !rowsWrap) return;
+
+    function atualizarBotoesRemover() {
+        const rows = rowsWrap.querySelectorAll(".item-row");
+        rows.forEach((row) => {
+            const btn = row.querySelector(".remove-item-row");
+            if (!btn) return;
+            btn.disabled = rows.length === 1;
+        });
+    }
+
+    addBtn.addEventListener("click", function () {
+        const row = document.createElement("tr");
+        row.className = "item-row";
+        row.innerHTML = `
+            <td><input type="text" name="item_descricao[]" class="form-control form-control-sm"></td>
+            <td><input type="number" name="item_quantidade[]" min="1" step="1" value="1" class="form-control form-control-sm"></td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item-row">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+        rowsWrap.appendChild(row);
+        atualizarBotoesRemover();
+    });
+
+    rowsWrap.addEventListener("click", function (event) {
+        const removeBtn = event.target.closest(".remove-item-row");
+        if (!removeBtn) return;
+        const row = removeBtn.closest(".item-row");
+        if (!row) return;
+        row.remove();
+        atualizarBotoesRemover();
+    });
+
+    atualizarBotoesRemover();
+});
+</script>
+
+{% endblock %}

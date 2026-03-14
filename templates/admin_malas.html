@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin - Cassetta attrezzi | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.malas-cards {
+    display: grid;
+    gap: 14px;
+    padding-bottom: 18px;
+}
+
+.mala-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-left: 4px solid #041955;
+}
+
+.mala-title {
+    font-weight: 700;
+    color: #041955;
+}
+
+.mala-meta {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.itens-list {
+    margin: 8px 0 0 0;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #495057;
+}
+
+.btn-toggle-items {
+    margin-top: 8px;
+}
+
+.mala-items-row td {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.mala-items-box {
+    background: #f8f9fb;
+    border: 1px solid #e8ebf1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 4px 0 8px 0;
+}
+
+.mala-items-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 6px;
+}
+
+.table-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .malas-cards {
+        display: none;
+    }
+    .table-desktop {
+        display: block;
+    }
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-briefcase me-2"></i>{{ tr("Gestione cassette attrezzi") }}
+    </h4>
+    <p>{{ tr("Registra le cassette personali e assegna la responsabilita agli utenti") }}</p>
+</div>
+
+<hr class="my-4">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ tr(message) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="card-box">
+    <h6 class="fw-bold mb-3">
+        <i class="fa fa-plus-circle me-1"></i> {{ tr("Nuova cassetta") }}
+    </h6>
+
+    <form method="POST" class="row g-3">
+        <input type="hidden" name="acao" value="novo">
+
+        <div class="col-12 col-md-6">
+            <label class="form-label">{{ tr("Responsabile") }}</label>
+            <select name="uid_responsavel" class="form-select" required>
+                <option value="" disabled selected>{{ tr("Seleziona utente") }}</option>
+                {% for u in usuarios %}
+                <option value="{{ u.uid }}">{{ u.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="usar-padrao" name="usar_padrao" value="1">
+                <label class="form-check-label" for="usar-padrao">{{ tr("Usa cassetta predefinita") }}</label>
+            </div>
+            <small class="text-muted d-block">{{ tr("Usa la cassetta predefinita con gli item gia configurati.") }}</small>
+            {% if cassetta_padrao_itens %}
+            <button class="btn btn-link p-0 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#cassetta-padrao-itens" aria-expanded="false" aria-controls="cassetta-padrao-itens">
+                <i class="fa fa-list me-1"></i>{{ tr("Visualizza cassetta predefinita") }}
+            </button>
+            <div class="collapse" id="cassetta-padrao-itens">
+                <ul class="itens-list mb-0">
+                    {% for item in cassetta_padrao_itens %}
+                    <li>{{ item.descricao or "-" }} (x{{ item.quantidade or 0 }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <p class="small text-muted mt-1 mb-0">{{ tr("Nessuna cassetta predefinita configurata.") }}</p>
+            {% endif %}
+        </div>
+
+        <div class="col-12">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="salvar-padrao" name="salvar_padrao" value="1">
+                <label class="form-check-label" for="salvar-padrao">{{ tr("Salva item come cassetta predefinita") }}</label>
+            </div>
+            <small class="text-muted d-block">{{ tr("Usa questa opzione per creare o aggiornare la cassetta predefinita.") }}</small>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-semibold">{{ tr("Item della cassetta") }}</label>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-2">
+                    <thead>
+                        <tr>
+                            <th>{{ tr("Descrizione") }}</th>
+                            <th style="width: 120px;">{{ tr("Quantita") }}</th>
+                            <th style="width: 70px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-rows">
+                        <tr class="item-row">
+                            <td><input type="text" name="item_descricao[]" class="form-control form-control-sm"></td>
+                            <td><input type="number" name="item_quantidade[]" min="1" step="1" value="1" class="form-control form-control-sm"></td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-item-row" disabled>
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="add-item-row" class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-plus me-1"></i>{{ tr("Aggiungi item") }}
+            </button>
+        </div>
+
+        <div class="col-12 d-grid d-md-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save me-1"></i>{{ tr("Aggiungi") }}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if malas %}
+
+<div class="malas-cards">
+    {% for m in malas %}
+    <div class="mala-card">
+        <div class="mala-title">
+            <i class="fa fa-briefcase me-1"></i>{{ tr("Cassetta attrezzi") }} - {{ m.responsavel_nome or m.nome or "-" }}
+        </div>
+        <div class="mala-meta mt-1">
+            {{ tr("Responsabile") }}: {{ m.responsavel_nome or "-" }}
+        </div>
+        <div class="mala-meta">
+            {{ tr("Assegnato il") }}: {{ m.assegnato_em_fmt }}
+        </div>
+
+        <button class="btn btn-sm btn-outline-secondary btn-toggle-items"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mala-items-mobile-{{ loop.index }}"
+                aria-expanded="false"
+                aria-controls="mala-items-mobile-{{ loop.index }}">
+            <i class="fa fa-list me-1"></i>{{ tr("Ver itens") }}
+        </button>
+
+        <div class="collapse" id="mala-items-mobile-{{ loop.index }}">
+            <ul class="itens-list">
+                {% for item in m.itens %}
+                <li>
+                    {{ item.descricao or "-" }} (x{{ item.quantidade or 0 }})
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="d-grid gap-2 mt-3">
+            <a href="{{ url_for('admin_malas_termo', mala_id=m.id) }}" target="_blank" class="btn btn-outline-dark btn-sm w-100">
+                <i class="fa fa-file-signature me-1"></i>{{ tr("Termine di responsabilita") }}
+            </a>
+            <a href="{{ url_for('admin_malas_editar', mala_id=m.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                <i class="fa fa-pen me-1"></i>{{ tr("Modifica") }}
+            </a>
+            <form method="POST" onsubmit="return confirm('{{ tr("Confermi eliminazione cassetta?") }}');">
+                <input type="hidden" name="acao" value="elimina">
+                <input type="hidden" name="mala_id" value="{{ m.id }}">
+                <button class="btn btn-outline-danger btn-sm w-100">
+                    <i class="fa fa-trash me-1"></i>{{ tr("Elimina") }}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="table-desktop">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>{{ tr("Cassetta attrezzi") }}</th>
+                <th>{{ tr("Responsabile") }}</th>
+                <th>{{ tr("Assegnato il") }}</th>
+                <th class="text-center">{{ tr("Azioni") }}</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for m in malas %}
+            <tr>
+                <td>
+                    {{ tr("Cassetta attrezzi") }} - {{ m.responsavel_nome or m.nome or "-" }}
+                </td>
+                <td>{{ m.responsavel_nome or "-" }}</td>
+                <td>{{ m.assegnato_em_fmt }}</td>
+                <td class="text-center">
+                    <div class="d-inline-flex gap-2">
+                        <a href="{{ url_for('admin_malas_termo', mala_id=m.id) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="{{ tr('Termine di responsabilita') }}">
+                            <i class="fa fa-file-signature"></i>
+                        </a>
+                        <a href="{{ url_for('admin_malas_editar', mala_id=m.id) }}" class="btn btn-sm btn-outline-primary" title="{{ tr('Modifica') }}">
+                            <i class="fa fa-pen"></i>
+                        </a>
+                        <button class="btn btn-sm btn-outline-secondary"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#mala-items-desktop-{{ loop.index }}"
+                                aria-expanded="false"
+                                aria-controls="mala-items-desktop-{{ loop.index }}">
+                            <i class="fa fa-list"></i>
+                        </button>
+                        <form method="POST" onsubmit="return confirm('{{ tr("Confermi eliminazione cassetta?") }}');">
+                            <input type="hidden" name="acao" value="elimina">
+                            <input type="hidden" name="mala_id" value="{{ m.id }}">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr class="mala-items-row">
+                <td colspan="4" class="pt-0 pb-0">
+                    <div class="collapse" id="mala-items-desktop-{{ loop.index }}">
+                        <div class="mala-items-box">
+                            <div class="mala-items-title">
+                                <i class="fa fa-list me-1"></i>{{ tr("Item della cassetta") }} - {{ m.responsavel_nome or m.nome or "-" }}
+                            </div>
+                            <ul class="itens-list mb-0">
+                                {% for item in m.itens %}
+                                <li>{{ item.descricao or "-" }} (x{{ item.quantidade or 0 }})</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<p class="text-muted text-center mt-4">
+    {{ tr("Nessuna cassetta registrata.") }}
+</p>
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const usarPadrao = document.getElementById("usar-padrao");
+    const salvarPadrao = document.getElementById("salvar-padrao");
+    const addBtn = document.getElementById("add-item-row");
+    const rowsWrap = document.getElementById("item-rows");
+    if (!rowsWrap) return;
+
+    const defaultItems = {{ cassetta_padrao_itens | tojson }};
+
+    function atualizarBotoesRemover() {
+        const rows = rowsWrap.querySelectorAll(".item-row");
+        rows.forEach((row) => {
+            const btn = row.querySelector(".remove-item-row");
+            if (!btn) return;
+            btn.disabled = rows.length === 1;
+        });
+    }
+
+    function addRow(descricao = "", quantidade = 1, disabled = false) {
+        const row = document.createElement("tr");
+        row.className = "item-row";
+        row.innerHTML = `
+            <td><input type="text" name="item_descricao[]" class="form-control form-control-sm" value="${descricao}" ${disabled ? "disabled" : ""}></td>
+            <td><input type="number" name="item_quantidade[]" min="1" step="1" value="${quantidade}" class="form-control form-control-sm" ${disabled ? "disabled" : ""}></td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item-row" ${disabled ? "disabled" : ""}>
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+        rowsWrap.appendChild(row);
+    }
+
+    function clearRows() {
+        rowsWrap.innerHTML = "";
+    }
+
+    function setManualMode() {
+        clearRows();
+        addRow("", 1, false);
+        atualizarBotoesRemover();
+        if (addBtn) addBtn.disabled = false;
+        if (salvarPadrao) salvarPadrao.disabled = false;
+    }
+
+    function setDefaultMode() {
+        clearRows();
+        if (Array.isArray(defaultItems) && defaultItems.length > 0) {
+            defaultItems.forEach((item) => {
+                const descricao = (item && item.descricao) ? item.descricao : "";
+                const quantidade = (item && item.quantidade) ? item.quantidade : 1;
+                addRow(descricao, quantidade, true);
+            });
+        } else {
+            addRow("", 1, true);
+        }
+        if (addBtn) addBtn.disabled = true;
+        if (salvarPadrao) salvarPadrao.checked = false;
+        if (salvarPadrao) salvarPadrao.disabled = true;
+    }
+
+    if (addBtn) {
+        addBtn.addEventListener("click", function () {
+            addRow("", 1, false);
+            atualizarBotoesRemover();
+        });
+    }
+
+    if (usarPadrao) {
+        usarPadrao.addEventListener("change", function () {
+            if (usarPadrao.checked) {
+                setDefaultMode();
+            } else {
+                setManualMode();
+            }
+        });
+    }
+
+    rowsWrap.addEventListener("click", function (event) {
+        const removeBtn = event.target.closest(".remove-item-row");
+        if (!removeBtn) return;
+        const row = removeBtn.closest(".item-row");
+        if (!row) return;
+        row.remove();
+        atualizarBotoesRemover();
+    });
+
+    atualizarBotoesRemover();
+});
+</script>
+
+{% endblock %}

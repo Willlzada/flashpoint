@@ -1,4 +1,4 @@
-﻿from flask import Flask, flash, render_template, request, redirect, session, url_for
+﻿from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 
 import pyrebase
 
@@ -52,7 +52,7 @@ from datetime import datetime
 
 # =========================
 
-# CONFIGURAÇÃO DO FLASK
+# CONFIGURA��O DO FLASK
 
 # =========================
 
@@ -66,7 +66,7 @@ app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # 3MB
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
-app.secret_key = "chave-secreta-simples"  # essencial para sessão
+app.secret_key = "chave-secreta-simples"  # essencial para sess�o
 
 
 
@@ -78,7 +78,7 @@ app.secret_key = "chave-secreta-simples"  # essencial para sessão
 
 SUPPORTED_LANGUAGES = [
 
-    {"code": "pt-br", "label": "Português (Brasil)"},
+    {"code": "pt-br", "label": "Portugu�s (Brasil)"},
 
     {"code": "en", "label": "English"},
 
@@ -88,7 +88,7 @@ SUPPORTED_LANGUAGES = [
 
 LANGUAGE_CODES = {lang["code"] for lang in SUPPORTED_LANGUAGES}
 
-DEFAULT_LANGUAGE = "it"  # Italiano como idioma padrão
+DEFAULT_LANGUAGE = "it"  # Italiano como idioma padr�o
 
 
 
@@ -98,7 +98,7 @@ TRANSLATIONS = {
 
         "language.label": "Idioma",
 
-        "nav.home": "Início",
+        "nav.home": "In�cio",
 
         "nav.clock_in": "Registrar horas",
 
@@ -108,19 +108,22 @@ TRANSLATIONS = {
 
         "nav.profile": "Perfil",
 
-        "nav.admin": "Administração",
+        "nav.admin": "Administra��o",
+        "nav.developer": "Desenvolvedor",
 
-        "nav.admin_hours": "Gestão das horas registradas",
+        "nav.admin_hours": "Gest�o das horas registradas",
 
-        "nav.admin_sites": "Gestão de locais",
+        "nav.admin_sites": "Gest�o de locais",
 
-        "nav.admin_badges": "Crachás",
+        "nav.admin_badges": "Crach�s",
 
-        "nav.admin_profiles": "Perfis de usuários",
+        "nav.admin_profiles": "Perfis de usu�rios",
 
-        "nav.admin_requests": "Solicitações dos funcionários",
+        "nav.admin_requests": "Solicita��es dos funcion�rios",
 
         "nav.admin_kits": "Kits de ferramentas",
+
+        "nav.admin_bags": "Caixa de ferramentas",
 
         "nav.logout": "Sair",
 
@@ -146,11 +149,11 @@ TRANSLATIONS = {
 
         "login.submit": "Entrar",
 
-        "login.no_account": "Não tem uma conta?",
+        "login.no_account": "N�o tem uma conta?",
 
         "login.create_account": "Criar uma conta",
 
-        "login.footer": "© FlashPoint 2026 Todos os direitos reservados.",
+        "login.footer": "� FlashPoint 2026 Todos os direitos reservados.",
 
         "register.page_title": "Criar conta | FlashPoint",
 
@@ -160,7 +163,7 @@ TRANSLATIONS = {
 
         "register.last_name": "Sobrenome",
 
-        "register.email_label": "Endereço de email",
+        "register.email_label": "Endere�o de email",
 
         "register.email_placeholder": "Insira seu email",
 
@@ -170,11 +173,11 @@ TRANSLATIONS = {
 
         "register.submit": "Criar conta",
 
-        "register.have_account": "Já tem uma conta?",
+        "register.have_account": "J� tem uma conta?",
 
         "register.sign_in": "Entrar",
 
-        "register.footer": "© FlashPoint 2026 Todos os direitos reservados.",
+        "register.footer": "� FlashPoint 2026 Todos os direitos reservados.",
 
     
 
@@ -224,6 +227,7 @@ TRANSLATIONS = {
         "nav.profile": "Profilo",
 
         "nav.admin": "Amministrazione",
+        "nav.developer": "Sviluppatore",
 
         "nav.admin_hours": "Gestione delle ore registrate",
 
@@ -236,6 +240,8 @@ TRANSLATIONS = {
         "nav.admin_requests": "Richieste dei dipendenti",
 
         "nav.admin_kits": "Kit attrezzi",
+
+        "nav.admin_bags": "Cassetta attrezzi",
 
         "nav.logout": "Esci",
 
@@ -265,7 +271,7 @@ TRANSLATIONS = {
 
         "login.create_account": "Crea un account",
 
-        "login.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
+        "login.footer": "� FlashPoint 2026 Tutti i diritti riservati.",
 
         "register.page_title": "Crea account | FlashPoint",
 
@@ -285,11 +291,11 @@ TRANSLATIONS = {
 
         "register.submit": "Crea un account",
 
-        "register.have_account": "Hai già un account?",
+        "register.have_account": "Hai gi� un account?",
 
         "register.sign_in": "Accedi",
 
-        "register.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
+        "register.footer": "� FlashPoint 2026 Tutti i diritti riservati.",
 
     
 
@@ -335,21 +341,21 @@ TEXT_TRANSLATIONS = {
 
         "Admin cria e designa atividades para os colaboradores": "Admin cria e designa atividades para os colaboradores",
 
-        "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Cartões de Reconhecimento | FlashPoint",
+        "Admin � Cart�es de Reconhecimento | FlashPoint": "Admin � Cart�es de Reconhecimento | FlashPoint",
 
-        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Limpeza | FlashPoint",
+        "Admin � Backup e Pulizia | FlashPoint": "Admin � Backup e Limpeza | FlashPoint",
 
-        "Admin • Locais | FlashPoint": "Admin • Locais | FlashPoint",
+        "Admin � Locais | FlashPoint": "Admin � Locais | FlashPoint",
 
-        "Admin • Modifica Profilo | FlashPoint": "Admin • Editar Perfil | FlashPoint",
+        "Admin � Modifica Profilo | FlashPoint": "Admin � Editar Perfil | FlashPoint",
 
-        "Admin • Modifica Punto | FlashPoint": "Admin • Editar Ponto | FlashPoint",
+        "Admin � Modifica Punto | FlashPoint": "Admin � Editar Ponto | FlashPoint",
 
-        "Admin • Ordini | FlashPoint": "Admin • Pedidos | FlashPoint",
+        "Admin � Ordini | FlashPoint": "Admin � Pedidos | FlashPoint",
 
-        "Admin • Pontos | FlashPoint": "Admin • Pontos | FlashPoint",
+        "Admin � Pontos | FlashPoint": "Admin � Pontos | FlashPoint",
 
-        "Admin • Profili Utenti | FlashPoint": "Admin • Perfis de Usuários | FlashPoint",
+        "Admin � Profili Utenti | FlashPoint": "Admin � Perfis de Usu�rios | FlashPoint",
 
         "Termine di responsabilita kit": "Termo de responsabilidade do kit",
 
@@ -380,6 +386,11 @@ TEXT_TRANSLATIONS = {
         "Responsabile aziendale": "Responsavel da empresa",
 
         "Firma del dipendente": "Assinatura do funcionario",
+        "Firma digitale del dipendente": "Assinatura digital do funcionario",
+        "Firma qui e salva direttamente nel documento.": "Assine aqui e salve diretamente no documento.",
+        "Pulisci": "Limpar",
+        "Salva firma": "Salvar assinatura",
+        "Nessuna firma salvata.": "Nenhuma assinatura salva.",
 
         "Firma del responsabile": "Assinatura do responsavel",
 
@@ -388,6 +399,40 @@ TEXT_TRANSLATIONS = {
         "Item del kit": "Itens do kit",
 
         "Nessun item registrato per questo kit.": "Nenhum item registrado para este kit.",
+        "Admin - Cassetta attrezzi | FlashPoint": "Admin - Caixa de ferramentas | FlashPoint",
+        "Gestione cassette attrezzi": "Gestao de caixas de ferramentas",
+        "Registra le cassette personali e assegna la responsabilita agli utenti": "Registre as caixas pessoais e atribua a responsabilidade aos usuarios",
+        "Nuova cassetta": "Nova caixa",
+        "Item della cassetta": "Itens da caixa",
+        "Cassetta attrezzi": "Caixa de ferramentas",
+        "Nessuna cassetta registrata.": "Nenhuma caixa registrada.",
+        "Nessuna cassetta assegnata.": "Nenhuma caixa atribuida.",
+        "Nessun item registrato per questa cassetta.": "Nenhum item registrado para esta caixa.",
+        "Cassetta attrezzi personale": "Caixa de ferramentas pessoal",
+        "Usa cassetta predefinita": "Usar caixa padrao",
+        "Usa la cassetta predefinita con gli item gia configurati.": "Use a caixa padrao com os itens ja configurados.",
+        "Visualizza cassetta predefinita": "Ver caixa padrao",
+        "Nessuna cassetta predefinita configurata.": "Nenhuma caixa padrao configurada.",
+        "Salva item come cassetta predefinita": "Salvar itens como caixa padrao",
+        "Usa questa opzione per creare o aggiornare la cassetta predefinita.": "Use esta opcao para criar ou atualizar a caixa padrao.",
+        "Termine di responsabilita cassetta attrezzi": "Termo de responsabilidade da caixa de ferramentas",
+        "Termine di responsabilita per cassetta attrezzi personale": "Termo de responsabilidade da caixa pessoal de ferramentas",
+        "Il dipendente dichiara di aver ricevuto la cassetta personale descritta e di custodirla con cura.": "O funcionario declara ter recebido a caixa pessoal descrita e compromete-se a cuidar dela.",
+        "La cassetta e assegnata in modo permanente al dipendente e non e prevista restituzione.": "A caixa e atribuida de forma permanente ao funcionario e nao ha devolucao.",
+        "In caso di smarrimento, furto o danno non usuale dovuto a uso improprio, la responsabilita ricade sul dipendente.": "Em caso de perda, furto ou dano nao usual por mau uso, a responsabilidade e do funcionario.",
+        "Compila i campi obbligatori della cassetta.": "Preencha os campos obrigatorios da caixa.",
+        "Inserisci almeno un item per la cassetta.": "Insira pelo menos um item para a caixa.",
+        "Cassetta registrata con successo.": "Caixa registrada com sucesso.",
+        "Cassetta non valida.": "Caixa invalida.",
+        "Cassetta non trovata.": "Caixa nao encontrada.",
+        "Cassetta eliminata con successo.": "Caixa eliminada com sucesso.",
+        "Assegna la cassetta a un utente prima di generare il termine.": "Atribua a caixa a um usuario antes de gerar o termo.",
+        "L'utente ha gia una cassetta assegnata.": "O usuario ja possui uma caixa atribuida.",
+        "Cassetta aggiornata con successo.": "Caixa atualizada com sucesso.",
+        "Modifica cassetta | FlashPoint": "Editar caixa | FlashPoint",
+        "Modifica cassetta": "Editar caixa",
+        "Aggiorna i dati della cassetta": "Atualize os dados da caixa",
+        "Confermi eliminazione cassetta?": "Confirma exclusao da caixa?",
 
         "Rapporto presenze": "Relatorio de presencas",
 
@@ -405,29 +450,29 @@ TEXT_TRANSLATIONS = {
 
         "Aggiungi": "Adicionar",
 
-        "Aggiungi e gestisci i luoghi disponibili": "Adicione e gerencie os locais disponíveis",
+        "Aggiungi e gestisci i luoghi disponibili": "Adicione e gerencie os locais dispon�veis",
 
         "Aggiungi nuovo locale": "Adicionar novo local",
 
-        "Aggiungi un'osservazione rilevante...": "Adicione uma observação relevante...",
+        "Aggiungi un'osservazione rilevante...": "Adicione uma observa��o relevante...",
 
         "Alta": "Alta",
 
         "Amministratore": "Administrador",
 
-        "Amministrazione e controllo delle ore": "Administração e controle de horas",
+        "Amministrazione e controllo delle ore": "Administra��o e controle de horas",
 
         "Annulla": "Cancelar",
 
         "Approvato": "Aprovado",
 
-        "Area amministratore": "Área administrativa",
+        "Area amministratore": "�rea administrativa",
 
         "Atualizar": "Atualizar",
 
-        "Azione": "Ação",
+        "Azione": "A��o",
 
-        "Azioni": "Ações",
+        "Azioni": "A��es",
 
         "Backup e pulizia": "Backup e limpeza",
 
@@ -439,9 +484,9 @@ TEXT_TRANSLATIONS = {
 
         "Cantieri": "Canteiros",
 
-        "Cartão de Reconhecimento": "Cartão de Reconhecimento",
+        "Cart�o de Reconhecimento": "Cart�o de Reconhecimento",
 
-        "Classifica mensile ore lavorate": "Classificação mensal de horas trabalhadas",
+        "Classifica mensile ore lavorate": "Classifica��o mensal de horas trabalhadas",
 
         "Cognome": "Sobrenome",
 
@@ -451,11 +496,11 @@ TEXT_TRANSLATIONS = {
 
         "Completo": "Completo",
 
-        "Configurações": "Configurações",
+        "Configura��es": "Configura��es",
 
         "Consulta e gestisci le ore registrate": "Consulte e gerencie as horas registradas",
 
-        "Consulta e modifica le informazioni del tuo profilo": "Consulte e edite as informações do seu perfil",
+        "Consulta e modifica le informazioni del tuo profilo": "Consulte e edite as informa��es do seu perfil",
 
         "Creato il": "Criado em",
 
@@ -467,31 +512,31 @@ TEXT_TRANSLATIONS = {
 
         "Data": "Data",
 
-        "Data Assunzione": "Data de admissão",
+        "Data Assunzione": "Data de admiss�o",
 
-        "Data di assunzione": "Data de admissão",
+        "Data di assunzione": "Data de admiss�o",
 
         "Data di nascita": "Data de nascimento",
 
-        "Data specifica": "Data específica",
+        "Data specifica": "Data espec�fica",
 
         "Dati del punto": "Dados do ponto",
 
         "Dati personali": "Dados pessoais",
 
-        "Descrição": "Descrição",
+        "Descri��o": "Descri��o",
 
         "Deseja excluir esta tarefa?": "Deseja excluir esta tarefa?",
 
-        "Designar para (pode selecionar vários)": "Designar para (pode selecionar vários)",
+        "Designar para (pode selecionar v�rios)": "Designar para (pode selecionar v�rios)",
 
         "Detalhes da tarefa": "Detalhes da tarefa",
 
-        "Dipendente": "Funcionário",
+        "Dipendente": "Funcion�rio",
 
         "Distaccato Presso": "Destacado em",
 
-        "Done": "Concluído",
+        "Done": "Conclu�do",
 
         "Elimina": "Excluir",
 
@@ -499,19 +544,19 @@ TEXT_TRANSLATIONS = {
 
         "Esporta PDF": "Exportar PDF",
 
-        "Esporta rapporto in PDF": "Exportar relatório em PDF",
+        "Esporta rapporto in PDF": "Exportar relat�rio em PDF",
 
         "Evaso": "Atendido",
 
-        "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15": "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15",
+        "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15": "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15",
 
         "Ex.: Brasile": "Ex.: Brasil",
 
         "Ex.: Elettricista": "Ex.: Eletricista",
 
-        "Ex.: Joao": "Ex.: João",
+        "Ex.: Joao": "Ex.: Jo�o",
 
-        "Ex.: João": "Ex.: João",
+        "Ex.: Jo�o": "Ex.: Jo�o",
 
         "Ex.: Silva": "Ex.: Silva",
 
@@ -525,29 +570,29 @@ TEXT_TRANSLATIONS = {
 
         "Foto do perfil": "Foto do perfil",
 
-        "Genera tessera": "Gerar crachá",
+        "Genera tessera": "Gerar crach�",
 
-        "Genera tesserino": "Gerar crachá",
+        "Genera tesserino": "Gerar crach�",
 
-        "Generazione e gestione dei cartellini": "Geração e gestão dos cartões",
+        "Generazione e gestione dei cartellini": "Gera��o e gest�o dos cart�es",
 
-        "Gestione dei cantieri": "Gestão dos canteiros",
+        "Gestione dei cantieri": "Gest�o dos canteiros",
 
-        "Gestione dei locali": "Gestão dos locais",
+        "Gestione dei locali": "Gest�o dos locais",
 
-        "Gestione delle ore registrate": "Gestão das horas registradas",
+        "Gestione delle ore registrate": "Gest�o das horas registradas",
 
-        "Gestione delle presenze": "Gestão das presenças",
+        "Gestione delle presenze": "Gest�o das presen�as",
 
-        "Gestione profili utenti": "Gestão de perfis de usuários",
+        "Gestione profili utenti": "Gest�o de perfis de usu�rios",
 
-        "Gestione richieste e ordini": "Gestão de solicitações e pedidos",
+        "Gestione richieste e ordini": "Gest�o de solicita��es e pedidos",
 
         "I miei ordini": "Meus pedidos",
 
         "Idioma": "Idioma",
 
-        "Il backup viene salvato sul tuo PC, non sul server.": "O backup é salvo no seu PC, não no servidor.",
+        "Il backup viene salvato sul tuo PC, non sul server.": "O backup � salvo no seu PC, n�o no servidor.",
 
         "In Progress": "Em andamento",
 
@@ -559,17 +604,17 @@ TEXT_TRANSLATIONS = {
 
         "Invia ordine": "Enviar pedido",
 
-        "Invia una nuova richiesta": "Envie uma nova solicitação",
+        "Invia una nuova richiesta": "Envie uma nova solicita��o",
 
-        "Le mie presenze": "Minhas presenças",
+        "Le mie presenze": "Minhas presen�as",
 
         "Locale": "Local",
 
-        "Mese": "Mês",
+        "Mese": "M�s",
 
-        "Mese finale": "Mês final",
+        "Mese finale": "M�s final",
 
-        "Mese iniziale": "Mês inicial",
+        "Mese iniziale": "M�s inicial",
 
         "Messaggio": "Mensagem",
 
@@ -581,17 +626,17 @@ TEXT_TRANSLATIONS = {
 
         "Modifica Profilo": "Editar Perfil",
 
-        "Modifica le informazioni del tuo profilo": "Edite as informações do seu perfil",
+        "Modifica le informazioni del tuo profilo": "Edite as informa��es do seu perfil",
 
         "Modifica ore": "Editar horas",
 
         "Modifica profilo": "Editar perfil",
 
-        "Modifica profilo utente": "Editar perfil do usuário",
+        "Modifica profilo utente": "Editar perfil do usu�rio",
 
-        "Modificabile se necessario.": "Editável se necessário.",
+        "Modificabile se necessario.": "Edit�vel se necess�rio.",
 
-        "Média": "Média",
+        "M�dia": "M�dia",
 
         "Nato": "Nascido",
 
@@ -605,51 +650,51 @@ TEXT_TRANSLATIONS = {
 
         "Nessuno": "Nenhum",
 
-        "Nessun utente registrato.": "Nenhum usuário registrado.",
+        "Nessun utente registrato.": "Nenhum usu�rio registrado.",
 
         "Nessuna nota inserita.": "Nenhuma nota inserida.",
 
-        "Nessuna presenza registrata con questi filtri.": "Nenhuma presença registrada com esses filtros.",
+        "Nessuna presenza registrata con questi filtri.": "Nenhuma presen�a registrada com esses filtros.",
 
-        "Nessuna presenza trovata con questi filtri.": "Nenhuma presença encontrada com esses filtros.",
+        "Nessuna presenza trovata con questi filtri.": "Nenhuma presen�a encontrada com esses filtros.",
 
         "Nome": "Nome",
 
         "Nome del locale": "Nome do local",
 
-        "Non": "Não",
+        "Non": "N�o",
 
-        "Non hai ancora effettuato alcun ordine.": "Você ainda não fez nenhum pedido.",
+        "Non hai ancora effettuato alcun ordine.": "Voc� ainda n�o fez nenhum pedido.",
 
         "Note": "Notas",
 
         "Nova tarefa": "Nova tarefa",
 
-        "Nuova richiesta": "Nova solicitação",
+        "Nuova richiesta": "Nova solicita��o",
 
-        "Nuova richiesta | FlashPoint": "Nova solicitação | FlashPoint",
+        "Nuova richiesta | FlashPoint": "Nova solicita��o | FlashPoint",
 
-        "Ordini degli utenti": "Pedidos dos usuários",
+        "Ordini degli utenti": "Pedidos dos usu�rios",
 
         "Ore": "Horas",
 
         "Ore lavorate": "Horas trabalhadas",
 
-        "Ore lavorate nel mese precedente": "Horas trabalhadas no mês anterior",
+        "Ore lavorate nel mese precedente": "Horas trabalhadas no m�s anterior",
 
-        "Ore lavorate questo mese": "Horas trabalhadas neste mês",
+        "Ore lavorate questo mese": "Horas trabalhadas neste m�s",
 
-        "Osservazioni": "Observações",
+        "Osservazioni": "Observa��es",
 
-        "Osservazioni aggiuntive...": "Observações adicionais...",
+        "Osservazioni aggiuntive...": "Observa��es adicionais...",
 
-        "PNG, JPG ou WEBP. Máx 3MB.": "PNG, JPG ou WEBP. Máx 3MB.",
+        "PNG, JPG ou WEBP. M�x 3MB.": "PNG, JPG ou WEBP. M�x 3MB.",
 
-        "Paese di origine": "País de origem",
+        "Paese di origine": "Pa�s de origem",
 
         "Perfil | FlashPoint": "Perfil | FlashPoint",
 
-        "Posizione in classifica": "Posição no ranking",
+        "Posizione in classifica": "Posi��o no ranking",
 
         "Prazo": "Prazo",
 
@@ -667,23 +712,23 @@ TEXT_TRANSLATIONS = {
 
         "Registrar Ponto | FlashPoint": "Registrar Ponto | FlashPoint",
 
-        "Registrare la presenza": "Registrar presença",
+        "Registrare la presenza": "Registrar presen�a",
 
-        "Responsável": "Responsável",
+        "Respons�vel": "Respons�vel",
 
-        "Richeste": "Solicitações",
+        "Richeste": "Solicita��es",
 
-        "Richeste degli utenti": "Solicitações dos usuários",
+        "Richeste degli utenti": "Solicita��es dos usu�rios",
 
-        "Riepilogo della tua attività": "Resumo da sua atividade",
+        "Riepilogo della tua attivit�": "Resumo da sua atividade",
 
         "Rifiutato": "Recusado",
 
         "Ruolo": "Cargo",
 
-        "Ruolo / Mansione": "Cargo / Função",
+        "Ruolo / Mansione": "Cargo / Fun��o",
 
-        "Salva modifiche": "Salvar alterações",
+        "Salva modifiche": "Salvar altera��es",
 
         "Scarica + elimina": "Baixar + excluir",
 
@@ -691,7 +736,7 @@ TEXT_TRANSLATIONS = {
 
         "Seleziona il luogo": "Selecione o local",
 
-        "Seleziona il luogo in cui si è svolta l'attività.": "Selecione o local onde a atividade foi realizada.",
+        "Seleziona il luogo in cui si � svolta l'attivit�.": "Selecione o local onde a atividade foi realizada.",
 
         "Si": "Sim",
 
@@ -707,13 +752,13 @@ TEXT_TRANSLATIONS = {
 
         "Status": "Status",
 
-        "Tarefas atribuídas": "Tarefas atribuídas",
+        "Tarefas atribu�das": "Tarefas atribu�das",
 
         "Tarefas de toda a equipa": "Tarefas de toda a equipe",
 
-        "Tesserini": "Crachás",
+        "Tesserini": "Crach�s",
 
-        "Tesserini di riconoscimento": "Crachás de reconhecimento",
+        "Tesserini di riconoscimento": "Crach�s de reconhecimento",
 
         "Tipo": "Tipo",
 
@@ -725,13 +770,13 @@ TEXT_TRANSLATIONS = {
 
         "Tornare": "Voltar",
 
-        "Totale delle ore lavorate quest’anno": "Total de horas trabalhadas neste ano",
+        "Totale delle ore lavorate quest�anno": "Total de horas trabalhadas neste ano",
 
         "Totale ore registrate": "Total de horas registradas",
 
         "Tutti": "Todos",
 
-        "Título": "Título",
+        "T�tulo": "T�tulo",
 
         "UID": "UID",
 
@@ -739,11 +784,11 @@ TEXT_TRANSLATIONS = {
 
         "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.",
 
-        "Utente": "Usuário",
+        "Utente": "Usu�rio",
 
-        "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Um backup será baixado e depois as presenças serão removidas do servidor. Continuar?",
+        "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Um backup ser� baixado e depois as presen�as ser�o removidas do servidor. Continuar?",
 
-        "Visualização das tarefas que foram designadas para você": "Visualização das tarefas que foram designadas para você",
+        "Visualiza��o das tarefas que foram designadas para voc�": "Visualiza��o das tarefas que foram designadas para voc�",
 
         "Visualizza e gestisci i tuoi ordini": "Visualize e gerencie seus pedidos",
 
@@ -753,11 +798,11 @@ TEXT_TRANSLATIONS = {
 
         "Vuoi eliminare questo punto?": "Deseja excluir este ponto?",
 
-        "Work Management": "Gestão de tarefas",
+        "Work Management": "Gest�o de tarefas",
 
         "a": "em",
 
-        "email non disponibile": "email não disponível",
+        "email non disponibile": "email n�o dispon�vel",
 
         "opzionale": "opcional",
 
@@ -769,7 +814,7 @@ TEXT_TRANSLATIONS = {
 
         "Telefone": "Telefone",
 
-        "Telefone de emergência": "Telefone de emergência",
+        "Telefone de emerg�ncia": "Telefone de emerg�ncia",
 
         "Ragione Sociale": "Raz?o social",
 
@@ -818,23 +863,23 @@ TEXT_TRANSLATIONS = {
 
         "Admin": "Admin",
 
-        "Admin cria e designa atividades para os colaboradores": "L'amministratore crea e assegna le attività ai collaboratori",
+        "Admin cria e designa atividades para os colaboradores": "L'amministratore crea e assegna le attivit� ai collaboratori",
 
-        "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Tesserini di riconoscimento | FlashPoint",
+        "Admin � Cart�es de Reconhecimento | FlashPoint": "Admin � Tesserini di riconoscimento | FlashPoint",
 
-        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Pulizia | FlashPoint",
+        "Admin � Backup e Pulizia | FlashPoint": "Admin � Backup e Pulizia | FlashPoint",
 
-        "Admin • Locais | FlashPoint": "Admin • Locali | FlashPoint",
+        "Admin � Locais | FlashPoint": "Admin � Locali | FlashPoint",
 
-        "Admin • Modifica Profilo | FlashPoint": "Admin • Modifica profilo | FlashPoint",
+        "Admin � Modifica Profilo | FlashPoint": "Admin � Modifica profilo | FlashPoint",
 
-        "Admin • Modifica Punto | FlashPoint": "Admin • Modifica punto | FlashPoint",
+        "Admin � Modifica Punto | FlashPoint": "Admin � Modifica punto | FlashPoint",
 
-        "Admin • Ordini | FlashPoint": "Admin • Ordini | FlashPoint",
+        "Admin � Ordini | FlashPoint": "Admin � Ordini | FlashPoint",
 
-        "Admin • Pontos | FlashPoint": "Admin • Presenze | FlashPoint",
+        "Admin � Pontos | FlashPoint": "Admin � Presenze | FlashPoint",
 
-        "Admin • Profili Utenti | FlashPoint": "Admin • Profili utenti | FlashPoint",
+        "Admin � Profili Utenti | FlashPoint": "Admin � Profili utenti | FlashPoint",
 
         "Aggiungi": "Aggiungi",
 
@@ -872,7 +917,7 @@ TEXT_TRANSLATIONS = {
 
         "Cantieri": "Cantieri",
 
-        "Cartão de Reconhecimento": "Tesserino di riconoscimento",
+        "Cart�o de Reconhecimento": "Tesserino di riconoscimento",
 
         "Classifica mensile ore lavorate": "Classifica mensile ore lavorate",
 
@@ -884,7 +929,7 @@ TEXT_TRANSLATIONS = {
 
         "Completo": "Completo",
 
-        "Configurações": "Impostazioni",
+        "Configura��es": "Impostazioni",
 
         "Consulta e gestisci le ore registrate": "Consulta e gestisci le ore registrate",
 
@@ -894,7 +939,7 @@ TEXT_TRANSLATIONS = {
 
         "Criado por": "Creato da",
 
-        "Criar e designar tarefa": "Crea e assegna attività",
+        "Criar e designar tarefa": "Crea e assegna attivit�",
 
         "Dashboard | FlashPoint": "Dashboard | FlashPoint",
 
@@ -912,13 +957,13 @@ TEXT_TRANSLATIONS = {
 
         "Dati personali": "Dati personali",
 
-        "Descrição": "Descrizione",
+        "Descri��o": "Descrizione",
 
-        "Deseja excluir esta tarefa?": "Vuoi eliminare questa attività?",
+        "Deseja excluir esta tarefa?": "Vuoi eliminare questa attivit�?",
 
-        "Designar para (pode selecionar vários)": "Assegna a (puoi selezionare più persone)",
+        "Designar para (pode selecionar v�rios)": "Assegna a (puoi selezionare pi� persone)",
 
-        "Detalhes da tarefa": "Dettagli dell'attività",
+        "Detalhes da tarefa": "Dettagli dell'attivit�",
 
         "Dipendente": "Dipendente",
 
@@ -936,15 +981,15 @@ TEXT_TRANSLATIONS = {
 
         "Evaso": "Evaso",
 
-        "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15": "Es.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15",
+        "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15": "Es.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15",
 
         "Ex.: Brasile": "Es.: Brasile",
 
         "Ex.: Elettricista": "Es.: Elettricista",
 
-        "Ex.: Joao": "Es.: João",
+        "Ex.: Joao": "Es.: Jo�o",
 
-        "Ex.: João": "Es.: João",
+        "Ex.: Jo�o": "Es.: Jo�o",
 
         "Ex.: Silva": "Es.: Silva",
 
@@ -1008,7 +1053,7 @@ TEXT_TRANSLATIONS = {
 
         "Meus Pontos | FlashPoint": "Le mie presenze | FlashPoint",
 
-        "Minhas Atividades": "Le mie attività",
+        "Minhas Atividades": "Le mie attivit�",
 
         "Modifica": "Modifica",
 
@@ -1024,11 +1069,11 @@ TEXT_TRANSLATIONS = {
 
         "Modificabile se necessario.": "Modificabile se necessario.",
 
-        "Média": "Media",
+        "M�dia": "Media",
 
         "Nato": "Nato",
 
-        "Nenhuma tarefa encontrada para o filtro selecionado.": "Nessuna attività trovata per il filtro selezionato.",
+        "Nenhuma tarefa encontrada para o filtro selecionado.": "Nessuna attivit� trovata per il filtro selezionato.",
 
         "Nessun locale registrato.": "Nessun locale registrato.",
 
@@ -1056,7 +1101,7 @@ TEXT_TRANSLATIONS = {
 
         "Note": "Note",
 
-        "Nova tarefa": "Nuova attività",
+        "Nova tarefa": "Nuova attivit�",
 
         "Nuova richiesta": "Nuova richiesta",
 
@@ -1076,7 +1121,7 @@ TEXT_TRANSLATIONS = {
 
         "Osservazioni aggiuntive...": "Osservazioni aggiuntive...",
 
-        "PNG, JPG ou WEBP. Máx 3MB.": "PNG, JPG o WEBP. Max 3MB.",
+        "PNG, JPG ou WEBP. M�x 3MB.": "PNG, JPG o WEBP. Max 3MB.",
 
         "Paese di origine": "Paese di origine",
 
@@ -1086,7 +1131,7 @@ TEXT_TRANSLATIONS = {
 
         "Prazo": "Scadenza",
 
-        "Prioridade": "Priorità",
+        "Prioridade": "Priorit�",
 
         "Profilo": "Profilo",
 
@@ -1102,13 +1147,13 @@ TEXT_TRANSLATIONS = {
 
         "Registrare la presenza": "Registrare la presenza",
 
-        "Responsável": "Responsabile",
+        "Respons�vel": "Responsabile",
 
         "Richeste": "Richieste",
 
         "Richeste degli utenti": "Richieste degli utenti",
 
-        "Riepilogo della tua attività": "Riepilogo della tua attività",
+        "Riepilogo della tua attivit�": "Riepilogo della tua attivit�",
 
         "Rifiutato": "Rifiutato",
 
@@ -1124,9 +1169,9 @@ TEXT_TRANSLATIONS = {
 
         "Seleziona il luogo": "Seleziona il luogo",
 
-        "Seleziona il luogo in cui si è svolta l'attività.": "Seleziona il luogo in cui si è svolta l'attività.",
+        "Seleziona il luogo in cui si � svolta l'attivit�.": "Seleziona il luogo in cui si � svolta l'attivit�.",
 
-        "Si": "Sì",
+        "Si": "S�",
 
         "Solo amministratori possono aggiornare i profili": "Solo amministratori possono aggiornare i profili",
 
@@ -1140,9 +1185,9 @@ TEXT_TRANSLATIONS = {
 
         "Status": "Status",
 
-        "Tarefas atribuídas": "Attività assegnate",
+        "Tarefas atribu�das": "Attivit� assegnate",
 
-        "Tarefas de toda a equipa": "Attività di tutto il team",
+        "Tarefas de toda a equipa": "Attivit� di tutto il team",
 
         "Tesserini": "Tesserini",
 
@@ -1158,25 +1203,25 @@ TEXT_TRANSLATIONS = {
 
         "Tornare": "Torna indietro",
 
-        "Totale delle ore lavorate quest’anno": "Totale delle ore lavorate quest’anno",
+        "Totale delle ore lavorate quest�anno": "Totale delle ore lavorate quest�anno",
 
         "Totale ore registrate": "Totale ore registrate",
 
         "Tutti": "Tutti",
 
-        "Título": "Titolo",
+        "T�tulo": "Titolo",
 
         "UID": "UID",
 
         "Usa valori decimali (es: 1.50 = 1h30)": "Usa valori decimali (es: 1.50 = 1h30)",
 
-        "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Usa Ctrl/Cmd + clic per selezionare più persone.",
+        "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Usa Ctrl/Cmd + clic per selezionare pi� persone.",
 
         "Utente": "Utente",
 
-        "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?",
+        "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?",
 
-        "Visualização das tarefas que foram designadas para você": "Visualizzazione delle attività assegnate a te",
+        "Visualiza��o das tarefas que foram designadas para voc�": "Visualizzazione delle attivit� assegnate a te",
 
         "Visualizza e gestisci i tuoi ordini": "Visualizza e gestisci i tuoi ordini",
 
@@ -1186,7 +1231,7 @@ TEXT_TRANSLATIONS = {
 
         "Vuoi eliminare questo punto?": "Vuoi eliminare questo punto?",
 
-        "Work Management": "Gestione attività",
+        "Work Management": "Gestione attivit�",
 
         "a": "a",
 
@@ -1202,7 +1247,7 @@ TEXT_TRANSLATIONS = {
 
         "Telefone": "Telefono",
 
-        "Telefone de emergência": "Telefono di emergenza",
+        "Telefone de emerg�ncia": "Telefono di emergenza",
 
         "Ragione Sociale": "Ragione sociale",
 
@@ -1252,7 +1297,7 @@ TEXT_TRANSLATIONS = {
 
 # =========================
 
-# CONFIGURAÇÃO DO FIREBASE (pyrebase)
+# CONFIGURA��O DO FIREBASE (pyrebase)
 
 # =========================
 
@@ -1286,21 +1331,21 @@ auth = firebase.auth()
 
 # =========================
 
-# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
+# CONFIGURA��O DO FIREBASE ADMIN (Firestore)
 
 # =========================
 
 
 
-firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
+firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da vari�vel bate com a do Render
 
 if not firebase_json:
 
-    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
+    raise Exception("Vari�vel de ambiente FIREBASE_CREDENTIALS n�o encontrada!")
 
 
 
-cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
+cred_dict = json.loads(firebase_json)  # Converte JSON da vari�vel em dicion�rio
 
 cred = credentials.Certificate(cred_dict)
 
@@ -1314,7 +1359,7 @@ db = firestore.client()
 
 # =========================
 
-# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
+# CONFIGURA��O DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
 
 # =========================
 
@@ -1340,7 +1385,7 @@ db = firestore.client()
 
 # =========================
 
-# FUNÇÕES AUXILIARES
+# FUN��ES AUXILIARES
 
 # =========================
 
@@ -1650,7 +1695,7 @@ def formatar_data_somente_data(timestamp):
 
 
 
-# ⚠️ Registrar filtro no Jinja
+# ?? Registrar filtro no Jinja
 
 app.jinja_env.filters['formatar_data'] = formatar_data_somente_data
 
@@ -1686,7 +1731,7 @@ def formatar_data_pedido(timestamp):
 
 
 
-# Função para verificar se o usuário é ADM
+# Fun��o para verificar se o usu�rio � ADM
 
 def is_admin():
 
@@ -1708,7 +1753,7 @@ def is_admin():
 
 def get_usuario_logado():
 
-    """Retorna o dicionário do usuário logado pelo UID da sessão"""
+    """Retorna o dicion�rio do usu�rio logado pelo UID da sess�o"""
 
     uid = session.get('uid')
 
@@ -1725,6 +1770,19 @@ def get_usuario_logado():
         return u.to_dict()
 
     return None
+
+
+# Funcao is_admin_or_dev
+def is_admin_or_dev(usuario):
+    return bool(usuario) and (usuario.get("tipo") or "").lower() in ("admin", "developer")
+
+
+# Funcao is_admin_like_tipo
+def is_developer(usuario):
+    return bool(usuario) and (usuario.get("tipo") or "").lower() == "developer"
+
+def is_admin_like_tipo(tipo):
+    return (tipo or "").lower() in ("admin", "developer")
 
 
 
@@ -1918,6 +1976,108 @@ def get_kits_by_responsavel(uid_responsavel):
 
 
 
+# Funcao get_mala_by_responsavel
+def get_mala_by_responsavel(uid_responsavel):
+    if not uid_responsavel:
+        return None
+
+    candidate_ids = {uid_responsavel}
+    try:
+        usuario_ref = db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1).stream()
+        for usuario_doc in usuario_ref:
+            candidate_ids.add(usuario_doc.id)
+            break
+    except Exception:
+        pass
+
+    for doc in db.collection("malas").stream():
+        data = doc.to_dict() or {}
+        responsavel_uid = (data.get("responsavel_uid") or "").strip()
+        responsavel_doc_id = (data.get("responsavel_doc_id") or "").strip()
+        if responsavel_uid not in candidate_ids and responsavel_doc_id not in candidate_ids:
+            continue
+
+        assegnato_em = data.get("assegnato_em")
+        if hasattr(assegnato_em, "strftime"):
+            assegnato_em_fmt = assegnato_em.strftime("%d/%m/%Y %H:%M")
+        else:
+            assegnato_em_fmt = "-"
+
+        itens = data.get("itens")
+        if not isinstance(itens, list):
+            itens = []
+        if not itens and (data.get("descricao") or "").strip():
+            itens = [{
+                "codigo": "",
+                "descricao": (data.get("descricao") or "").strip(),
+                "quantidade": 1,
+            }]
+
+        itens_norm = []
+        for item in itens:
+            if not isinstance(item, dict):
+                continue
+            descricao = (item.get("descricao") or item.get("codigo") or "").strip()
+            if not descricao:
+                continue
+            try:
+                quantidade = int(float(item.get("quantidade", 0)))
+                if quantidade <= 0:
+                    quantidade = 1
+            except Exception:
+                quantidade = 1
+
+            itens_norm.append({
+                "descricao": descricao,
+                "quantidade": quantidade,
+            })
+
+        nome = (data.get("nome") or "").strip()
+        if not nome:
+            nome = (data.get("responsavel_nome") or "").strip()
+
+        return {
+            "id": doc.id,
+            "nome": nome,
+            "itens": itens_norm,
+            "total_itens": len(itens_norm),
+            "responsavel_nome": data.get("responsavel_nome", ""),
+            "assegnato_em_fmt": assegnato_em_fmt,
+        }
+
+    return None
+
+
+# Funcao get_cassetta_padrao
+def get_cassetta_padrao():
+    doc = db.collection("config").document("cassetta_padrao").get()
+    if not doc.exists:
+        return []
+
+    data = doc.to_dict() or {}
+    itens_raw = data.get("itens")
+    if not isinstance(itens_raw, list):
+        itens_raw = []
+
+    itens = []
+    for item in itens_raw:
+        if not isinstance(item, dict):
+            continue
+        descricao = (item.get("descricao") or item.get("codigo") or "").strip()
+        if not descricao:
+            continue
+        try:
+            quantidade = int(float(item.get("quantidade", 0)))
+            if quantidade <= 0:
+                quantidade = 1
+        except Exception:
+            quantidade = 1
+        itens.append({
+            "descricao": descricao,
+            "quantidade": quantidade,
+        })
+
+    return itens
 def get_user_by_id(uid):
 
     doc = db.collection("usuarios").document(uid).get()
@@ -2344,7 +2504,7 @@ def formatar_data_pedido(data_str):
 
     Converte string do Firestore como:
 
-    "19 de janeiro de 2026 às 21:35:39 UTC+1"
+    "19 de janeiro de 2026 �s 21:35:39 UTC+1"
 
     para "19/01/2026 21:35"
 
@@ -2354,9 +2514,9 @@ def formatar_data_pedido(data_str):
 
         # separar data e hora
 
-        if " às " in data_str:
+        if " �s " in data_str:
 
-            data_part, hora_part = data_str.split(" às ")
+            data_part, hora_part = data_str.split(" �s ")
 
             hora_part = hora_part.split(" ")[0]  # remove UTC+1
 
@@ -2368,7 +2528,7 @@ def formatar_data_pedido(data_str):
 
 
 
-        # mapear meses em português para número
+        # mapear meses em portugu�s para n�mero
 
         meses = {
 
@@ -2376,7 +2536,7 @@ def formatar_data_pedido(data_str):
 
             "fevereiro": "02",
 
-            "março": "03",
+            "mar�o": "03",
 
             "abril": "04",
 
@@ -2400,7 +2560,7 @@ def formatar_data_pedido(data_str):
 
 
 
-        # separar dia, mês por extenso e ano
+        # separar dia, m�s por extenso e ano
 
         partes = data_part.strip().split(" de ")
 
@@ -2516,7 +2676,7 @@ def ranking_mensal(ano, mes, limite=None):
 
             ranking[d["uid"]] += float(d["horas"])
 
-            nomes[d["uid"]] = d.get("nome", "Usuário")
+            nomes[d["uid"]] = d.get("nome", "Usu�rio")
 
 
 
@@ -2532,7 +2692,7 @@ def ranking_mensal(ano, mes, limite=None):
 
         resultado.append({
 
-            "nome": nomes.get(uid, "Usuário"),
+            "nome": nomes.get(uid, "Usu�rio"),
 
             "horas": horas,
 
@@ -2598,7 +2758,7 @@ def horas_por_ano(uid, ano):
 
 def parse_work_due_date(due_date):
 
-    """Converte yyyy-mm-dd para datetime para ordenação."""
+    """Converte yyyy-mm-dd para datetime para ordena��o."""
 
     if not due_date:
 
@@ -2754,7 +2914,7 @@ def dashboard():
 
 
 
-    # Usuário
+    # Usu�rio
 
     usuario_doc = db.collection("usuarios").document(uid).get()
 
@@ -2766,7 +2926,7 @@ def dashboard():
 
     usuario = usuario_doc.to_dict()
 
-    nome_usuario = usuario.get("nome", "Usuário")
+    nome_usuario = usuario.get("nome", "Usu�rio")
 
 
 
@@ -2793,10 +2953,11 @@ def dashboard():
     ranking = ranking_mensal(hoje.year, hoje.month)
 
     kits_responsabilidade = get_kits_by_responsavel(uid)
+    mala_responsabilidade = get_mala_by_responsavel(uid)
 
 
 
-    # Posição do usuário no ranking (CORRIGIDO)
+    # Posi��o do usu�rio no ranking (CORRIGIDO)
 
     posicao = "-"
 
@@ -2827,6 +2988,7 @@ def dashboard():
         posicao=posicao,
 
         kits_responsabilidade=kits_responsabilidade,
+        mala_responsabilidade=mala_responsabilidade,
 
     )
 
@@ -2854,7 +3016,7 @@ def help_page():
 
     usuario = get_usuario_logado() or {}
 
-    is_admin_user = usuario.get("tipo") == "admin"
+    is_admin_user = is_admin_or_dev(usuario)
 
     return render_template("help.html", is_admin_user=is_admin_user)
 
@@ -2874,7 +3036,7 @@ def help_manuale(tipo):
 
     usuario = get_usuario_logado() or {}
 
-    is_admin_user = usuario.get("tipo") == "admin"
+    is_admin_user = is_admin_or_dev(usuario)
 
 
 
@@ -3016,7 +3178,7 @@ def login():
 
         except:
 
-            error = "Email ou senha inválidos"
+            error = "Email ou senha inv�lidos"
 
     return render_template("login.html", error=error)
 
@@ -3096,7 +3258,7 @@ def register_usuario():
 
             if "EMAIL_EXISTS" in erro_str:
 
-                error = "Questo email è già registrato. Prova ad effettuare il login."
+                error = "Questo email � gi� registrato. Prova ad effettuare il login."
 
             elif "WEAK_PASSWORD" in erro_str:
 
@@ -3108,7 +3270,7 @@ def register_usuario():
 
             else:
 
-                error = "Errore durante la registrazione. Riprova più tardi."
+                error = "Errore durante la registrazione. Riprova pi� tardi."
 
 
 
@@ -3119,7 +3281,7 @@ def register_usuario():
 
 # =========================
 
-# PERFIL USUÁRIO
+# PERFIL USU�RIO
 
 # =========================
 
@@ -3353,7 +3515,7 @@ def admin_estatisticas():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return redirect("/dashboard")
 
@@ -3573,7 +3735,7 @@ def admin_estatisticas():
 
 # =========================
 
-# ADMIN - PERFIS USUÁRIOS
+# ADMIN - PERFIS USU�RIOS
 
 # =========================
 
@@ -3585,7 +3747,7 @@ def admin_perfis():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return redirect("/dashboard")
 
@@ -3617,7 +3779,7 @@ def admin_kits():
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_developer(usuario_logado):
 
         return redirect("/dashboard")
 
@@ -3725,17 +3887,9 @@ def admin_kits():
 
 
 
-                if not item_codigo and not item_descricao and not item_quantidade_raw:
-
-                    continue
-
-
-
                 if not item_codigo and not item_descricao:
 
-                    flash("Compila codice o descrizione per ogni item del kit.", "danger")
-
-                    return redirect(url_for("admin_kits"))
+                    continue
 
 
 
@@ -4021,7 +4175,7 @@ def admin_kits_termo(kit_id):
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_developer(usuario_logado):
 
         return redirect("/dashboard")
 
@@ -4040,6 +4194,7 @@ def admin_kits_termo(kit_id):
 
 
     kit_data = kit_doc.to_dict() or {}
+    firma_dipendente = (kit_data.get("firma_dipendente") or "").strip()
 
 
 
@@ -4137,6 +4292,8 @@ def admin_kits_termo(kit_id):
 
         },
 
+        firma_dipendente=firma_dipendente,
+
         responsavel={
 
             "nome": responsavel_nome,
@@ -4146,6 +4303,31 @@ def admin_kits_termo(kit_id):
         },
 
     )
+
+
+@app.route("/admin/kits/termo/<kit_id>/firma", methods=["POST"])
+def admin_kits_termo_assinar(kit_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or not is_developer(usuario_logado):
+        return jsonify({"success": False, "message": "Accesso negato."}), 403
+
+    payload = request.get_json(silent=True) or {}
+    assinatura = (payload.get("assinatura") or "").strip()
+    if not assinatura.startswith("data:image/png;base64,"):
+        return jsonify({"success": False, "message": "Firma non valida."}), 400
+
+    kit_ref = db.collection("kits").document(kit_id)
+    kit_doc = kit_ref.get()
+    if not kit_doc.exists:
+        return jsonify({"success": False, "message": "Kit non trovato."}), 404
+
+    agora_italia = datetime.utcnow() + timedelta(hours=1)
+    kit_ref.update({
+        "firma_dipendente": assinatura,
+        "firma_dipendente_em": agora_italia,
+    })
+
+    return jsonify({"success": True})
 
 
 
@@ -4161,7 +4343,7 @@ def admin_kits_editar(kit_id):
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_developer(usuario_logado):
 
         return redirect("/dashboard")
 
@@ -4217,17 +4399,9 @@ def admin_kits_editar(kit_id):
 
 
 
-            if not item_codigo and not item_descricao and not item_quantidade_raw:
-
-                continue
-
-
-
             if not item_codigo and not item_descricao:
 
-                flash("Compila codice o descrizione per ogni item del kit.", "danger")
-
-                return redirect(url_for("admin_kits_editar", kit_id=kit_id))
+                continue
 
 
 
@@ -4325,13 +4499,494 @@ def admin_kits_editar(kit_id):
 
 
 
+# Rota /admin/malas (GET, POST)
+@app.route("/admin/malas", methods=["GET", "POST"])
+def admin_malas():
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or not is_developer(usuario_logado):
+        return redirect("/dashboard")
+
+    def _buscar_funcionario(uid_funcionario):
+        if not uid_funcionario:
+            return None, "Seleziona un utente."
+        funcionario = None
+        funcionario_doc_id = ""
+
+        funcionario_doc = db.collection("usuarios").document(uid_funcionario).get()
+        if funcionario_doc.exists:
+            funcionario = funcionario_doc.to_dict() or {}
+            funcionario_doc_id = funcionario_doc.id
+        else:
+            candidatos = db.collection("usuarios").where("uid", "==", uid_funcionario).limit(1).stream()
+            for cand in candidatos:
+                funcionario = cand.to_dict() or {}
+                funcionario_doc_id = cand.id
+                break
+
+        if not funcionario:
+            return None, "Utente non trovato."
+
+        uid_auth = (funcionario.get("uid") or "").strip() or funcionario_doc_id
+        nome = f"{funcionario.get('nome', '')} {funcionario.get('sobrenome', '')}".strip()
+        return {
+            "uid": uid_auth,
+            "doc_id": funcionario_doc_id,
+            "nome": nome or funcionario.get("email") or uid_auth,
+        }, None
+
+    def _mala_esistente(uid_funcionario, doc_id_funcionario, exclude_id=None):
+        for doc in db.collection("malas").stream():
+            if exclude_id and doc.id == exclude_id:
+                continue
+            data = doc.to_dict() or {}
+            resp_uid = (data.get("responsavel_uid") or "").strip()
+            resp_doc = (data.get("responsavel_doc_id") or "").strip()
+            if resp_uid == uid_funcionario or resp_doc == doc_id_funcionario:
+                return True
+        return False
+
+    if request.method == "POST":
+        acao = (request.form.get("acao") or "").strip().lower()
+        mala_id = (request.form.get("mala_id") or "").strip()
+        agora_italia = datetime.utcnow() + timedelta(hours=1)
+
+        if acao == "novo":
+            uid_responsavel = (request.form.get("uid_responsavel") or "").strip()
+            usar_padrao = (request.form.get("usar_padrao") or "").strip().lower() in ("1", "true", "on", "yes")
+            salvar_padrao = (request.form.get("salvar_padrao") or "").strip().lower() in ("1", "true", "on", "yes")
+            item_descricoes = request.form.getlist("item_descricao[]")
+            item_quantidades = request.form.getlist("item_quantidade[]")
+
+            if not uid_responsavel:
+                flash("Compila i campi obbligatori della cassetta.", "danger")
+                return redirect(url_for("admin_malas"))
+
+            funcionario, erro_funcionario = _buscar_funcionario(uid_responsavel)
+            if erro_funcionario:
+                flash(erro_funcionario, "danger")
+                return redirect(url_for("admin_malas"))
+
+            if _mala_esistente(funcionario["uid"], funcionario["doc_id"]):
+                flash("L'utente ha gia una cassetta assegnata.", "danger")
+                return redirect(url_for("admin_malas"))
+
+            if usar_padrao:
+                itens = get_cassetta_padrao()
+                if not itens:
+                    flash("Nessuna cassetta predefinita configurata.", "danger")
+                    return redirect(url_for("admin_malas"))
+            else:
+                itens = []
+                total_linhas = max(len(item_descricoes), len(item_quantidades))
+                for idx in range(total_linhas):
+                    item_descricao = (item_descricoes[idx] if idx < len(item_descricoes) else "").strip()
+                    item_quantidade_raw = (item_quantidades[idx] if idx < len(item_quantidades) else "").strip()
+
+                    if not item_descricao:
+                        continue
+
+                    try:
+                        item_quantidade = int(float(item_quantidade_raw))
+                        if item_quantidade <= 0:
+                            raise ValueError()
+                    except Exception:
+                        flash("Quantita item non valida. Usa un numero maggiore di zero.", "danger")
+                        return redirect(url_for("admin_malas"))
+
+                    itens.append({
+                        "descricao": item_descricao,
+                        "quantidade": item_quantidade,
+                    })
+
+            if not itens:
+                flash("Inserisci almeno un item per la cassetta.", "danger")
+                return redirect(url_for("admin_malas"))
+
+            if salvar_padrao and not usar_padrao:
+                db.collection("config").document("cassetta_padrao").set({
+                    "itens": itens,
+                    "atualizado_em": agora_italia,
+                    "atualizado_por": session.get("uid"),
+                }, merge=True)
+
+            mala_data = {
+                "nome": funcionario["nome"],
+                "itens": itens,
+                "responsavel_uid": funcionario["uid"],
+                "responsavel_doc_id": funcionario["doc_id"],
+                "responsavel_nome": funcionario["nome"],
+                "assegnato_em": agora_italia,
+                "creato_em": agora_italia,
+                "atualizado_em": agora_italia,
+                "registrado_por_admin_uid": session.get("uid"),
+            }
+
+            db.collection("malas").add(mala_data)
+            flash("Cassetta registrata con successo.", "success")
+            return redirect(url_for("admin_malas"))
+
+        if not mala_id:
+            flash("Cassetta non valida.", "danger")
+            return redirect(url_for("admin_malas"))
+
+        mala_ref = db.collection("malas").document(mala_id)
+        mala_doc = mala_ref.get()
+        if not mala_doc.exists:
+            flash("Cassetta non trovata.", "danger")
+            return redirect(url_for("admin_malas"))
+
+        if acao == "elimina":
+            mala_ref.delete()
+            flash("Cassetta eliminata con successo.", "success")
+            return redirect(url_for("admin_malas"))
+
+        flash("Azione non valida.", "danger")
+        return redirect(url_for("admin_malas"))
+
+    malas = []
+    for doc in db.collection("malas").stream():
+        data = doc.to_dict() or {}
+        itens_raw = data.get("itens")
+        if not isinstance(itens_raw, list):
+            itens_raw = []
+
+        itens = []
+        for item in itens_raw:
+            if not isinstance(item, dict):
+                continue
+            descricao = (item.get("descricao") or item.get("codigo") or "").strip()
+            if not descricao:
+                continue
+            try:
+                quantidade = int(float(item.get("quantidade", 0)))
+                if quantidade <= 0:
+                    quantidade = 1
+            except Exception:
+                quantidade = 1
+            itens.append({
+                "descricao": descricao,
+                "quantidade": quantidade,
+            })
+
+        if not itens and (data.get("descricao") or "").strip():
+            itens = [{
+                "descricao": (data.get("descricao") or "").strip(),
+                "quantidade": 1,
+            }]
+
+        assegnato_em = data.get("assegnato_em")
+        if hasattr(assegnato_em, "strftime"):
+            assegnato_em_fmt = assegnato_em.strftime("%d/%m/%Y %H:%M")
+        else:
+            assegnato_em_fmt = "-"
+
+        nome = (data.get("nome") or "").strip()
+        if not nome:
+            nome = (data.get("responsavel_nome") or "").strip()
+
+        malas.append({
+            "id": doc.id,
+            "nome": nome,
+            "itens": itens,
+            "responsavel_nome": data.get("responsavel_nome", ""),
+            "responsavel_uid": data.get("responsavel_uid", "") or data.get("responsavel_doc_id", ""),
+            "assegnato_em_fmt": assegnato_em_fmt,
+        })
+
+    malas.sort(key=lambda m: m.get("nome", "").lower())
+
+    return render_template(
+        "admin_malas.html",
+        malas=malas,
+        usuarios=get_non_admin_users(),
+        cassetta_padrao_itens=get_cassetta_padrao(),
+    )
+
+
+# Rota /admin/malas/termo/<mala_id> (GET)
+@app.route("/admin/malas/termo/<mala_id>", methods=["GET"])
+def admin_malas_termo(mala_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or not is_developer(usuario_logado):
+        return redirect("/dashboard")
+
+    mala_ref = db.collection("malas").document(mala_id)
+    mala_doc = mala_ref.get()
+    if not mala_doc.exists:
+        flash("Cassetta non trovata.", "danger")
+        return redirect(url_for("admin_malas"))
+
+    mala_data = mala_doc.to_dict() or {}
+    firma_dipendente = (mala_data.get("firma_dipendente") or "").strip()
+
+    responsavel_uid = (mala_data.get("responsavel_uid") or "").strip()
+    responsavel_doc_id = (mala_data.get("responsavel_doc_id") or "").strip()
+    responsavel_nome = (mala_data.get("responsavel_nome") or "").strip()
+
+    if not responsavel_uid and not responsavel_doc_id:
+        flash("Assegna la cassetta a un utente prima di generare il termine.", "danger")
+        return redirect(url_for("admin_malas"))
+
+    responsavel = None
+    if responsavel_doc_id:
+        doc = db.collection("usuarios").document(responsavel_doc_id).get()
+        if doc.exists:
+            responsavel = doc.to_dict() or {}
+            responsavel["uid_doc"] = doc.id
+
+    if not responsavel and responsavel_uid:
+        candidatos = db.collection("usuarios").where("uid", "==", responsavel_uid).limit(1).stream()
+        for cand in candidatos:
+            responsavel = cand.to_dict() or {}
+            responsavel["uid_doc"] = cand.id
+            break
+
+    if responsavel:
+        nome_composto = f"{responsavel.get('nome', '')} {responsavel.get('sobrenome', '')}".strip()
+        responsavel_nome = nome_composto or responsavel_nome or responsavel.get("email", "") or "-"
+        responsavel_cargo = (responsavel.get("cargo") or "").strip() or "-"
+    else:
+        responsavel_cargo = "-"
+        responsavel_nome = responsavel_nome or "-"
+
+    mala_nome = (mala_data.get("nome") or "").strip()
+    if not mala_nome:
+        mala_nome = responsavel_nome
+    mala_data["nome"] = mala_nome
+
+    itens_raw = mala_data.get("itens")
+    if not isinstance(itens_raw, list):
+        itens_raw = []
+
+    itens = []
+    for item in itens_raw:
+        if not isinstance(item, dict):
+            continue
+        descricao = (item.get("descricao") or item.get("codigo") or "").strip()
+        if not descricao:
+            continue
+        try:
+            quantidade = int(float(item.get("quantidade", 0)))
+            if quantidade <= 0:
+                quantidade = 1
+        except Exception:
+            quantidade = 1
+
+        itens.append({
+            "descricao": descricao,
+            "quantidade": quantidade,
+        })
+
+    if not itens and (mala_data.get("descricao") or "").strip():
+        itens = [{
+            "descricao": (mala_data.get("descricao") or "").strip(),
+            "quantidade": 1,
+        }]
+
+    return render_template(
+        "mala_termo_responsabilidade.html",
+        mala={
+            "id": mala_id,
+            "nome": mala_data.get("nome", ""),
+            "itens": itens,
+        },
+        firma_dipendente=firma_dipendente,
+        responsavel={
+            "nome": responsavel_nome,
+            "cargo": responsavel_cargo,
+        },
+    )
+
+
+@app.route("/admin/malas/termo/<mala_id>/firma", methods=["POST"])
+def admin_malas_termo_assinar(mala_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or not is_developer(usuario_logado):
+        return jsonify({"success": False, "message": "Accesso negato."}), 403
+
+    payload = request.get_json(silent=True) or {}
+    assinatura = (payload.get("assinatura") or "").strip()
+    if not assinatura.startswith("data:image/png;base64,"):
+        return jsonify({"success": False, "message": "Firma non valida."}), 400
+
+    mala_ref = db.collection("malas").document(mala_id)
+    mala_doc = mala_ref.get()
+    if not mala_doc.exists:
+        return jsonify({"success": False, "message": "Cassetta non trovata."}), 404
+
+    agora_italia = datetime.utcnow() + timedelta(hours=1)
+    mala_ref.update({
+        "firma_dipendente": assinatura,
+        "firma_dipendente_em": agora_italia,
+    })
+
+    return jsonify({"success": True})
+
+
+# Rota /admin/malas/editar/<mala_id> (GET, POST)
+@app.route("/admin/malas/editar/<mala_id>", methods=["GET", "POST"])
+def admin_malas_editar(mala_id):
+    usuario_logado = get_usuario_logado()
+    if not usuario_logado or not is_developer(usuario_logado):
+        return redirect("/dashboard")
+
+    mala_ref = db.collection("malas").document(mala_id)
+    mala_doc = mala_ref.get()
+    if not mala_doc.exists:
+        flash("Cassetta non trovata.", "danger")
+        return redirect(url_for("admin_malas"))
+
+    mala_data = mala_doc.to_dict() or {}
+
+    def _buscar_funcionario(uid_funcionario):
+        if not uid_funcionario:
+            return None, "Seleziona un utente."
+        funcionario = None
+        funcionario_doc_id = ""
+
+        funcionario_doc = db.collection("usuarios").document(uid_funcionario).get()
+        if funcionario_doc.exists:
+            funcionario = funcionario_doc.to_dict() or {}
+            funcionario_doc_id = funcionario_doc.id
+        else:
+            candidatos = db.collection("usuarios").where("uid", "==", uid_funcionario).limit(1).stream()
+            for cand in candidatos:
+                funcionario = cand.to_dict() or {}
+                funcionario_doc_id = cand.id
+                break
+
+        if not funcionario:
+            return None, "Utente non trovato."
+
+        uid_auth = (funcionario.get("uid") or "").strip() or funcionario_doc_id
+        nome = f"{funcionario.get('nome', '')} {funcionario.get('sobrenome', '')}".strip()
+        return {
+            "uid": uid_auth,
+            "doc_id": funcionario_doc_id,
+            "nome": nome or funcionario.get("email") or uid_auth,
+        }, None
+
+    def _mala_esistente(uid_funcionario, doc_id_funcionario, exclude_id=None):
+        for doc in db.collection("malas").stream():
+            if exclude_id and doc.id == exclude_id:
+                continue
+            data = doc.to_dict() or {}
+            resp_uid = (data.get("responsavel_uid") or "").strip()
+            resp_doc = (data.get("responsavel_doc_id") or "").strip()
+            if resp_uid == uid_funcionario or resp_doc == doc_id_funcionario:
+                return True
+        return False
+
+    if request.method == "POST":
+        uid_responsavel = (request.form.get("uid_responsavel") or "").strip()
+        item_descricoes = request.form.getlist("item_descricao[]")
+        item_quantidades = request.form.getlist("item_quantidade[]")
+
+        if not uid_responsavel:
+            flash("Compila i campi obbligatori della cassetta.", "danger")
+            return redirect(url_for("admin_malas_editar", mala_id=mala_id))
+
+        funcionario, erro_funcionario = _buscar_funcionario(uid_responsavel)
+        if erro_funcionario:
+            flash(erro_funcionario, "danger")
+            return redirect(url_for("admin_malas_editar", mala_id=mala_id))
+
+        if _mala_esistente(funcionario["uid"], funcionario["doc_id"], exclude_id=mala_id):
+            flash("L'utente ha gia una cassetta assegnata.", "danger")
+            return redirect(url_for("admin_malas_editar", mala_id=mala_id))
+
+        itens = []
+        total_linhas = max(len(item_descricoes), len(item_quantidades))
+        for idx in range(total_linhas):
+            item_descricao = (item_descricoes[idx] if idx < len(item_descricoes) else "").strip()
+            item_quantidade_raw = (item_quantidades[idx] if idx < len(item_quantidades) else "").strip()
+
+            if not item_descricao:
+                continue
+
+            try:
+                item_quantidade = int(float(item_quantidade_raw))
+                if item_quantidade <= 0:
+                    raise ValueError()
+            except Exception:
+                flash("Quantita item non valida. Usa un numero maggiore di zero.", "danger")
+                return redirect(url_for("admin_malas_editar", mala_id=mala_id))
+
+            itens.append({
+                "descricao": item_descricao,
+                "quantidade": item_quantidade,
+            })
+
+        if not itens:
+            flash("Inserisci almeno un item per la cassetta.", "danger")
+            return redirect(url_for("admin_malas_editar", mala_id=mala_id))
+
+        mala_ref.update({
+            "nome": funcionario["nome"],
+            "itens": itens,
+            "responsavel_uid": funcionario["uid"],
+            "responsavel_doc_id": funcionario["doc_id"],
+            "responsavel_nome": funcionario["nome"],
+            "atualizado_em": datetime.utcnow() + timedelta(hours=1),
+        })
+        flash("Cassetta aggiornata con successo.", "success")
+        return redirect(url_for("admin_malas"))
+
+    itens_raw = mala_data.get("itens")
+    if not isinstance(itens_raw, list):
+        itens_raw = []
+
+    itens = []
+    for item in itens_raw:
+        if not isinstance(item, dict):
+            continue
+        descricao = (item.get("descricao") or item.get("codigo") or "").strip()
+        if not descricao:
+            continue
+        try:
+            quantidade = int(float(item.get("quantidade", 0)))
+            if quantidade <= 0:
+                quantidade = 1
+        except Exception:
+            quantidade = 1
+        itens.append({
+            "descricao": descricao,
+            "quantidade": quantidade,
+        })
+
+    if not itens and (mala_data.get("descricao") or "").strip():
+        itens = [{
+            "descricao": (mala_data.get("descricao") or "").strip(),
+            "quantidade": 1,
+        }]
+    if not itens:
+        itens = [{"descricao": "", "quantidade": 1}]
+
+    responsavel_uid = (mala_data.get("responsavel_uid") or "") or (mala_data.get("responsavel_doc_id") or "")
+
+    nome = (mala_data.get("nome") or "").strip()
+    if not nome:
+        nome = (mala_data.get("responsavel_nome") or "").strip()
+
+    mala = {
+        "id": mala_id,
+        "nome": nome,
+        "itens": itens,
+        "responsavel_uid": responsavel_uid,
+    }
+
+    return render_template(
+        "admin_malas_editar.html",
+        mala=mala,
+        usuarios=get_non_admin_users(),
+    )
 @app.route("/admin/perfis/editar/<uid>", methods=["GET", "POST"])
 
 def admin_perfil_editar(uid):
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_admin_or_dev(usuario_logado):
 
         return redirect("/dashboard")
 
@@ -4401,7 +5056,7 @@ def admin_perfil_excluir():
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_admin_or_dev(usuario_logado):
 
         return redirect("/dashboard")
 
@@ -4541,7 +5196,7 @@ def admin_registrar_ponto():
 
     admin_user = admin_doc.to_dict() if admin_doc.exists else {}
 
-    if admin_user.get("tipo") != "admin":
+    if not is_admin_or_dev(admin_user):
 
         return redirect("/dashboard")
 
@@ -4553,7 +5208,7 @@ def admin_registrar_ponto():
 
         udata = doc.to_dict() or {}
 
-        if (udata.get("tipo") or "").lower() == "admin":
+        if is_admin_like_tipo(udata.get("tipo")):
 
             continue
 
@@ -4665,7 +5320,7 @@ def admin_registrar_ponto():
 
                 funcionario = funcionario_doc.to_dict() or {}
 
-                if (funcionario.get("tipo") or "").lower() == "admin":
+                if is_admin_like_tipo(funcionario.get("tipo")):
 
                     error = "Seleziona un dipendente valido."
 
@@ -4720,7 +5375,7 @@ def admin_registrar_ponto():
 
             if any(pontos_existentes):
 
-                error = f"Il dipendente ha già una presenza registrata per {data_ponto}."
+                error = f"Il dipendente ha gi� una presenza registrata per {data_ponto}."
 
 
 
@@ -4802,7 +5457,7 @@ def registrar_ponto_usuario():
 
 
 
-    # Horário Itália (UTC+1, fixo)
+    # Hor�rio It�lia (UTC+1, fixo)
 
     agora = datetime.utcnow() + timedelta(hours=1)
 
@@ -4812,7 +5467,7 @@ def registrar_ponto_usuario():
 
     locais_docs = db.collection("locais").stream()
 
-    locais = []  # opção padrão
+    locais = []  # op��o padr�o
 
     for doc in locais_docs:
 
@@ -4909,7 +5564,7 @@ def registrar_ponto_usuario():
 
         if any(pontos_existentes):
 
-            error = f"Hai già registrato una presenza per {data_ponto}!"
+            error = f"Hai gi� registrato una presenza per {data_ponto}!"
 
         
 
@@ -4931,7 +5586,7 @@ def registrar_ponto_usuario():
 
                 "tipo_registro": tipo_registro,
 
-                "criado_em": agora  # salva com fuso Itália (UTC+1)
+                "criado_em": agora  # salva com fuso It�lia (UTC+1)
 
             }
 
@@ -4997,9 +5652,9 @@ def meus_pontos():
 
 
 
-    # Fuso horário Itália: UTC+1 (considerando horário padrão)
+    # Fuso hor�rio It�lia: UTC+1 (considerando hor�rio padr�o)
 
-    # OBS: Não calcula horário de verão automaticamente
+    # OBS: N�o calcula hor�rio de ver�o automaticamente
 
     def agora_italia():
 
@@ -5077,7 +5732,7 @@ def meus_pontos():
 
 
 
-        # Converte string para datetime (fuso fixo Itália)
+        # Converte string para datetime (fuso fixo It�lia)
 
         data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
 
@@ -5215,7 +5870,7 @@ def admin_pontos():
 
 
 
-    if usuario.get("tipo") != "admin":
+    if not is_admin_or_dev(usuario):
 
         return "Acesso negado"
 
@@ -5482,7 +6137,7 @@ def admin_pontos_exportar_pdf():
     uid_admin = session["uid"]
     usuario_doc = db.collection("usuarios").document(uid_admin).get()
     usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
-    if usuario.get("tipo") != "admin":
+    if not is_admin_or_dev(usuario):
         return "Acesso negado"
 
     filtro_usuario = (request.args.get("filtro_usuario") or "").strip()
@@ -5583,7 +6238,7 @@ def admin_pontos_backup():
 
 
 
-    if usuario.get("tipo") != "admin":
+    if not is_developer(usuario):
 
         return "Acesso negado"
 
@@ -5839,7 +6494,7 @@ def editar_ponto_admin(id):
 
     # Seguran?a: se n?o for admin, s? pode editar ponto pr?prio
 
-    if usuario.get("tipo") != "admin" and ponto.get("uid") != uid:
+    if not is_admin_or_dev(usuario) and ponto.get("uid") != uid:
 
         return "Acesso negado!"
 
@@ -5986,7 +6641,7 @@ def editar_ponto_admin(id):
 
 
 
-            if usuario.get("tipo") == "admin":
+            if is_admin_or_dev(usuario):
 
                 return redirect("/admin_pontos")
 
@@ -6018,7 +6673,7 @@ def editar_ponto_admin(id):
 
         error=error,
 
-        is_admin_user=usuario.get("tipo") == "admin"
+        is_admin_user=is_admin_or_dev(usuario)
 
     )
 
@@ -6046,7 +6701,7 @@ def excluir_ponto(id):
 
 
 
-    # Verifica se é admin
+    # Verifica se � admin
 
     uid = session["uid"]
 
@@ -6054,7 +6709,7 @@ def excluir_ponto(id):
 
     usuario = usuario_doc.to_dict()
 
-    if usuario.get("tipo") != "admin":
+    if not is_admin_or_dev(usuario):
 
         return "Acesso negado!"
 
@@ -6096,7 +6751,7 @@ def gerenciar_locais():
 
         return redirect("/")
 
-    if usuario.get("tipo") != "admin":   # verifica tipo igual ao admin_pontos
+    if not is_admin_or_dev(usuario):   # verifica tipo igual ao admin_pontos
 
         return "Accesso negato!"         # retorna string simples
 
@@ -6182,7 +6837,7 @@ def editar_local(id):
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return "Accesso negato!"
 
@@ -6262,7 +6917,7 @@ def excluir_local():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return "Accesso negato!"
 
@@ -6294,7 +6949,7 @@ def excluir_local():
 
 # =========================
 
-# ADMIN CARTÕES DE RECONHECIMENTO
+# ADMIN CART�ES DE RECONHECIMENTO
 
 # =========================
 
@@ -6306,7 +6961,7 @@ def admin_cartoes():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return "Acesso negado!"
 
@@ -6322,7 +6977,7 @@ def admin_cartoes():
 
 # =========================
 
-# GERAR CARTÃO (ADMIN)
+# GERAR CART�O (ADMIN)
 
 # =========================
 
@@ -6334,7 +6989,7 @@ def gerar_cartao(uid):
 
     usuario_logado = get_usuario_logado()
 
-    if not usuario_logado or usuario_logado.get("tipo") != "admin":
+    if not usuario_logado or not is_admin_or_dev(usuario_logado):
 
         return "Accesso negato!"
 
@@ -6384,7 +7039,7 @@ def gerar_cartao(uid):
 
 # =========================
 
-# GERAR CARTÃO (USUÁRIO)
+# GERAR CART�O (USU�RIO)
 
 # =========================
 
@@ -6440,7 +7095,7 @@ def gerar_cartao_perfil():
 
 # =========================
 
-# PEDIDO NOVO E LISTAGEM DE PEDIDOS DO USUÁRIO
+# PEDIDO NOVO E LISTAGEM DE PEDIDOS DO USU�RIO
 
 # =========================
 
@@ -6466,7 +7121,7 @@ def novo_pedido():
 
 
 
-    # 🔹 Busca o usuário no Firestore
+    # ?? Busca o usu�rio no Firestore
 
     usuario_doc = db.collection("usuarios").document(uid).get()
 
@@ -6506,7 +7161,7 @@ def novo_pedido():
 
 
 
-    # 🔹 Busca todos os pedidos do usuário atual
+    # ?? Busca todos os pedidos do usu�rio atual
 
     pedidos_docs = pedidos_ref.where("user_id", "==", uid).order_by("criado_em", direction=firestore.Query.DESCENDING).stream()
 
@@ -6542,7 +7197,7 @@ def novo_pedido():
 
 # =========================
 
-# ADMIN PEDIDOS - LISTAGEM E AÇÕES
+# ADMIN PEDIDOS - LISTAGEM E A��ES
 
 # =========================
 
@@ -6554,7 +7209,7 @@ def admin_pedidos():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return "Accesso negato!"
 
@@ -6564,7 +7219,7 @@ def admin_pedidos():
 
     
 
-    # Atualização via POST
+    # Atualiza��o via POST
 
     if request.method == "POST":
 
@@ -6598,7 +7253,7 @@ def admin_pedidos():
 
                     pedido_ref.delete()
 
-        # após a ação, recarrega os pedidos
+        # ap�s a a��o, recarrega os pedidos
 
         return redirect(url_for("admin_pedidos"))
 
@@ -6634,7 +7289,7 @@ def admin_pedidos():
 
 
 
-    # GET → lista de pedidos
+    # GET ? lista de pedidos
 
     pedidos_docs = db.collection("pedidos").stream()
 
@@ -6678,7 +7333,7 @@ def decidir_pedido(id):
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return "Accesso negato!"
 
@@ -6722,7 +7377,7 @@ def decidir_pedido(id):
 
 # =========================
 
-# RELATÓRIO DE PONTOS (HTML)
+# RELAT�RIO DE PONTOS (HTML)
 
 # =========================
 
@@ -6748,7 +7403,7 @@ def exportar_relatorio():
 
     # =========================
 
-    # USUÁRIO
+    # USU�RIO
 
     # =========================
 
@@ -6810,13 +7465,13 @@ def exportar_relatorio():
 
 
 
-        # Converte data (fuso Itália fixo)
+        # Converte data (fuso It�lia fixo)
 
         data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
 
 
 
-        # 🔹 filtro por data
+        # ?? filtro por data
 
         if filtro_data and p["data"] != filtro_data:
 
@@ -6824,7 +7479,7 @@ def exportar_relatorio():
 
 
 
-        # 🔹 filtro por mês
+        # ?? filtro por m�s
 
         if filtro_mes:
 
@@ -6836,7 +7491,7 @@ def exportar_relatorio():
 
 
 
-        # 🔹 data formatada + dia da semana
+        # ?? data formatada + dia da semana
 
         dia_semana = dias_semana[data_obj.weekday()]
 
@@ -6844,7 +7499,7 @@ def exportar_relatorio():
 
 
 
-        # 🔹 horas (FLOAT → HH:MM)
+        # ?? horas (FLOAT ? HH:MM)
 
         horas_totais = float(p.get("horas", 0))
 
@@ -6880,7 +7535,7 @@ def exportar_relatorio():
 
 
 
-    # 🔹 TOTAL FINAL
+    # ?? TOTAL FINAL
 
     total_horas = formatar_horas_hhmm(total_horas_float)
 
@@ -6939,7 +7594,7 @@ def exportar_estatisticas_pdf():
 
     usuario = get_usuario_logado()
 
-    if not usuario or usuario.get("tipo") != "admin":
+    if not usuario or not is_admin_or_dev(usuario):
 
         return redirect("/dashboard")
 
