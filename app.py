@@ -387,10 +387,13 @@ TEXT_TRANSLATIONS = {
 
         "Firma del dipendente": "Assinatura do funcionario",
         "Firma digitale del dipendente": "Assinatura digital do funcionario",
+        "Firma digitale del responsabile": "Assinatura digital do responsavel",
         "Firma qui e salva direttamente nel documento.": "Assine aqui e salve diretamente no documento.",
         "Pulisci": "Limpar",
         "Salva firma": "Salvar assinatura",
         "Apri firma": "Abrir assinatura",
+        "Apri firma dipendente": "Abrir assinatura do funcionario",
+        "Apri firma responsabile": "Abrir assinatura do responsavel",
         "Firma continua: usa tutto lo spazio del riquadro.": "Assinatura continua: use todo o espaco do quadro.",
         "Chiudi": "Fechar",
         "Nessuna firma salvata.": "Nenhuma assinatura salva.",
@@ -4196,6 +4199,7 @@ def admin_kits_termo(kit_id):
 
     kit_data = kit_doc.to_dict() or {}
     firma_dipendente = (kit_data.get("firma_dipendente") or "").strip()
+    firma_responsabile = (kit_data.get("firma_responsabile") or "").strip()
 
 
 
@@ -4294,6 +4298,7 @@ def admin_kits_termo(kit_id):
         },
 
         firma_dipendente=firma_dipendente,
+        firma_responsabile=firma_responsabile,
 
         responsavel={
 
@@ -4314,8 +4319,11 @@ def admin_kits_termo_assinar(kit_id):
 
     payload = request.get_json(silent=True) or {}
     assinatura = (payload.get("assinatura") or "").strip()
+    tipo_firma = (payload.get("tipo") or "dipendente").strip().lower()
     if not assinatura.startswith("data:image/png;base64,"):
         return jsonify({"success": False, "message": "Firma non valida."}), 400
+    if tipo_firma not in {"dipendente", "responsabile"}:
+        return jsonify({"success": False, "message": "Tipo firma non valido."}), 400
 
     kit_ref = db.collection("kits").document(kit_id)
     kit_doc = kit_ref.get()
@@ -4323,10 +4331,16 @@ def admin_kits_termo_assinar(kit_id):
         return jsonify({"success": False, "message": "Kit non trovato."}), 404
 
     agora_italia = datetime.utcnow() + timedelta(hours=1)
-    kit_ref.update({
-        "firma_dipendente": assinatura,
-        "firma_dipendente_em": agora_italia,
-    })
+    if tipo_firma == "responsabile":
+        kit_ref.update({
+            "firma_responsabile": assinatura,
+            "firma_responsabile_em": agora_italia,
+        })
+    else:
+        kit_ref.update({
+            "firma_dipendente": assinatura,
+            "firma_dipendente_em": agora_italia,
+        })
 
     return jsonify({"success": True})
 
@@ -4719,6 +4733,7 @@ def admin_malas_termo(mala_id):
 
     mala_data = mala_doc.to_dict() or {}
     firma_dipendente = (mala_data.get("firma_dipendente") or "").strip()
+    firma_responsabile = (mala_data.get("firma_responsabile") or "").strip()
 
     responsavel_uid = (mala_data.get("responsavel_uid") or "").strip()
     responsavel_doc_id = (mala_data.get("responsavel_doc_id") or "").strip()
@@ -4792,6 +4807,7 @@ def admin_malas_termo(mala_id):
             "itens": itens,
         },
         firma_dipendente=firma_dipendente,
+        firma_responsabile=firma_responsabile,
         responsavel={
             "nome": responsavel_nome,
             "cargo": responsavel_cargo,
@@ -4807,8 +4823,11 @@ def admin_malas_termo_assinar(mala_id):
 
     payload = request.get_json(silent=True) or {}
     assinatura = (payload.get("assinatura") or "").strip()
+    tipo_firma = (payload.get("tipo") or "dipendente").strip().lower()
     if not assinatura.startswith("data:image/png;base64,"):
         return jsonify({"success": False, "message": "Firma non valida."}), 400
+    if tipo_firma not in {"dipendente", "responsabile"}:
+        return jsonify({"success": False, "message": "Tipo firma non valido."}), 400
 
     mala_ref = db.collection("malas").document(mala_id)
     mala_doc = mala_ref.get()
@@ -4816,10 +4835,16 @@ def admin_malas_termo_assinar(mala_id):
         return jsonify({"success": False, "message": "Cassetta non trovata."}), 404
 
     agora_italia = datetime.utcnow() + timedelta(hours=1)
-    mala_ref.update({
-        "firma_dipendente": assinatura,
-        "firma_dipendente_em": agora_italia,
-    })
+    if tipo_firma == "responsabile":
+        mala_ref.update({
+            "firma_responsabile": assinatura,
+            "firma_responsabile_em": agora_italia,
+        })
+    else:
+        mala_ref.update({
+            "firma_dipendente": assinatura,
+            "firma_dipendente_em": agora_italia,
+        })
 
     return jsonify({"success": True})
 

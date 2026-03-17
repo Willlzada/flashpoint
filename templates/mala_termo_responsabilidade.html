@@ -191,6 +191,13 @@
         white-space: nowrap;
     }
 
+    .signature-open-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
     .signature-modal {
         position: fixed;
         inset: 0;
@@ -385,11 +392,12 @@
 
 <div class="assinatura-digital">
     <div>
-        <h3>{{ tr("Firma digitale del dipendente") }}</h3>
+        <h3>{{ tr("Firma digitale del dipendente") }} / {{ tr("Firma digitale del responsabile") }}</h3>
         <p>{{ tr("Firma qui e salva direttamente nel documento.") }}</p>
     </div>
-    <div>
-        <button type="button" class="signature-open-btn" id="open-signature-modal">{{ tr("Apri firma") }}</button>
+    <div class="signature-open-buttons">
+        <button type="button" class="signature-open-btn" id="open-signature-dipendente">{{ tr("Apri firma dipendente") }}</button>
+        <button type="button" class="signature-open-btn" id="open-signature-responsabile">{{ tr("Apri firma responsabile") }}</button>
     </div>
 </div>
 
@@ -467,8 +475,11 @@
                 {% endif %}
                 <div class="linha">{{ tr("Firma del dipendente") }}</div>
             </div>
-            <div class="assinatura-bloco">
+            <div class="assinatura-bloco {% if firma_responsabile %}has-signature{% endif %}">
                 <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
+                {% if firma_responsabile %}
+                <img src="{{ firma_responsabile }}" class="signature-img" alt="{{ tr('Firma del responsabile') }}">
+                {% endif %}
                 <div class="linha">{{ tr("Firma del responsabile") }}</div>
             </div>
         </div>
@@ -483,23 +494,30 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("signature-modal");
-    const openBtn = document.getElementById("open-signature-modal");
+    const openDipendenteBtn = document.getElementById("open-signature-dipendente");
+    const openResponsabileBtn = document.getElementById("open-signature-responsabile");
+    const modalTitle = document.getElementById("signature-modal-title");
     const canvas = document.getElementById("signature-pad");
     const clearBtn = document.getElementById("clear-signature");
     const saveBtn = document.getElementById("save-signature");
-    if (!canvas || !saveBtn || !modal || !openBtn) return;
+    if (!canvas || !saveBtn || !modal || !openDipendenteBtn || !openResponsabileBtn || !modalTitle) return;
 
     const ctx = canvas.getContext("2d");
     let drawing = false;
     let hasInk = false;
     let usingTouch = false;
     let activeTouchId = null;
+    let signatureType = "dipendente";
+    const titleDipendente = "{{ tr('Firma digitale del dipendente') }}";
+    const titleResponsabile = "{{ tr('Firma digitale del responsabile') }}";
 
     function onSelectStart(event) {
         if (modal.classList.contains("is-open")) event.preventDefault();
     }
 
-    function openModal() {
+    function openModal(tipo) {
+        signatureType = tipo === "responsabile" ? "responsabile" : "dipendente";
+        modalTitle.textContent = signatureType === "responsabile" ? titleResponsabile : titleDipendente;
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("signature-capture-active");
@@ -666,7 +684,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    openBtn.addEventListener("click", openModal);
+    openDipendenteBtn.addEventListener("click", function () {
+        openModal("dipendente");
+    });
+    openResponsabileBtn.addEventListener("click", function () {
+        openModal("responsabile");
+    });
 
     document.querySelectorAll("[data-close-signature]").forEach((btn) => {
         btn.addEventListener("click", closeModal);
@@ -693,7 +716,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(saveBtn.dataset.url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ assinatura: dataUrl }),
+            body: JSON.stringify({ assinatura: dataUrl, tipo: signatureType }),
         })
         .then((res) => res.json())
         .then((data) => {
