@@ -112,8 +112,8 @@
     }
 
     .signature-img {
-        max-width: 320px;
-        max-height: 130px;
+        max-width: 380px;
+        max-height: 160px;
         display: block;
         object-fit: contain;
         margin: 6px 0 8px 0;
@@ -480,19 +480,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const ctx = canvas.getContext("2d");
     let drawing = false;
     let hasInk = false;
-    let activePointerId = null;
+    let usingTouch = false;
+    let activeTouchId = null;
+
+    function onSelectStart(event) {
+        if (modal.classList.contains("is-open")) event.preventDefault();
+    }
 
     function openModal() {
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("signature-capture-active");
+        document.addEventListener("selectstart", onSelectStart);
         resizeCanvas();
     }
 
     function closeModal() {
+        drawing = false;
+        usingTouch = false;
+        activeTouchId = null;
         modal.classList.remove("is-open");
         modal.setAttribute("aria-hidden", "true");
         document.body.classList.remove("signature-capture-active");
+        document.removeEventListener("selectstart", onSelectStart);
     }
 
     function resizeCanvas() {
@@ -505,9 +515,96 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.lineJoin = "round";
         ctx.strokeStyle = "#111827";
         ctx.fillStyle = "#ffffff";
-        ctx.imageSmoothingEnabled = true;
         ctx.fillRect(0, 0, canvas.width / ratio, canvas.height / ratio);
     }
+
+    function getPos(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function beginStroke(clientX, clientY) {
+        const p = getPos(clientX, clientY);
+        drawing = true;
+        hasInk = true;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+    }
+
+    function moveStroke(clientX, clientY) {
+        if (!drawing) return;
+        const p = getPos(clientX, clientY);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+    }
+
+    function endStroke() {
+        drawing = false;
+    }
+
+    canvas.addEventListener("dragstart", function (event) {
+        event.preventDefault();
+    });
+
+    canvas.addEventListener("mousedown", function (event) {
+        if (usingTouch) return;
+        beginStroke(event.clientX, event.clientY);
+        event.preventDefault();
+    });
+
+    window.addEventListener("mousemove", function (event) {
+        if (usingTouch || !drawing) return;
+        moveStroke(event.clientX, event.clientY);
+        event.preventDefault();
+    });
+
+    window.addEventListener("mouseup", function () {
+        if (usingTouch) return;
+        endStroke();
+    });
+
+    canvas.addEventListener("touchstart", function (event) {
+        if (!event.changedTouches || event.changedTouches.length === 0) return;
+        usingTouch = true;
+        const touch = event.changedTouches[0];
+        activeTouchId = touch.identifier;
+        beginStroke(touch.clientX, touch.clientY);
+        event.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener("touchmove", function (event) {
+        if (!drawing || activeTouchId === null) return;
+        let touchPoint = null;
+        for (const t of event.changedTouches) {
+            if (t.identifier === activeTouchId) {
+                touchPoint = t;
+                break;
+            }
+        }
+        if (!touchPoint) return;
+        moveStroke(touchPoint.clientX, touchPoint.clientY);
+        event.preventDefault();
+    }, { passive: false });
+
+    function finishTouch(event) {
+        if (activeTouchId === null) return;
+        for (const t of event.changedTouches) {
+            if (t.identifier === activeTouchId) {
+                endStroke();
+                activeTouchId = null;
+                usingTouch = false;
+                event.preventDefault();
+                break;
+            }
+        }
+    }
+
+    canvas.addEventListener("touchend", finishTouch, { passive: false });
+    canvas.addEventListener("touchcancel", finishTouch, { passive: false });
+
+    modal.addEventListener("touchmove", function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     function exportCroppedDataUrl() {
         const width = canvas.width;
@@ -549,50 +646,6 @@ document.addEventListener("DOMContentLoaded", function () {
         outCtx.drawImage(canvas, minX, minY, w, h, 0, 0, w, h);
         return out.toDataURL("image/png");
     }
-
-    function getPos(event) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
-        };
-    }
-
-    canvas.addEventListener("pointerdown", function (event) {
-        drawing = true;
-        hasInk = true;
-        activePointerId = event.pointerId;
-        canvas.setPointerCapture(activePointerId);
-        const pos = getPos(event);
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-        event.preventDefault();
-    });
-
-    canvas.addEventListener("pointermove", function (event) {
-        if (!drawing) return;
-        const points = event.getCoalescedEvents ? event.getCoalescedEvents() : [event];
-        for (const p of points) {
-            const pos = getPos(p);
-            ctx.lineTo(pos.x, pos.y);
-        }
-        ctx.stroke();
-        event.preventDefault();
-    });
-
-    function finishDrawing(event) {
-        drawing = false;
-        if (activePointerId !== null) {
-            try {
-                canvas.releasePointerCapture(activePointerId);
-            } catch (e) {}
-            activePointerId = null;
-        }
-        if (event) event.preventDefault();
-    }
-
-    canvas.addEventListener("pointerup", finishDrawing);
-    canvas.addEventListener("pointercancel", finishDrawing);
 
     if (clearBtn) {
         clearBtn.addEventListener("click", function () {
