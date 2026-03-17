@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <title>{{ tr("Termine di responsabilita cassetta attrezzi") }}</title>
 <style>
+    :root {
+        --signature-box-width: 330px;
+        --signature-box-height: 120px;
+    }
+
     body {
         font-family: Arial, sans-serif;
         background: #f3f5f8;
@@ -109,26 +114,28 @@
 
     .assinatura-bloco {
         font-size: 13px;
+        display: flex;
+        flex-direction: column;
     }
 
-    .assinatura-bloco.has-signature .signature-img {
-        margin: 6px 0 2px 0;
-    }
-
-    .assinatura-bloco.has-signature .linha {
-        margin-top: 8px;
+    .signature-slot {
+        width: min(100%, var(--signature-box-width));
+        height: var(--signature-box-height);
+        margin-top: 6px;
+        display: flex;
+        align-items: flex-end;
     }
 
     .signature-img {
-        max-width: 380px;
-        max-height: 160px;
+        width: 100%;
+        height: 100%;
         display: block;
         object-fit: contain;
-        margin: 6px 0 8px 0;
+        margin: 0;
     }
 
     .linha {
-        margin-top: 40px;
+        margin-top: 8px;
         border-top: 1px solid #111827;
         padding-top: 6px;
         text-align: center;
@@ -161,8 +168,8 @@
 
     .signature-pad {
         width: 100%;
-        height: 260px;
-        border: 1px dashed #cbd5f5;
+        height: var(--signature-box-height);
+        border: 0;
         border-radius: 8px;
         background: #fff;
         touch-action: none;
@@ -170,13 +177,15 @@
 
     .signature-pad-wrap {
         position: relative;
+        width: min(100%, var(--signature-box-width));
+        margin: 0 auto;
     }
 
     .signature-guide-line {
         position: absolute;
-        left: 14px;
-        right: 14px;
-        top: 72%;
+        left: 8px;
+        right: 8px;
+        top: 78%;
         border-top: 2px solid #94a3b8;
         pointer-events: none;
         opacity: 0.7;
@@ -362,11 +371,12 @@
             font-size: 12.5px;
         }
 
-        .linha {
-            margin-top: 30px;
+        .signature-slot {
+            width: min(100%, var(--signature-box-width));
+            height: var(--signature-box-height);
         }
 
-        .assinatura-bloco.has-signature .linha {
+        .linha {
             margin-top: 6px;
         }
 
@@ -470,16 +480,20 @@
         <div class="assinaturas">
             <div class="assinatura-bloco {% if firma_dipendente %}has-signature{% endif %}">
                 <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
-                {% if firma_dipendente %}
-                <img src="{{ firma_dipendente }}" class="signature-img" alt="{{ tr('Firma del dipendente') }}">
-                {% endif %}
+                <div class="signature-slot">
+                    {% if firma_dipendente %}
+                    <img src="{{ firma_dipendente }}" class="signature-img" alt="{{ tr('Firma del dipendente') }}">
+                    {% endif %}
+                </div>
                 <div class="linha">{{ tr("Firma del dipendente") }}</div>
             </div>
             <div class="assinatura-bloco {% if firma_responsabile %}has-signature{% endif %}">
                 <div><strong>{{ tr("Responsabile aziendale") }}</strong></div>
-                {% if firma_responsabile %}
-                <img src="{{ firma_responsabile }}" class="signature-img" alt="{{ tr('Firma del responsabile') }}">
-                {% endif %}
+                <div class="signature-slot">
+                    {% if firma_responsabile %}
+                    <img src="{{ firma_responsabile }}" class="signature-img" alt="{{ tr('Firma del responsabile') }}">
+                    {% endif %}
+                </div>
                 <div class="linha">{{ tr("Firma del responsabile") }}</div>
             </div>
         </div>
