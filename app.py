@@ -390,6 +390,9 @@ TEXT_TRANSLATIONS = {
         "Firma qui e salva direttamente nel documento.": "Assine aqui e salve diretamente no documento.",
         "Pulisci": "Limpar",
         "Salva firma": "Salvar assinatura",
+        "Apri firma": "Abrir assinatura",
+        "Firma continua: usa tutto lo spazio del riquadro.": "Assinatura continua: use todo o espaco do quadro.",
+        "Chiudi": "Fechar",
         "Nessuna firma salvata.": "Nenhuma assinatura salva.",
 
         "Firma del responsabile": "Assinatura do responsavel",

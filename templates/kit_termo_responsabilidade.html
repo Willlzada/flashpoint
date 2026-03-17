@@ -158,6 +158,10 @@
         border: 1px solid #e5e7eb;
         padding: 14px;
         box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
     }
 
     .assinatura-digital h3 {
@@ -173,11 +177,62 @@
 
     .signature-pad {
         width: 100%;
-        height: 160px;
+        height: 260px;
         border: 1px dashed #cbd5f5;
         border-radius: 8px;
         background: #fff;
         touch-action: none;
+    }
+
+    .signature-open-btn {
+        background: #0f766e;
+        color: #fff;
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        white-space: nowrap;
+    }
+
+    .signature-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        z-index: 1000;
+    }
+
+    .signature-modal.is-open {
+        display: block;
+    }
+
+    .signature-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.52);
+    }
+
+    .signature-modal-dialog {
+        position: relative;
+        max-width: 920px;
+        margin: 4vh auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+        border: 1px solid #e5e7eb;
+        width: calc(100% - 24px);
+        padding: 14px;
+        z-index: 2;
+    }
+
+    .signature-modal-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .signature-modal-subtitle {
+        margin: 4px 0 10px 0;
+        color: #64748b;
+        font-size: 12px;
     }
 
     .signature-actions {
@@ -316,7 +371,8 @@
             page-break-inside: avoid;
         }
 
-        .assinatura-digital {
+        .assinatura-digital,
+        .signature-modal {
             display: none;
         }
 
@@ -329,14 +385,28 @@
 <body>
 
 <div class="assinatura-digital">
-    <h3>{{ tr("Firma digitale del dipendente") }}</h3>
-    <p>{{ tr("Firma qui e salva direttamente nel documento.") }}</p>
-    <canvas id="signature-pad" class="signature-pad"></canvas>
-    <div class="signature-actions">
-        <button type="button" class="btn btn-back" id="clear-signature">{{ tr("Pulisci") }}</button>
-        <button type="button" class="btn btn-print" id="save-signature" data-url="{{ url_for('admin_kits_termo_assinar', kit_id=kit.id) }}">
-            {{ tr("Salva firma") }}
-        </button>
+    <div>
+        <h3>{{ tr("Firma digitale del dipendente") }}</h3>
+        <p>{{ tr("Firma qui e salva direttamente nel documento.") }}</p>
+    </div>
+    <div>
+        <button type="button" class="signature-open-btn" id="open-signature-modal">{{ tr("Apri firma") }}</button>
+    </div>
+</div>
+
+<div class="signature-modal" id="signature-modal" aria-hidden="true">
+    <div class="signature-modal-backdrop" data-close-signature></div>
+    <div class="signature-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="signature-modal-title">
+        <h4 id="signature-modal-title" class="signature-modal-title">{{ tr("Firma digitale del dipendente") }}</h4>
+        <p class="signature-modal-subtitle">{{ tr("Firma continua: usa tutto lo spazio del riquadro.") }}</p>
+        <canvas id="signature-pad" class="signature-pad"></canvas>
+        <div class="signature-actions">
+            <button type="button" class="btn btn-back" id="clear-signature">{{ tr("Pulisci") }}</button>
+            <button type="button" class="btn btn-back" data-close-signature>{{ tr("Chiudi") }}</button>
+            <button type="button" class="btn btn-print" id="save-signature" data-url="{{ url_for('admin_kits_termo_assinar', kit_id=kit.id) }}">
+                {{ tr("Salva firma") }}
+            </button>
+        </div>
     </div>
 </div>
 
@@ -431,24 +501,40 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("signature-modal");
+    const openBtn = document.getElementById("open-signature-modal");
     const canvas = document.getElementById("signature-pad");
     const clearBtn = document.getElementById("clear-signature");
     const saveBtn = document.getElementById("save-signature");
-    if (!canvas || !saveBtn) return;
+    if (!canvas || !saveBtn || !modal || !openBtn) return;
 
     const ctx = canvas.getContext("2d");
     let drawing = false;
     let hasInk = false;
+    let activePointerId = null;
+
+    function openModal() {
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        resizeCanvas();
+    }
+
+    function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+    }
 
     function resizeCanvas() {
         const ratio = window.devicePixelRatio || 1;
         canvas.width = canvas.offsetWidth * ratio;
         canvas.height = canvas.offsetHeight * ratio;
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.4;
         ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         ctx.strokeStyle = "#111827";
         ctx.fillStyle = "#ffffff";
+        ctx.imageSmoothingEnabled = true;
         ctx.fillRect(0, 0, canvas.width / ratio, canvas.height / ratio);
     }
 
@@ -463,6 +549,8 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas.addEventListener("pointerdown", function (event) {
         drawing = true;
         hasInk = true;
+        activePointerId = event.pointerId;
+        canvas.setPointerCapture(activePointerId);
         const pos = getPos(event);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
@@ -471,19 +559,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     canvas.addEventListener("pointermove", function (event) {
         if (!drawing) return;
-        const pos = getPos(event);
-        ctx.lineTo(pos.x, pos.y);
+        const points = event.getCoalescedEvents ? event.getCoalescedEvents() : [event];
+        for (const p of points) {
+            const pos = getPos(p);
+            ctx.lineTo(pos.x, pos.y);
+        }
         ctx.stroke();
         event.preventDefault();
     });
 
-    canvas.addEventListener("pointerup", function () {
+    function finishDrawing(event) {
         drawing = false;
-    });
+        if (activePointerId !== null) {
+            try {
+                canvas.releasePointerCapture(activePointerId);
+            } catch (e) {}
+            activePointerId = null;
+        }
+        if (event) event.preventDefault();
+    }
 
-    canvas.addEventListener("pointerleave", function () {
-        drawing = false;
-    });
+    canvas.addEventListener("pointerup", finishDrawing);
+    canvas.addEventListener("pointercancel", finishDrawing);
 
     if (clearBtn) {
         clearBtn.addEventListener("click", function () {
@@ -492,11 +589,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    openBtn.addEventListener("click", openModal);
+
+    document.querySelectorAll("[data-close-signature]").forEach((btn) => {
+        btn.addEventListener("click", closeModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+        }
+    });
+
     saveBtn.addEventListener("click", function () {
         if (!hasInk) {
             alert("{{ tr('Nessuna firma salvata.') }}");
             return;
         }
+        saveBtn.disabled = true;
         const dataUrl = canvas.toDataURL("image/png");
         fetch(saveBtn.dataset.url, {
             method: "POST",
@@ -509,13 +619,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.location.reload();
             } else {
                 alert(data.message || "Errore");
+                saveBtn.disabled = false;
             }
         })
-        .catch(() => alert("Errore"));
+        .catch(() => {
+            alert("Errore");
+            saveBtn.disabled = false;
+        });
     });
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
 });
 </script>
 
