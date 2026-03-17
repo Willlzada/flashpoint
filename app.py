@@ -1384,8 +1384,6 @@ db = firestore.client()
 
 
 
-
-
 # =========================
 
 # FUN��ES AUXILIARES
