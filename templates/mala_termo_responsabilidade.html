@@ -111,6 +111,14 @@
         font-size: 13px;
     }
 
+    .assinatura-bloco.has-signature .signature-img {
+        margin: 6px 0 2px 0;
+    }
+
+    .assinatura-bloco.has-signature .linha {
+        margin-top: 8px;
+    }
+
     .signature-img {
         max-width: 380px;
         max-height: 160px;
@@ -351,6 +359,10 @@
             margin-top: 30px;
         }
 
+        .assinatura-bloco.has-signature .linha {
+            margin-top: 6px;
+        }
+
         .box,
         table,
         tr,
@@ -448,7 +460,7 @@
         </div>
 
         <div class="assinaturas">
-            <div class="assinatura-bloco">
+            <div class="assinatura-bloco {% if firma_dipendente %}has-signature{% endif %}">
                 <div><strong>{{ tr("Dipendente responsabile") }}</strong></div>
                 {% if firma_dipendente %}
                 <img src="{{ firma_dipendente }}" class="signature-img" alt="{{ tr('Firma del dipendente') }}">
