@@ -233,7 +233,7 @@
         <input type="hidden" name="filtro_mes" value="{{ filtro_mes }}">
         <input type="hidden" name="filtro_local" value="{{ filtro_local }}">
         <button type="submit" class="btn btn-outline-secondary w-100"
-                {% if filtro_usuario == "__none__" or filtro_usuario == "" %}disabled{% endif %}>
+                {% if filtro_usuario == "__none__" %}disabled{% endif %}>
             <i class="fa fa-file-pdf"></i> {{ tr("Stampa / Esporta PDF") }}
         </button>
     </form>
