@@ -2082,6 +2082,25 @@ def get_cassetta_padrao():
         })
 
     return itens
+
+
+def get_firma_responsabile_azienda():
+    doc = db.collection("config").document("firma_responsabile_azienda").get()
+    if not doc.exists:
+        return ""
+    data = doc.to_dict() or {}
+    return (data.get("assinatura") or "").strip()
+
+
+def salvar_firma_responsabile_azienda(assinatura):
+    agora_italia = datetime.utcnow() + timedelta(hours=1)
+    db.collection("config").document("firma_responsabile_azienda").set({
+        "assinatura": assinatura,
+        "atualizado_em": agora_italia,
+        "atualizado_por": session.get("uid"),
+    }, merge=True)
+
+
 def get_user_by_id(uid):
 
     doc = db.collection("usuarios").document(uid).get()
@@ -4199,7 +4218,8 @@ def admin_kits_termo(kit_id):
 
     kit_data = kit_doc.to_dict() or {}
     firma_dipendente = (kit_data.get("firma_dipendente") or "").strip()
-    firma_responsabile = (kit_data.get("firma_responsabile") or "").strip()
+    firma_responsabile_local = (kit_data.get("firma_responsabile") or "").strip()
+    firma_responsabile = get_firma_responsabile_azienda() or firma_responsabile_local
 
 
 
@@ -4332,6 +4352,7 @@ def admin_kits_termo_assinar(kit_id):
 
     agora_italia = datetime.utcnow() + timedelta(hours=1)
     if tipo_firma == "responsabile":
+        salvar_firma_responsabile_azienda(assinatura)
         kit_ref.update({
             "firma_responsabile": assinatura,
             "firma_responsabile_em": agora_italia,
@@ -4733,7 +4754,8 @@ def admin_malas_termo(mala_id):
 
     mala_data = mala_doc.to_dict() or {}
     firma_dipendente = (mala_data.get("firma_dipendente") or "").strip()
-    firma_responsabile = (mala_data.get("firma_responsabile") or "").strip()
+    firma_responsabile_local = (mala_data.get("firma_responsabile") or "").strip()
+    firma_responsabile = get_firma_responsabile_azienda() or firma_responsabile_local
 
     responsavel_uid = (mala_data.get("responsavel_uid") or "").strip()
     responsavel_doc_id = (mala_data.get("responsavel_doc_id") or "").strip()
@@ -4836,6 +4858,7 @@ def admin_malas_termo_assinar(mala_id):
 
     agora_italia = datetime.utcnow() + timedelta(hours=1)
     if tipo_firma == "responsabile":
+        salvar_firma_responsabile_azienda(assinatura)
         mala_ref.update({
             "firma_responsabile": assinatura,
             "firma_responsabile_em": agora_italia,
@@ -6170,17 +6193,22 @@ def admin_pontos_exportar_pdf():
     filtro_mes = (request.args.get("filtro_mes") or "").strip()
     filtro_local = (request.args.get("filtro_local") or "").strip()
 
-    if not filtro_usuario or filtro_usuario == "__none__":
+    if filtro_usuario == "__none__":
         return redirect(url_for("admin_pontos", export_error="Seleziona un dipendente per esportare."))
+    exportar_todos = filtro_usuario == ""
+    usuarios_cache = {}
 
-    usuario_ref = db.collection("usuarios").document(filtro_usuario).get()
-    if not usuario_ref.exists:
-        return redirect(url_for("admin_pontos", export_error="Seleziona un dipendente per esportare."))
+    if exportar_todos:
+        nome_usuario = "Tutti"
+        pontos_docs = db.collection("pontos").stream()
+    else:
+        usuario_ref = db.collection("usuarios").document(filtro_usuario).get()
+        if not usuario_ref.exists:
+            return redirect(url_for("admin_pontos", export_error="Seleziona un dipendente per esportare."))
 
-    udata = usuario_ref.to_dict()
-    nome_usuario = f"{udata.get('nome','')} {udata.get('sobrenome','')}".strip()
-
-    pontos_docs = db.collection("pontos").where("uid", "==", filtro_usuario).stream()
+        udata = usuario_ref.to_dict()
+        nome_usuario = f"{udata.get('nome','')} {udata.get('sobrenome','')}".strip()
+        pontos_docs = db.collection("pontos").where("uid", "==", filtro_usuario).stream()
 
     pontos_list = []
     total_horas = 0.0
@@ -6204,12 +6232,25 @@ def admin_pontos_exportar_pdf():
 
         total_horas += horas_val
 
+        ponto_uid = p.get("uid", "")
+        if ponto_uid in usuarios_cache:
+            nome_ponto_usuario = usuarios_cache[ponto_uid]
+        else:
+            usuario_p_ref = db.collection("usuarios").document(ponto_uid).get()
+            if usuario_p_ref.exists:
+                usuario_p_data = usuario_p_ref.to_dict() or {}
+                nome_ponto_usuario = f"{usuario_p_data.get('nome', '')} {usuario_p_data.get('sobrenome', '')}".strip() or "-"
+            else:
+                nome_ponto_usuario = "-"
+            usuarios_cache[ponto_uid] = nome_ponto_usuario
+
         pontos_list.append({
             "data_raw": data_str,
             "data": formatar_data(data_str),
             "local": p.get("local", "-"),
             "horas": formatar_horas_hhmm(horas_val),
             "notas": p.get("notas", "") or "-",
+            "usuario_nome": nome_ponto_usuario,
         })
 
     if not pontos_list:
@@ -6231,6 +6272,7 @@ def admin_pontos_exportar_pdf():
         periodo=periodo,
         total_horas=formatar_horas_hhmm(total_horas),
         pontos=pontos_list,
+        show_usuario_col=exportar_todos,
         back_url=url_for(
             "admin_pontos",
             filtro_usuario=filtro_usuario,

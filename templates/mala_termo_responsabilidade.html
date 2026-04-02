@@ -7,6 +7,8 @@
     :root {
         --signature-box-width: 330px;
         --signature-box-height: 120px;
+        --signature-capture-width: 560px;
+        --signature-capture-height: 220px;
     }
 
     body {
@@ -168,7 +170,7 @@
 
     .signature-pad {
         width: 100%;
-        height: var(--signature-box-height);
+        height: var(--signature-capture-height);
         border: 0;
         border-radius: 8px;
         background: #fff;
@@ -177,7 +179,7 @@
 
     .signature-pad-wrap {
         position: relative;
-        width: min(100%, var(--signature-box-width));
+        width: min(100%, var(--signature-capture-width));
         margin: 0 auto;
     }
 
