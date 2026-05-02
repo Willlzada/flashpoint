@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}{{ tr("Admin - Carros | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+.page-header h4 {
+    font-weight: 700;
+}
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+.table thead th {
+    white-space: nowrap;
+}
+.table td, .table th {
+    vertical-align: middle;
+}
+.pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #f1f3f5;
+    color: #495057;
+}
+.scroll-x {
+    overflow-x: auto;
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-car me-2"></i>{{ tr("Gestão de carros da empresa") }}
+    </h4>
+    <p>{{ tr("Crie/remova colunas e cadastre os carros com todos os campos na mesma página") }}</p>
+</div>
+
+<hr class="my-4">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ tr(message) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="card-box">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+        <h6 class="fw-bold mb-0">
+            <i class="fa fa-table-columns me-1"></i> {{ tr("Colunas (campos)") }}
+        </h6>
+        <form method="POST" class="m-0">
+            <input type="hidden" name="acao" value="criar_campos_padrao">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-wand-magic-sparkles me-1"></i> {{ tr("Criar campos padrão") }}
+            </button>
+        </form>
+    </div>
+
+    <form method="POST" class="row g-2 align-items-end">
+        <input type="hidden" name="acao" value="adicionar_campo">
+        <div class="col-12 col-md-4">
+            <label class="form-label">{{ tr("Nome do campo") }}</label>
+            <input class="form-control" name="nome" placeholder="{{ tr("Ex.: Cor, Modelo, Telepass") }}" required>
+        </div>
+        <div class="col-12 col-md-3">
+            <label class="form-label">{{ tr("Chave (opcional)") }}</label>
+            <input class="form-control" name="chave" placeholder="{{ tr("Ex.: cor, modelo") }}">
+            <div class="form-text">{{ tr("Se vazio, será gerada automaticamente.") }}</div>
+        </div>
+        <div class="col-12 col-md-3">
+            <label class="form-label">{{ tr("Tipo") }}</label>
+            <select class="form-select" name="tipo" id="campo_tipo">
+                <option value="text">{{ tr("Texto") }}</option>
+                <option value="number">{{ tr("Número") }}</option>
+                <option value="date">{{ tr("Data") }}</option>
+                <option value="boolean">{{ tr("Sim/Não") }}</option>
+                <option value="select">{{ tr("Lista (opções)") }}</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-8 d-none" id="campo_opcoes_wrap">
+            <label class="form-label">{{ tr("Opções (separadas por vírgula)") }}</label>
+            <input class="form-control" name="opcoes" placeholder="{{ tr("Ex.: Gasolina, Diesel") }}">
+        </div>
+        <div class="col-12 col-md-2">
+            <button class="btn btn-primary w-100" type="submit">
+                <i class="fa fa-plus-circle me-1"></i> {{ tr("Adicionar") }}
+            </button>
+        </div>
+    </form>
+
+    <hr class="my-3">
+
+    {% if campos %}
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>{{ tr("Nome") }}</th>
+                        <th>{{ tr("Chave") }}</th>
+                        <th>{{ tr("Tipo") }}</th>
+                        <th class="text-end">{{ tr("Ações") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campo in campos %}
+                    <tr>
+                        <td class="fw-semibold">{{ campo.nome or "-" }}</td>
+                        <td><span class="pill">{{ campo.chave or "-" }}</span></td>
+                        <td><span class="pill">{{ campo.tipo }}</span></td>
+                        <td class="text-end">
+                            <form method="POST" class="d-inline">
+                                <input type="hidden" name="acao" value="remover_campo">
+                                <input type="hidden" name="campo_id" value="{{ campo.id }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('{{ tr('Remover esta coluna? (os dados antigos ficam salvos, mas não aparecem mais)') }}');">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-muted">{{ tr("Nenhuma coluna cadastrada ainda. Crie uma acima (ou use 'Criar campos padrão').") }}</div>
+    {% endif %}
+</div>
+
+<div class="card-box">
+    <h6 class="fw-bold mb-3">
+        <i class="fa fa-plus-circle me-1"></i> {{ tr("Novo carro") }}
+    </h6>
+    <form method="POST" class="row g-2">
+        <input type="hidden" name="acao" value="adicionar_carro">
+        <div class="col-12 col-md-4">
+            <label class="form-label">{{ tr("Placa / Identificador") }}</label>
+            <input class="form-control" name="identificador" placeholder="{{ tr("Ex.: AB-123-CD") }}" required>
+        </div>
+        <div class="col-12 col-md-8">
+            <label class="form-label">{{ tr("Descrição (opcional)") }}</label>
+            <input class="form-control" name="descricao" placeholder="{{ tr("Ex.: Furgão branco da equipe A") }}">
+        </div>
+
+        {% for campo in campos %}
+            <div class="col-12 col-md-4">
+                {% if campo.tipo == 'boolean' %}
+                    <div class="form-check form-switch mt-4">
+                        <input class="form-check-input" type="checkbox" role="switch"
+                               id="campo_{{ campo.chave }}" name="campo__{{ campo.chave }}" value="1">
+                        <label class="form-check-label" for="campo_{{ campo.chave }}">{{ campo.nome }}</label>
+                    </div>
+                {% elif campo.tipo == 'select' %}
+                    <label class="form-label">{{ campo.nome }}</label>
+                    <select class="form-select" name="campo__{{ campo.chave }}">
+                        <option value="">{{ tr("-") }}</option>
+                        {% for opcao in (campo.opcoes or []) %}
+                            <option value="{{ opcao }}">{{ opcao }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif campo.tipo == 'number' %}
+                    <label class="form-label">{{ campo.nome }}</label>
+                    <input class="form-control" type="number" step="1" name="campo__{{ campo.chave }}" placeholder="{{ campo.nome }}">
+                {% elif campo.tipo == 'date' %}
+                    <label class="form-label">{{ campo.nome }}</label>
+                    <input class="form-control" type="date" name="campo__{{ campo.chave }}">
+                {% else %}
+                    <label class="form-label">{{ campo.nome }}</label>
+                    <input class="form-control" type="text" name="campo__{{ campo.chave }}" placeholder="{{ campo.nome }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="col-12">
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-check me-1"></i> {{ tr("Salvar carro") }}
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card-box">
+    <h6 class="fw-bold mb-3">
+        <i class="fa fa-list me-1"></i> {{ tr("Lista de carros") }}
+    </h6>
+
+    {% if carros %}
+        <div class="scroll-x">
+            <table class="table table-sm table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>{{ tr("Identificador") }}</th>
+                        <th>{{ tr("Descrição") }}</th>
+                        {% for campo in campos %}
+                            <th>{{ campo.nome }}</th>
+                        {% endfor %}
+                        <th class="text-end">{{ tr("Ações") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for carro in carros %}
+                        <tr>
+                            <td class="fw-semibold">{{ carro.identificador or "-" }}</td>
+                            <td>{{ carro.descricao or "-" }}</td>
+                            {% for campo in campos %}
+                                {% set v = (carro.valores or {}).get(campo.chave) %}
+                                <td>
+                                    {% if campo.tipo == 'boolean' %}
+                                        {% if v is sameas true %}{{ tr("Sim") }}{% elif v is sameas false %}{{ tr("Não") }}{% else %}-{% endif %}
+                                    {% else %}
+                                        {{ v if (v is not none and (v|string)|trim != '') else '-' }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                            <td class="text-end">
+                                <form method="POST" class="d-inline">
+                                    <input type="hidden" name="acao" value="remover_carro">
+                                    <input type="hidden" name="carro_id" value="{{ carro.id }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('{{ tr('Remover este carro?') }}');">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-muted">{{ tr("Nenhum carro cadastrado ainda.") }}</div>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    function toggleOpcoes() {
+        var tipo = document.getElementById('campo_tipo');
+        var wrap = document.getElementById('campo_opcoes_wrap');
+        if (!tipo || !wrap) return;
+        if (tipo.value === 'select') {
+            wrap.classList.remove('d-none');
+        } else {
+            wrap.classList.add('d-none');
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var tipo = document.getElementById('campo_tipo');
+        if (tipo) tipo.addEventListener('change', toggleOpcoes);
+        toggleOpcoes();
+    });
+})();
+</script>
+
+{% endblock %}
+

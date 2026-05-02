@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tr("Admin - Ferie | FlashPoint") }}{% endblock %}
+
+{% block content %}
+
+<style>
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.page-header h4 {
+    font-weight: 700;
+}
+
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.calendar-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 24px 0 12px;
+}
+
+.calendar-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #041955;
+    text-align: center;
+}
+
+.ferias-calendar {
+    background: #fff;
+    border: 1px solid #e7eaf0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar-weekday {
+    background: #f4f6fb;
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e7eaf0;
+}
+
+.calendar-day {
+    min-height: 118px;
+    border-right: 1px solid #e7eaf0;
+    border-bottom: 1px solid #e7eaf0;
+    padding: 8px;
+    background: #fff;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: 0;
+}
+
+.calendar-day.outside {
+    background: #f8f9fa;
+    color: #9ca3af;
+}
+
+.day-number {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.vacation-pill {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 6px;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 5px 6px;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.request-list {
+    background: #fff;
+    border: 1px solid #e7eaf0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 28px;
+}
+
+.admin-ferias-cards {
+    display: grid;
+    gap: 14px;
+}
+
+.admin-ferias-card {
+    background: #fff;
+    border-left: 4px solid #0f766e;
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.msg-pre {
+    white-space: pre-wrap;
+}
+
+@media (max-width: 767px) {
+    .calendar-day {
+        min-height: 86px;
+        padding: 6px;
+    }
+
+    .vacation-pill {
+        font-size: 10px;
+        padding: 4px;
+    }
+}
+
+@media (min-width: 768px) {
+    .admin-ferias-cards {
+        display: none;
+    }
+}
+</style>
+
+<div class="page-header">
+    <h4 class="text-dark">
+        <i class="fa fa-calendar-days me-2"></i>{{ tr("Ferie dei dipendenti") }}
+    </h4>
+    <p>{{ tr("Approva le richieste e visualizza il calendario delle ferie approvate") }}</p>
+</div>
+
+<hr class="my-4">
+
+<div class="calendar-toolbar">
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('admin_ferias', ano=prev_ano, mes=prev_mes) }}">
+        <i class="fa fa-chevron-left"></i>
+    </a>
+    <div class="calendar-title">{{ nome_mes }} {{ ano }}</div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('admin_ferias', ano=next_ano, mes=next_mes) }}">
+        <i class="fa fa-chevron-right"></i>
+    </a>
+</div>
+
+<div class="ferias-calendar">
+    <div class="calendar-grid">
+        <div class="calendar-weekday">{{ tr("Lun") }}</div>
+        <div class="calendar-weekday">{{ tr("Mar") }}</div>
+        <div class="calendar-weekday">{{ tr("Mer") }}</div>
+        <div class="calendar-weekday">{{ tr("Gio") }}</div>
+        <div class="calendar-weekday">{{ tr("Ven") }}</div>
+        <div class="calendar-weekday">{{ tr("Sab") }}</div>
+        <div class="calendar-weekday">{{ tr("Dom") }}</div>
+
+        {% for semana in calendario %}
+            {% for dia in semana %}
+                <div class="calendar-day {% if not dia.no_mes %}outside{% endif %}">
+                    <div class="day-number">{{ dia.numero }}</div>
+                    {% for evento in dia.eventos %}
+                        <span class="vacation-pill" title="{{ evento.nome }} - {{ evento.periodo }}">
+                            {{ evento.nome }}
+                        </span>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="request-list">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h5 class="mb-0 fw-bold">{{ tr("Richieste ferie") }}</h5>
+        <span class="text-muted small">{{ pedidos|length }} {{ tr("richieste") }}</span>
+    </div>
+
+    {% if pedidos %}
+    <div class="d-none d-md-block">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>{{ tr("Dipendente") }}</th>
+                    <th>{{ tr("Periodo") }}</th>
+                    <th>{{ tr("Giorni") }}</th>
+                    <th>{{ tr("Messaggio") }}</th>
+                    <th>{{ tr("Stato") }}</th>
+                    <th class="text-center">{{ tr("Azioni") }}</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for p in pedidos %}
+                <tr>
+                    <td>{{ p.nome }}</td>
+                    <td>{{ p.periodo }}</td>
+                    <td>{{ p.dias }}</td>
+                    <td><div class="msg-pre">{{ p.mensagem or "-" }}</div></td>
+                    <td>
+                        {% set status = (p.status or "pendente")|lower %}
+                        {% if status == "pendente" %}
+                            <span class="badge bg-warning">{{ tr(ferias_status_label(status)) }}</span>
+                        {% elif status == "aprovado" %}
+                            <span class="badge bg-success">{{ tr(ferias_status_label(status)) }}</span>
+                        {% elif status == "recusado" %}
+                            <span class="badge bg-danger">{{ tr(ferias_status_label(status)) }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ p.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <form method="post" class="admin-actions justify-content-center">
+                            <input type="hidden" name="pedido_id" value="{{ p.id }}">
+                            <button name="acao" value="aprovado" class="btn btn-sm btn-success" title="{{ tr("Approva") }}">
+                                <i class="fa fa-check"></i>
+                            </button>
+                            <button name="acao" value="recusado" class="btn btn-sm btn-warning" title="{{ tr("Rifiuta") }}">
+                                <i class="fa fa-times"></i>
+                            </button>
+                            <button name="acao" value="pendente" class="btn btn-sm btn-secondary" title="{{ tr("Rimetti in sospeso") }}">
+                                <i class="fa fa-rotate-left"></i>
+                            </button>
+                            <button name="acao" value="excluir" class="btn btn-sm btn-danger" title="{{ tr("Elimina") }}" onclick="return confirm('{{ tr("Vuoi eliminare questa richiesta ferie?") }}');">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-ferias-cards d-md-none">
+        {% for p in pedidos %}
+        <div class="admin-ferias-card">
+            <div class="d-flex justify-content-between gap-2 mb-2">
+                <div>
+                    <strong>{{ p.nome }}</strong>
+                    <div class="text-muted small">{{ p.periodo }} - {{ p.dias }} {{ tr("giorni") }}</div>
+                </div>
+                <div>
+                    {% set status = (p.status or "pendente")|lower %}
+                    {% if status == "pendente" %}
+                        <span class="badge bg-warning">{{ tr(ferias_status_label(status)) }}</span>
+                    {% elif status == "aprovado" %}
+                        <span class="badge bg-success">{{ tr(ferias_status_label(status)) }}</span>
+                    {% elif status == "recusado" %}
+                        <span class="badge bg-danger">{{ tr(ferias_status_label(status)) }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ p.status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="msg-pre text-muted small mb-3">{{ p.mensagem or tr("Nessun messaggio inserito.") }}</div>
+            <form method="post" class="admin-actions">
+                <input type="hidden" name="pedido_id" value="{{ p.id }}">
+                <button name="acao" value="aprovado" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button>
+                <button name="acao" value="recusado" class="btn btn-sm btn-warning"><i class="fa fa-times"></i></button>
+                <button name="acao" value="pendente" class="btn btn-sm btn-secondary"><i class="fa fa-rotate-left"></i></button>
+                <button name="acao" value="excluir" class="btn btn-sm btn-danger" onclick="return confirm('{{ tr("Vuoi eliminare questa richiesta ferie?") }}');">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted text-center my-4">{{ tr("Nessuna richiesta ferie registrata.") }}</p>
+    {% endif %}
+</div>
+
+<div class="text-end mt-3">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+        <i class="fa fa-arrow-left me-2"></i>{{ tr("Indietro") }}
+    </a>
+</div>
+
+{% endblock %}

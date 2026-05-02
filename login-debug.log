@@ -1,0 +1,312 @@
+[2026-05-01 14:52:10] login: POST recebido para finalrios@icloud.com
+[2026-05-01 14:52:10] login: iniciando autenticacao firebase
+[2026-05-01 14:52:11] login: autenticacao firebase concluida
+[2026-05-01 14:52:11] login: sessao criada, redirecionando dashboard
+[2026-05-01 14:52:11] dashboard: inicio
+[2026-05-01 14:52:11] dashboard: buscando usuario
+[2026-05-01 14:52:11] dashboard: calculando horas mes atual
+[2026-05-01 14:52:11] dashboard: calculando horas mes anterior
+[2026-05-01 14:52:11] dashboard: calculando horas ano
+[2026-05-01 14:52:11] dashboard: calculando ranking mensal
+[2026-05-01 14:52:11] dashboard: buscando kits e mala
+[2026-05-01 14:58:06] login: POST recebido para finalrios@icloud.com
+[2026-05-01 14:58:06] login: iniciando autenticacao firebase
+[2026-05-01 14:58:07] login: autenticacao firebase concluida
+[2026-05-01 14:58:07] login: sessao criada, redirecionando dashboard
+[2026-05-01 14:58:07] dashboard: inicio
+[2026-05-01 14:58:07] dashboard: buscando usuario
+[2026-05-01 14:58:07] dashboard: calculando horas mes atual
+[2026-05-01 14:58:07] dashboard: calculando horas mes anterior
+[2026-05-01 14:58:07] dashboard: calculando horas ano
+[2026-05-01 14:58:07] dashboard: calculando ranking mensal
+[2026-05-01 14:58:07] dashboard: buscando kits e mala
+[2026-05-01 15:35:18] dashboard: inicio
+[2026-05-01 15:35:18] dashboard: buscando usuario
+[2026-05-01 15:35:18] dashboard: calculando horas mes atual
+[2026-05-01 15:35:18] dashboard: calculando horas mes anterior
+[2026-05-01 15:35:18] dashboard: calculando horas ano
+[2026-05-01 15:35:18] dashboard: calculando ranking mensal
+[2026-05-01 15:35:18] dashboard: buscando kits e mala
+[2026-05-01 15:36:34] dashboard: inicio
+[2026-05-01 15:36:34] dashboard: buscando usuario
+[2026-05-01 15:36:34] dashboard: calculando horas mes atual
+[2026-05-01 15:36:34] dashboard: calculando horas mes anterior
+[2026-05-01 15:36:34] dashboard: calculando horas ano
+[2026-05-01 15:36:35] dashboard: calculando ranking mensal
+[2026-05-01 15:36:35] dashboard: buscando kits e mala
+[2026-05-01 15:36:43] dashboard: renderizando template
+[2026-05-01 15:36:53] dashboard: renderizando template
+[2026-05-01 15:37:15] dashboard: renderizando template
+[2026-05-01 16:03:18] dashboard: inicio
+[2026-05-01 16:03:18] dashboard: buscando usuario
+[2026-05-01 16:03:20] dashboard: calculando horas mes atual
+[2026-05-01 16:03:20] dashboard: calculando horas mes anterior
+[2026-05-01 16:03:20] dashboard: calculando horas ano
+[2026-05-01 16:03:20] dashboard: calculando ranking mensal
+[2026-05-01 16:03:20] dashboard: buscando kits e mala
+[2026-05-01 16:03:25] dashboard: renderizando template
+[2026-05-01 16:03:39] dashboard: renderizando template
+[2026-05-01 16:04:05] login: POST recebido para finalrios@icloud.com
+[2026-05-01 16:04:05] login: iniciando autenticacao firebase
+[2026-05-01 16:04:05] login: autenticacao firebase concluida
+[2026-05-01 16:04:05] login: sessao criada, redirecionando dashboard
+[2026-05-01 16:04:05] dashboard: inicio
+[2026-05-01 16:04:05] dashboard: buscando usuario
+[2026-05-01 16:04:05] dashboard: calculando horas mes atual
+[2026-05-01 16:04:05] dashboard: calculando horas mes anterior
+[2026-05-01 16:04:05] dashboard: calculando horas ano
+[2026-05-01 16:04:05] dashboard: calculando ranking mensal
+[2026-05-01 16:04:06] dashboard: buscando kits e mala
+[2026-05-01 16:04:08] dashboard: renderizando template
+[2026-05-01 16:04:23] dashboard: renderizando template
+[2026-05-01 16:04:39] login: POST recebido para adm@gmail.com
+[2026-05-01 16:04:39] login: iniciando autenticacao firebase
+[2026-05-01 16:04:40] login: autenticacao firebase concluida
+[2026-05-01 16:04:40] login: sessao criada, redirecionando dashboard
+[2026-05-01 16:04:40] dashboard: inicio
+[2026-05-01 16:04:40] dashboard: buscando usuario
+[2026-05-01 16:04:40] dashboard: calculando horas mes atual
+[2026-05-01 16:04:40] dashboard: calculando horas mes anterior
+[2026-05-01 16:04:40] dashboard: calculando horas ano
+[2026-05-01 16:04:40] dashboard: calculando ranking mensal
+[2026-05-01 16:04:40] dashboard: buscando kits e mala
+[2026-05-01 16:04:43] dashboard: renderizando template
+[2026-05-01 16:04:58] dashboard: renderizando template
+[2026-05-01 16:25:51] dashboard: inicio
+[2026-05-01 16:25:51] dashboard: buscando usuario
+[2026-05-01 16:25:51] dashboard: calculando horas mes atual
+[2026-05-01 16:25:51] dashboard: calculando horas mes anterior
+[2026-05-01 16:25:51] dashboard: calculando horas ano
+[2026-05-01 16:25:51] dashboard: calculando ranking mensal
+[2026-05-01 16:25:51] dashboard: buscando kits e mala
+[2026-05-01 16:29:19] dashboard: renderizando template
+[2026-05-01 16:29:23] dashboard: inicio
+[2026-05-01 16:29:23] dashboard: buscando usuario
+[2026-05-01 16:29:23] dashboard: calculando horas mes atual
+[2026-05-01 16:29:23] dashboard: calculando horas mes anterior
+[2026-05-01 16:29:23] dashboard: calculando horas ano
+[2026-05-01 16:29:23] dashboard: calculando ranking mensal
+[2026-05-01 16:29:23] dashboard: buscando kits e mala
+[2026-05-01 16:33:05] dashboard: inicio
+[2026-05-01 16:33:05] dashboard: buscando usuario
+[2026-05-01 16:33:05] dashboard: calculando horas mes atual
+[2026-05-01 16:33:05] dashboard: calculando horas mes anterior
+[2026-05-01 16:33:05] dashboard: calculando horas ano
+[2026-05-01 16:33:05] dashboard: calculando ranking mensal
+[2026-05-01 16:33:05] dashboard: buscando kits e mala
+[2026-05-01 16:39:23] login: POST recebido para finalrios@icloud.com
+[2026-05-01 16:39:23] login: iniciando autenticacao firebase
+[2026-05-01 16:39:24] login: autenticacao firebase concluida
+[2026-05-01 16:39:24] login: sessao criada, redirecionando dashboard
+[2026-05-01 16:39:24] dashboard: inicio
+[2026-05-01 16:39:24] dashboard: buscando usuario
+[2026-05-01 16:39:25] dashboard: calculando horas mes atual
+[2026-05-01 16:39:25] dashboard: calculando horas mes anterior
+[2026-05-01 16:39:25] dashboard: calculando horas ano
+[2026-05-01 16:39:25] dashboard: calculando ranking mensal
+[2026-05-01 16:39:25] dashboard: buscando kits e mala
+[2026-05-01 16:39:53] dashboard: renderizando template
+[2026-05-01 16:40:09] login: POST recebido para adm@gmail.com
+[2026-05-01 16:40:09] login: iniciando autenticacao firebase
+[2026-05-01 16:40:10] login: autenticacao firebase concluida
+[2026-05-01 16:40:10] login: sessao criada, redirecionando dashboard
+[2026-05-01 16:40:10] dashboard: inicio
+[2026-05-01 16:40:10] dashboard: buscando usuario
+[2026-05-01 16:40:10] dashboard: calculando horas mes atual
+[2026-05-01 16:40:10] dashboard: calculando horas mes anterior
+[2026-05-01 16:40:10] dashboard: calculando horas ano
+[2026-05-01 16:40:10] dashboard: calculando ranking mensal
+[2026-05-01 16:40:10] dashboard: buscando kits e mala
+[2026-05-01 17:05:58] dashboard: inicio
+[2026-05-01 17:05:58] dashboard: buscando usuario
+[2026-05-01 17:05:58] dashboard: calculando horas mes atual
+[2026-05-01 17:05:58] dashboard: calculando horas mes anterior
+[2026-05-01 17:05:58] dashboard: calculando horas ano
+[2026-05-01 17:05:58] dashboard: calculando ranking mensal
+[2026-05-01 17:05:58] dashboard: buscando kits e mala
+[2026-05-01 17:18:03] dashboard: inicio
+[2026-05-01 17:18:03] dashboard: buscando usuario
+[2026-05-01 17:18:03] dashboard: calculando horas mes atual
+[2026-05-01 17:18:03] dashboard: calculando horas mes anterior
+[2026-05-01 17:18:04] dashboard: calculando horas ano
+[2026-05-01 17:18:04] dashboard: calculando ranking mensal
+[2026-05-01 17:18:04] dashboard: buscando kits e mala
+[2026-05-01 17:42:58] dashboard: inicio
+[2026-05-01 17:42:58] dashboard: buscando usuario
+[2026-05-01 17:42:59] dashboard: calculando horas mes atual
+[2026-05-01 17:42:59] dashboard: calculando horas mes anterior
+[2026-05-01 17:42:59] dashboard: calculando horas ano
+[2026-05-01 17:42:59] dashboard: calculando ranking mensal
+[2026-05-01 17:42:59] dashboard: buscando kits e mala
+[2026-05-01 17:43:04] login: POST recebido para finalrios@icloud.com
+[2026-05-01 17:43:04] login: iniciando autenticacao firebase
+[2026-05-01 17:43:05] login: autenticacao firebase concluida
+[2026-05-01 17:43:05] login: sessao criada, redirecionando dashboard
+[2026-05-01 17:43:05] dashboard: inicio
+[2026-05-01 17:43:05] dashboard: buscando usuario
+[2026-05-01 17:43:05] dashboard: calculando horas mes atual
+[2026-05-01 17:43:05] dashboard: calculando horas mes anterior
+[2026-05-01 17:43:05] dashboard: calculando horas ano
+[2026-05-01 17:43:05] dashboard: calculando ranking mensal
+[2026-05-01 17:43:05] dashboard: buscando kits e mala
+[2026-05-01 18:22:46] dashboard: inicio
+[2026-05-01 18:22:46] dashboard: buscando usuario
+[2026-05-01 18:22:47] dashboard: calculando horas mes atual
+[2026-05-01 18:22:47] dashboard: calculando horas mes anterior
+[2026-05-01 18:22:47] dashboard: calculando horas ano
+[2026-05-01 18:22:47] dashboard: calculando ranking mensal
+[2026-05-01 18:22:47] dashboard: buscando kits e mala
+[2026-05-01 18:37:03] dashboard: inicio
+[2026-05-01 18:37:03] dashboard: buscando usuario
+[2026-05-01 18:37:03] dashboard: calculando horas mes atual
+[2026-05-01 18:37:03] dashboard: calculando horas mes anterior
+[2026-05-01 18:37:03] dashboard: calculando horas ano
+[2026-05-01 18:37:03] dashboard: calculando ranking mensal
+[2026-05-01 18:37:03] dashboard: buscando kits e mala
+[2026-05-01 22:48:35] dashboard: renderizando template
+[2026-05-01 22:49:01] login: POST recebido para adm@gmail.com
+[2026-05-01 22:49:01] login: iniciando autenticacao firebase
+[2026-05-01 22:49:02] login: autenticacao firebase concluida
+[2026-05-01 22:49:02] login: sessao criada, redirecionando dashboard
+[2026-05-01 22:49:02] dashboard: inicio
+[2026-05-01 22:49:02] dashboard: buscando usuario
+[2026-05-01 22:49:02] dashboard: calculando horas mes atual
+[2026-05-01 22:49:02] dashboard: calculando horas mes anterior
+[2026-05-01 22:49:02] dashboard: calculando horas ano
+[2026-05-01 22:49:02] dashboard: calculando ranking mensal
+[2026-05-01 22:49:02] dashboard: buscando kits e mala
+[2026-05-02 15:26:44] login: POST recebido para finalrios@icloud.com
+[2026-05-02 15:26:44] login: iniciando autenticacao firebase
+[2026-05-02 15:26:45] login: autenticacao firebase concluida
+[2026-05-02 15:26:45] login: sessao criada, redirecionando dashboard
+[2026-05-02 15:26:45] dashboard: inicio
+[2026-05-02 15:26:45] dashboard: buscando usuario
+[2026-05-02 15:26:45] dashboard: calculando horas mes atual
+[2026-05-02 15:26:45] dashboard: calculando horas mes anterior
+[2026-05-02 15:26:45] dashboard: calculando horas ano
+[2026-05-02 15:26:45] dashboard: calculando ranking mensal
+[2026-05-02 15:26:45] dashboard: buscando kits e mala
+[2026-05-02 15:36:01] dashboard: inicio
+[2026-05-02 15:36:01] dashboard: buscando usuario
+[2026-05-02 15:36:02] dashboard: calculando horas mes atual
+[2026-05-02 15:36:02] dashboard: calculando horas mes anterior
+[2026-05-02 15:36:02] dashboard: calculando horas ano
+[2026-05-02 15:36:02] dashboard: calculando ranking mensal
+[2026-05-02 15:36:02] dashboard: buscando kits e mala
+[2026-05-02 16:04:33] dashboard: inicio
+[2026-05-02 16:04:33] dashboard: buscando usuario
+[2026-05-02 16:04:33] dashboard: calculando horas mes atual
+[2026-05-02 16:04:33] dashboard: calculando horas mes anterior
+[2026-05-02 16:04:33] dashboard: calculando horas ano
+[2026-05-02 16:04:33] dashboard: calculando ranking mensal
+[2026-05-02 16:04:33] dashboard: buscando kits e mala
+[2026-05-02 16:05:21] dashboard: inicio
+[2026-05-02 16:05:21] dashboard: buscando usuario
+[2026-05-02 16:05:21] dashboard: calculando horas mes atual
+[2026-05-02 16:05:21] dashboard: calculando horas mes anterior
+[2026-05-02 16:05:22] dashboard: calculando horas ano
+[2026-05-02 16:05:22] dashboard: calculando ranking mensal
+[2026-05-02 16:05:22] dashboard: buscando kits e mala
+[2026-05-02 16:09:18] dashboard: inicio
+[2026-05-02 16:09:18] dashboard: buscando usuario
+[2026-05-02 16:09:18] dashboard: calculando horas mes atual
+[2026-05-02 16:09:18] dashboard: calculando horas mes anterior
+[2026-05-02 16:09:18] dashboard: calculando horas ano
+[2026-05-02 16:09:19] dashboard: calculando ranking mensal
+[2026-05-02 16:09:19] dashboard: buscando kits e mala
+[2026-05-02 16:09:58] dashboard: inicio
+[2026-05-02 16:09:58] dashboard: buscando usuario
+[2026-05-02 16:09:58] dashboard: calculando horas mes atual
+[2026-05-02 16:09:58] dashboard: calculando horas mes anterior
+[2026-05-02 16:09:59] dashboard: calculando horas ano
+[2026-05-02 16:09:59] dashboard: calculando ranking mensal
+[2026-05-02 16:09:59] dashboard: buscando kits e mala
+[2026-05-02 16:10:02] dashboard: renderizando template
+[2026-05-02 16:15:53] dashboard: renderizando template
+[2026-05-02 16:19:41] dashboard: renderizando template
+[2026-05-02 16:20:10] login: POST recebido para adm@gmail.com
+[2026-05-02 16:20:10] login: iniciando autenticacao firebase
+[2026-05-02 16:20:11] login: autenticacao firebase concluida
+[2026-05-02 16:20:11] login: sessao criada, redirecionando dashboard
+[2026-05-02 16:20:11] dashboard: inicio
+[2026-05-02 16:20:11] dashboard: buscando usuario
+[2026-05-02 16:20:11] dashboard: calculando horas mes atual
+[2026-05-02 16:20:11] dashboard: calculando horas mes anterior
+[2026-05-02 16:20:11] dashboard: calculando horas ano
+[2026-05-02 16:20:11] dashboard: calculando ranking mensal
+[2026-05-02 16:20:11] dashboard: buscando kits e mala
+[2026-05-02 16:20:28] login: POST recebido para finalrios@icloud.com
+[2026-05-02 16:20:28] login: iniciando autenticacao firebase
+[2026-05-02 16:20:29] login: autenticacao firebase concluida
+[2026-05-02 16:20:29] login: sessao criada, redirecionando dashboard
+[2026-05-02 16:20:29] dashboard: inicio
+[2026-05-02 16:20:29] dashboard: buscando usuario
+[2026-05-02 16:20:29] dashboard: calculando horas mes atual
+[2026-05-02 16:20:29] dashboard: calculando horas mes anterior
+[2026-05-02 16:20:29] dashboard: calculando horas ano
+[2026-05-02 16:20:29] dashboard: calculando ranking mensal
+[2026-05-02 16:20:29] dashboard: buscando kits e mala
+[2026-05-02 16:21:05] dashboard: inicio
+[2026-05-02 16:21:05] dashboard: buscando usuario
+[2026-05-02 16:21:05] dashboard: calculando horas mes atual
+[2026-05-02 16:21:06] dashboard: calculando horas mes anterior
+[2026-05-02 16:21:06] dashboard: calculando horas ano
+[2026-05-02 16:21:06] dashboard: calculando ranking mensal
+[2026-05-02 16:21:06] dashboard: buscando kits e mala
+[2026-05-02 16:25:39] dashboard: inicio
+[2026-05-02 16:25:39] dashboard: buscando usuario
+[2026-05-02 16:25:39] dashboard: calculando horas mes atual
+[2026-05-02 16:25:39] dashboard: calculando horas mes anterior
+[2026-05-02 16:25:39] dashboard: calculando horas ano
+[2026-05-02 16:25:39] dashboard: calculando ranking mensal
+[2026-05-02 16:25:40] dashboard: buscando kits e mala
+[2026-05-02 16:26:04] dashboard: inicio
+[2026-05-02 16:26:04] dashboard: buscando usuario
+[2026-05-02 16:26:05] dashboard: calculando horas mes atual
+[2026-05-02 16:26:05] dashboard: calculando horas mes anterior
+[2026-05-02 16:26:05] dashboard: calculando horas ano
+[2026-05-02 16:26:05] dashboard: calculando ranking mensal
+[2026-05-02 16:26:05] dashboard: buscando kits e mala
+[2026-05-02 16:27:47] dashboard: inicio
+[2026-05-02 16:27:47] dashboard: buscando usuario
+[2026-05-02 16:27:47] dashboard: calculando horas mes atual
+[2026-05-02 16:27:47] dashboard: calculando horas mes anterior
+[2026-05-02 16:27:47] dashboard: calculando horas ano
+[2026-05-02 16:27:47] dashboard: calculando ranking mensal
+[2026-05-02 16:27:47] dashboard: buscando kits e mala
+[2026-05-02 16:27:52] dashboard: inicio
+[2026-05-02 16:27:52] dashboard: buscando usuario
+[2026-05-02 16:27:53] dashboard: calculando horas mes atual
+[2026-05-02 16:27:53] dashboard: calculando horas mes anterior
+[2026-05-02 16:27:53] dashboard: calculando horas ano
+[2026-05-02 16:27:53] dashboard: calculando ranking mensal
+[2026-05-02 16:27:53] dashboard: buscando kits e mala
+[2026-05-02 16:46:32] dashboard: inicio
+[2026-05-02 16:46:32] dashboard: buscando usuario
+[2026-05-02 16:46:33] dashboard: calculando horas mes atual
+[2026-05-02 16:46:33] dashboard: calculando horas mes anterior
+[2026-05-02 16:46:33] dashboard: calculando horas ano
+[2026-05-02 16:46:33] dashboard: calculando ranking mensal
+[2026-05-02 16:46:33] dashboard: buscando kits e mala
+[2026-05-02 16:46:42] dashboard: inicio
+[2026-05-02 16:46:42] dashboard: buscando usuario
+[2026-05-02 16:46:42] dashboard: calculando horas mes atual
+[2026-05-02 16:46:42] dashboard: calculando horas mes anterior
+[2026-05-02 16:46:42] dashboard: calculando horas ano
+[2026-05-02 16:46:42] dashboard: calculando ranking mensal
+[2026-05-02 16:46:42] dashboard: buscando kits e mala
+[2026-05-02 17:06:21] dashboard: inicio
+[2026-05-02 17:06:21] dashboard: buscando usuario
+[2026-05-02 17:06:22] dashboard: calculando horas mes atual
+[2026-05-02 17:06:22] dashboard: calculando horas mes anterior
+[2026-05-02 17:06:22] dashboard: calculando horas ano
+[2026-05-02 17:06:23] dashboard: calculando ranking mensal
+[2026-05-02 17:06:23] dashboard: buscando kits e mala
+[2026-05-02 17:06:34] dashboard: inicio
+[2026-05-02 17:06:34] dashboard: buscando usuario
+[2026-05-02 17:06:34] dashboard: calculando horas mes atual
+[2026-05-02 17:06:34] dashboard: calculando horas mes anterior
+[2026-05-02 17:06:35] dashboard: calculando horas ano
+[2026-05-02 17:06:35] dashboard: calculando ranking mensal
+[2026-05-02 17:06:35] dashboard: buscando kits e mala
+[2026-05-02 17:06:42] dashboard: renderizando template

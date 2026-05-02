@@ -1,0 +1,256 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [29/Apr/2026 20:37:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [29/Apr/2026 20:38:20] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [29/Apr/2026 20:38:20] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Apr/2026 20:38:20] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Apr/2026 20:38:24] "POST / HTTP/1.1" 302 -
+C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\cloud\firestore_v1\base_collection.py:316: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  return query.where(field_path, op_string, value)
+C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\app.py:2815: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  .where("data", "<=", f"{ano:04d}-{mes:02d}-{calendar.monthrange(ano, mes)[1]:02d}"),
+127.0.0.1 - - [29/Apr/2026 20:38:24] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [29/Apr/2026 20:38:24] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+[2026-04-29 20:52:32,968] ERROR in app: Exception on /ferias [GET]
+Traceback (most recent call last):
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\grpc_helpers.py", line 169, in error_remapped_callable
+    return _StreamingResponseIterator(
+        result, prefetch_first_result=prefetch_first
+    )
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\grpc_helpers.py", line 91, in __init__
+    self._stored_first_result = next(self._wrapped)
+                                ~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\grpc\_channel.py", line 538, in __next__
+    return self._next()
+           ~~~~~~~~~~^^
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\grpc\_channel.py", line 962, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+	status = StatusCode.RESOURCE_EXHAUSTED
+	details = "Quota exceeded."
+	debug_error_string = "UNKNOWN:Error received from peer ipv6:%5B2a00:1450:4002:401::200a%5D:443 {grpc_status:8, grpc_message:"Quota exceeded."}"
+>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 147, in retry_target
+    result = target()
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\timeout.py", line 130, in func_with_timeout
+    return func(*args, **kwargs)
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\grpc_helpers.py", line 173, in error_remapped_callable
+    raise exceptions.from_grpc_error(exc) from exc
+google.api_core.exceptions.ResourceExhausted: 429 Quota exceeded.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\app.py", line 7787, in ferias
+    usuario_doc = db.collection("usuarios").document(uid).get()
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\cloud\firestore_v1\document.py", line 411, in get
+    response_iter = self._client._firestore_api.batch_get_documents(
+        request=request,
+        metadata=self._client._rpc_metadata,
+        **kwargs,
+    )
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\client.py", line 1222, in batch_get_documents
+    response = rpc(
+        request,
+    ...<2 lines>...
+        metadata=metadata,
+    )
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\gapic_v1\method.py", line 131, in __call__
+    return wrapped_func(*args, **kwargs)
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+        target,
+    ...<3 lines>...
+        on_error=on_error,
+    )
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\retry\retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+        exc,
+    ...<6 lines>...
+        timeout,
+    )
+  File "C:\Users\Anderson PC\Documents\Personale\Designer\FlashPoint\flashpoint-main\venv\Lib\site-packages\google\api_core\retry\retry_base.py", line 229, in _retry_error_helper
+    raise final_exc from source_exc
+google.api_core.exceptions.RetryError: Timeout of 300.0s exceeded, last exception: 429 Quota exceeded.
+127.0.0.1 - - [29/Apr/2026 20:52:32] "GET /ferias HTTP/1.1" 500 -
+127.0.0.1 - - [29/Apr/2026 20:52:33] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:19:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:33] "GET /static/img/logo-login.png HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:33] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:37] "POST / HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:19:37] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:37] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:19:45] "GET /ferias HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:45] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:19:57] "POST /ferias HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:19:58] "GET /ferias HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:19:58] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:20:01] "GET /admin/ferias HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:20:01] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:20:05] "POST /admin/ferias HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:20:05] "GET /admin/ferias HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:20:05] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:20:32] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:21:26] "POST /admin/ferias HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:21:26] "GET /admin/ferias HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:21:26] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:21:26] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:21:31] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:21:31] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:21:31] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:27:56] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:27:56] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:27:56] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:27:56] "GET /static/img/perfis/anderson.png HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:31:39] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:31:39] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:31:39] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:31:39] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:31:39] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:31:56] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:31:56] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:31:56] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:31:56] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:31:56] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:17] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:32:17] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:32:17] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:17] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:17] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:21] "GET /perfil/trocar_senha HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:32:21] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:32:21] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:23] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:32:23] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:32:23] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:32:23] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:13] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:34:13] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:34:13] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:13] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:13] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:26] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:34:26] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:34:26] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:26] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:34:26] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:35:14] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:35:14] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:35:14] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:35:14] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:35:14] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:21] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:36:21] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:36:21] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:21] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:21] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:27] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:36:27] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:36:27] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:27] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:27] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:36] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:36:36] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:36] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:40] "POST / HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:36:41] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:36:41] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:46] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:36:46] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:36:46] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:37:03] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:37:22] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:37:22] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:37:22] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:37:22] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:37:22] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:38:09] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:38:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:38:09] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:38:09] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:38:09] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:40:58] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:40:58] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:40:58] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:41:33] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:41:33] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:41:33] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:41:33] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:41:56] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:41:57] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:41:57] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:41:57] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:24] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:42:24] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:42:24] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:24] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:34] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:42:34] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+127.0.0.1 - - [01/May/2026 14:42:34] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:34] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:43] "GET /logout HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:42:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:42:43] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:43] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:42:46] "POST / HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:42:46] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:42:46] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:43:17] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:43:17] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:43:18] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:43:54] "GET /meus_pontos HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:43:54] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:43:56] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:43:56] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:44:11] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:44:11] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:44:11] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:44:13] "GET /registrar_ponto HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:44:13] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:44:14] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:44:14] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:07] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:07] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:07] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:08] "GET /registrar_ponto HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:08] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:43] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:43] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:46] "POST / HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:45:46] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:46] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:51] "GET /registrar_ponto HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:51] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:54] "GET /meus_pontos HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:54] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:57] "GET /perfil HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:57] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:57] "GET /static/img/perfis/anderson.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:45:59] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:45:59] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:48:00] "GET /registrar_ponto HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:48:00] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:48:00] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:48:02] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:48:02] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:52:07] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:52:08] "GET /static/css/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:52:08] "GET /static/img/logo-login.png HTTP/1.1" 304 -
+127.0.0.1 - - [01/May/2026 14:52:11] "POST / HTTP/1.1" 302 -
+127.0.0.1 - - [01/May/2026 14:52:11] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [01/May/2026 14:52:11] "GET /static/img/logo-login.png HTTP/1.1" 304 -

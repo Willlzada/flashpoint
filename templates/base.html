@@ -166,6 +166,13 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ url_for('ferias') }}" class="nav-link {% if request.path.startswith('/ferias') %}active{% endif %}">
+                <i class="fa fa-umbrella-beach me-2"></i> {{ t('nav.vacations') }}
+            </a>
+        </li>
+
+
 
         <li>
             <a href="/perfil" class="nav-link {% if request.path == '/perfil' %}active{% endif %}">
@@ -204,6 +211,12 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ url_for('admin_carros') }}" class="nav-link {% if request.path.startswith('/admin/carros') %}active{% endif %}">
+                <i class="fa fa-car me-2"></i> {{ t('nav.admin_cars') }}
+            </a>
+        </li>
+
 
         <li>
             <a href="{{ url_for('admin_perfis') }}" class="nav-link {% if request.path == '/admin/perfis' %}active{% endif %}">
@@ -220,6 +233,12 @@
 
             </a>
 
+        </li>
+
+        <li>
+            <a href="{{ url_for('admin_ferias') }}" class="nav-link {% if request.path.startswith('/admin/ferias') %}active{% endif %}">
+                <i class="fa fa-calendar-days me-2"></i> {{ t('nav.admin_vacations') }}
+            </a>
         </li>
 
         <li>
@@ -252,6 +271,12 @@
         <li>
             <a href="{{ url_for('admin_pontos_backup') }}" class="nav-link {% if request.path == '/admin_pontos/backup' %}active{% endif %}">
                 <i class="fa fa-database me-2"></i> {{ tr("Backup e pulizia") }}
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('admin_alocacao') }}" class="nav-link {% if request.path.startswith('/admin/alocacao') %}active{% endif %}">
+                <i class="fa fa-calendar-week me-2"></i> {{ tr("Assegnazione settimanale") }}
             </a>
         </li>
 
@@ -306,12 +331,6 @@
                 <i class="fa fa-clock d-block" width="30" height="30"></i>
             </a>
         </li>
-                <li class="nav-item flex-fill">
-            <a href="{{ url_for('novo_pedido') }}" class="nav-link py-3 {% if request.path == '/pedido/novo' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.new_request') }}">
-                <i class="fa fa-folder-open d-block" width="30" height="30"></i>
-            </a>
-        </li>
-
         <li class="nav-item flex-fill">
             <a href="/perfil" class="nav-link py-3 {% if request.path == '/perfil' %}active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="{{ t('nav.mobile.profile') }}">
                 <i class="fa fa-user d-block" width="30" height="30"></i>

@@ -14,11 +14,13 @@ import calendar
 
 import uuid
 
+import unicodedata
+
 from urllib.parse import quote, unquote, urlparse
 
 from firebase_admin import credentials, firestore, storage, initialize_app, auth as admin_auth
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from flask import send_file, session, request
 
@@ -68,6 +70,33 @@ ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 app.secret_key = "chave-secreta-simples"  # essencial para sess�o
 
+LOGIN_DEBUG_LOG = os.path.join(app.root_path, "login-debug.log")
+
+
+def log_login_debug(message):
+
+    try:
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        with open(LOGIN_DEBUG_LOG, "a", encoding="utf-8") as handle:
+
+            handle.write(f"[{timestamp}] {message}\n")
+
+    except Exception:
+
+        pass
+
+
+def firestore_get(ref, timeout=5):
+
+    return ref.get(retry=None, timeout=timeout)
+
+
+def firestore_stream(query, timeout=8):
+
+    return query.stream(retry=None, timeout=timeout)
+
 
 
 # =========================
@@ -106,6 +135,8 @@ TRANSLATIONS = {
 
         "nav.my_requests": "Meus pedidos",
 
+        "nav.vacations": "Ferias",
+
         "nav.profile": "Perfil",
 
         "nav.admin": "Administra��o",
@@ -115,11 +146,15 @@ TRANSLATIONS = {
 
         "nav.admin_sites": "Gest�o de locais",
 
+        "nav.admin_cars": "Carros da empresa",
+
         "nav.admin_badges": "Crach�s",
 
         "nav.admin_profiles": "Perfis de usu�rios",
 
         "nav.admin_requests": "Solicita��es dos funcion�rios",
+
+        "nav.admin_vacations": "Ferias dos funcionarios",
 
         "nav.admin_kits": "Kits de ferramentas",
 
@@ -132,6 +167,8 @@ TRANSLATIONS = {
         "nav.mobile.my_points": "Meus pontos",
 
         "nav.mobile.new_request": "Novo pedido",
+
+        "nav.mobile.vacations": "Ferias",
 
         "nav.mobile.profile": "Perfil",
 
@@ -224,6 +261,8 @@ TRANSLATIONS = {
 
         "nav.my_requests": "Mie richieste",
 
+        "nav.vacations": "Ferie",
+
         "nav.profile": "Profilo",
 
         "nav.admin": "Amministrazione",
@@ -233,11 +272,15 @@ TRANSLATIONS = {
 
         "nav.admin_sites": "Gestione dei cantieri",
 
+        "nav.admin_cars": "Auto aziendali",
+
         "nav.admin_badges": "Tesserini",
 
         "nav.admin_profiles": "Profili utenti",
 
         "nav.admin_requests": "Richieste dei dipendenti",
+
+        "nav.admin_vacations": "Ferie dei dipendenti",
 
         "nav.admin_kits": "Kit attrezzi",
 
@@ -250,6 +293,8 @@ TRANSLATIONS = {
         "nav.mobile.my_points": "I miei punti",
 
         "nav.mobile.new_request": "Nuova richiesta",
+
+        "nav.mobile.vacations": "Ferie",
 
         "nav.mobile.profile": "Profilo",
 
@@ -594,9 +639,115 @@ TEXT_TRANSLATIONS = {
 
         "Gestione richieste e ordini": "Gest�o de solicita��es e pedidos",
 
+        "Assegnazione settimanale | FlashPoint": "Alocacao semanal | FlashPoint",
+        "Assegnazione settimanale della squadra": "Alocacao semanal da equipe",
+        "Imposta un luogo per dipendente per tutta la settimana. Il lunedi la squadra sapra gia dove andare.": "Defina um local por funcionario para a semana inteira. Na segunda-feira a equipe ja sabe onde deve ir.",
+        "Consulta la tua assegnazione settimanale per sapere presso quale cliente devi lavorare.": "Consulte sua alocacao da semana para saber em qual cliente voce deve trabalhar.",
+        "Inizio settimana": "Inicio da semana",
+        "La data verra automaticamente regolata al lunedi.": "A data sera ajustada automaticamente para segunda-feira.",
+        "Carica settimana": "Carregar semana",
+        "Esporta per WhatsApp": "Exportar para WhatsApp",
+        "Salva pianificazione settimanale": "Salvar planejamento da semana",
+        "Caricamento assegnazione settimanale...": "Carregando alocacao da semana...",
+        "Preparazione agenda settimanale...": "Preparando agenda semanal...",
+        "Caricamento agenda settimanale...": "Carregando agenda semanal...",
+        "Settimana caricata.": "Semana carregada.",
+        "Salvataggio pianificazione settimanale...": "Salvando planejamento semanal...",
+        "Pianificazione settimanale salvata con successo.": "Planejamento semanal salvo com sucesso.",
+        "Carica una settimana prima di salvare.": "Carregue uma semana antes de salvar.",
+        "Carica una settimana prima di esportare.": "Carregue uma semana antes de exportar.",
+        "Testo copiato. Incollalo su WhatsApp.": "Texto copiado. Cole no WhatsApp.",
+        "Testo pronto da copiare.": "Texto pronto para copiar.",
+        "Errore nel caricamento dell'agenda settimanale.": "Erro ao carregar agenda semanal.",
+        "Errore nel caricamento dell’agenda settimanale.": "Erro ao carregar agenda semanal.",
+        "Errore nel salvataggio della pianificazione settimanale.": "Erro ao salvar planejamento semanal.",
+        "Nessun dato da esportare.": "Nao ha dados para exportar.",
+        "Nessun dato da mostrare.": "Sem dados para mostrar.",
+        "Impossibile caricare i dati.": "Nao foi possivel carregar os dados.",
+        "Nessun dipendente trovato per questa settimana.": "Nenhum funcionario encontrado para esta semana.",
+        "Stato della settimana": "Status na semana",
+        "Luogo per tutta la settimana": "Local da semana inteira",
+        "Tu": "Voce",
+        "Nessuna assegnazione": "Sem alocacao",
+        "Disponibile": "Disponivel",
+        "Ferie (tutta la settimana)": "Ferias (semana toda)",
+        "Ferie": "Ferias",
+        "giorno(i)": "dia(s)",
+        "Conflitto: utente %uid% e in ferie (%days% giorno(i) nella settimana).": "Conflito: usuario %uid% esta de ferias (%days% dia(s) na semana).",
+        "al": "ate",
+        "Assegnazione settimanale": "Alocacao semanal",
+        "Ragazzi, ecco l'assegnazione della settimana:": "Pessoal, segue a alocacao da semana:",
+        "Ragazzi, ecco l’assegnazione della settimana:": "Pessoal, segue a alocacao da semana:",
+        "Copia il testo qui sotto e incollalo su WhatsApp:": "Copie o texto abaixo e cole no WhatsApp:",
+        "Accesso rapido": "Acesso rapido",
+
+        "Admin - Ferie | FlashPoint": "Admin - Ferias | FlashPoint",
+
+        "Approva": "Aprovar",
+
+        "Approva le richieste e visualizza il calendario delle ferie approvate": "Aprove os pedidos e visualize o calendario das ferias aprovadas",
+
+        "Data finale": "Data final",
+
+        "Data iniziale": "Data inicial",
+
+        "Ferie | FlashPoint": "Ferias | FlashPoint",
+
+        "Ferie dei dipendenti": "Ferias dos funcionarios",
+
+        "Giorni": "Dias",
+
+        "Invia e controlla lo stato delle tue richieste di ferie": "Envie e acompanhe o status dos seus pedidos de ferias",
+
+        "Invia richiesta ferie": "Enviar pedido de ferias",
+
+        "La data finale non puo essere precedente alla data iniziale.": "A data final nao pode ser anterior a data inicial.",
+
+        "Le mie richieste ferie": "Meus pedidos de ferias",
+
+        "Note opzionali per l'amministrazione": "Notas opcionais para a administracao",
+
+        "Non hai ancora inviato richieste ferie.": "Voce ainda nao enviou pedidos de ferias.",
+
+        "Nessuna richiesta ferie registrata.": "Nenhum pedido de ferias registrado.",
+
+        "Richiesta ferie": "Pedido de ferias",
+
+        "Richiesta ferie inviata con successo.": "Pedido de ferias enviado com sucesso.",
+
+        "Richieste ferie": "Pedidos de ferias",
+
+        "Rifiuta": "Recusar",
+
+        "Rimetti in sospeso": "Marcar como pendente",
+
+        "Seleziona date valide per la richiesta di ferie.": "Selecione datas validas para o pedido de ferias.",
+
+        "Vuoi eliminare questa richiesta ferie?": "Deseja excluir este pedido de ferias?",
+
+        "giorni": "dias",
+
+        "richieste": "pedidos",
+
+        "Lun": "Seg",
+
+        "Mar": "Ter",
+
+        "Mer": "Qua",
+
+        "Gio": "Qui",
+
+        "Ven": "Sex",
+
+        "Sab": "Sab",
+
+        "Dom": "Dom",
+
         "I miei ordini": "Meus pedidos",
 
         "Idioma": "Idioma",
+
+        "I dati non sono temporaneamente disponibili per limite di quota Firestore. Riprova piu tardi.": "Os dados nao estao temporariamente disponiveis por limite de quota do Firestore. Tente novamente mais tarde.",
 
         "Il backup viene salvato sul tuo PC, non sul server.": "O backup � salvo no seu PC, n�o no servidor.",
 
@@ -1767,11 +1918,25 @@ def get_usuario_logado():
 
 
 
+    try:
+        # Primeiro tenta pelo document id (alguns bancos usam o UID como doc id).
+        doc = db.collection("usuarios").document(uid).get()
+        if doc.exists:
+            data = doc.to_dict() or {}
+            data.setdefault("uid", (data.get("uid") or "").strip() or doc.id)
+            data.setdefault("doc_id", doc.id)
+            return data
+    except Exception:
+        pass
+
     usuarios_ref = db.collection('usuarios').where('uid', '==', uid).limit(1).stream()
 
     for u in usuarios_ref:
 
-        return u.to_dict()
+        data = u.to_dict() or {}
+        data.setdefault("uid", (data.get("uid") or "").strip() or u.id)
+        data.setdefault("doc_id", u.id)
+        return data
 
     return None
 
@@ -1821,13 +1986,9 @@ def get_non_admin_users():
         nome = f"{data.get('nome', '')} {data.get('sobrenome', '')}".strip()
 
         usuarios.append({
-
             "uid": uid_auth,
-
             "uid_doc": u.id,
-
             "nome": nome or data.get("email") or u.id,
-
         })
 
     usuarios.sort(key=lambda item: item["nome"].lower())
@@ -1835,7 +1996,245 @@ def get_non_admin_users():
     return usuarios
 
 
+def _uids_em_ferias_por_data(data_dt):
+    uids_em_ferias = set()
+    for fdoc in db.collection("ferias").where("status", "==", "aprovado").stream():
+        ferias_item = fdoc.to_dict() or {}
+        inicio = parse_iso_date(ferias_item.get("data_inicio"))
+        fim = parse_iso_date(ferias_item.get("data_fim"))
+        if not inicio or not fim:
+            continue
+        if inicio <= data_dt <= fim and ferias_item.get("user_id"):
+            uids_em_ferias.add(ferias_item.get("user_id"))
+    return uids_em_ferias
 
+
+@app.route("/admin/alocacao", methods=["GET"])
+def admin_alocacao():
+    usuario = get_usuario_logado()
+    if not usuario:
+        return redirect("/")
+
+    semana = request.args.get("semana")
+    semana_inicio = parse_iso_date(semana) if semana else date.today()
+    if not semana_inicio:
+        semana_inicio = date.today()
+    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
+
+    return render_template(
+        "admin_alocacao.html",
+        can_edit=is_admin_or_dev(usuario),
+        semana_inicio=semana_inicio.isoformat(),
+        usuario_uid=(session.get("uid") or "").strip(),
+    )
+
+
+@app.route("/alocacao-semanal", methods=["GET"])
+def alocacao_semanal():
+    return admin_alocacao()
+
+
+def _listar_locais_alocacao():
+    locais = []
+    for doc in db.collection("locais").stream():
+        data = doc.to_dict() or {}
+        locais.append({
+            "id": doc.id,
+            "nome": data.get("ragione_sociale") or data.get("nome") or doc.id,
+        })
+    locais.sort(key=lambda item: (item.get("nome") or "").lower())
+    return locais
+
+
+def _listar_funcionarios_alocacao():
+    usuarios = []
+    for doc in db.collection("usuarios").stream():
+        data = doc.to_dict() or {}
+        uid_auth = (data.get("uid") or "").strip() or doc.id
+        nome = f"{data.get('nome','')} {data.get('sobrenome','')}".strip()
+        usuarios.append({
+            "uid": uid_auth,
+            "doc_id": doc.id,
+            "nome": nome or data.get("email") or uid_auth,
+            "tipo": (data.get("tipo") or "").strip().lower(),
+        })
+    usuarios.sort(key=lambda item: (item.get("nome") or "").lower())
+    return usuarios
+
+
+@app.route("/api/alocacao_semanal", methods=["GET"])
+def api_alocacao_semanal_get():
+    usuario = get_usuario_logado()
+    if not usuario:
+        return jsonify({"error": "access denied"}), 403
+
+    semana_str = (request.args.get("week_start") or "").strip()
+    semana_inicio = parse_iso_date(semana_str) if semana_str else date.today()
+    if not semana_inicio:
+        return jsonify({"error": "invalid week_start"}), 400
+    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
+
+    dias = [(semana_inicio + timedelta(days=i)).isoformat() for i in range(7)]
+    can_edit = is_admin_or_dev(usuario)
+    current_uid = (session.get("uid") or "").strip()
+
+    locais = _listar_locais_alocacao()
+    locais_ids = {item["id"] for item in locais}
+    funcionarios = _listar_funcionarios_alocacao()
+
+    # Todos visualizam a equipe completa; apenas admin/developer editam.
+    usuarios_visiveis = [{"uid": u["uid"], "nome": u["nome"]} for u in funcionarios]
+    aliases_por_uid = {u["uid"]: {u["uid"], u["doc_id"]} for u in funcionarios}
+
+    doc_ref = db.collection("alocacoes_semanais").document(semana_inicio.isoformat()).get()
+    agenda_raw = {}
+    if doc_ref.exists:
+        agenda_raw = (doc_ref.to_dict() or {}).get("agenda") or {}
+
+    ferias_por_usuario = {}
+    for user in usuarios_visiveis:
+        uid = user["uid"]
+        aliases = aliases_por_uid.get(uid, {uid})
+        dias_ferias = []
+        for dia in dias:
+            dia_dt = parse_iso_date(dia)
+            uids_ferias = _uids_em_ferias_por_data(dia_dt) if dia_dt else set()
+            if uids_ferias.intersection(aliases):
+                dias_ferias.append(dia)
+        ferias_por_usuario[uid] = {
+            "em_ferias": len(dias_ferias) > 0,
+            "dias_count": len(dias_ferias),
+            "dias": dias_ferias,
+        }
+
+    agenda = {}
+    for user in usuarios_visiveis:
+        uid = user["uid"]
+        local_id = ""
+        raw_val = agenda_raw.get(uid) if isinstance(agenda_raw, dict) else None
+
+        # Compatibilidade com formato antigo: {uid: {dia: local_id}}
+        if isinstance(raw_val, dict):
+            for dia in dias:
+                val = (raw_val.get(dia) or "").strip()
+                if val and val in locais_ids:
+                    local_id = val
+                    break
+        else:
+            val = (raw_val or "").strip() if isinstance(raw_val, str) else ""
+            if val in locais_ids:
+                local_id = val
+
+        agenda[uid] = local_id
+
+    return jsonify({
+        "ok": True,
+        "week_start": semana_inicio.isoformat(),
+        "days": dias,
+        "can_edit": can_edit,
+        "current_uid": current_uid,
+        "usuarios": usuarios_visiveis,
+        "locais": locais,
+        "agenda": agenda,
+        "ferias_por_usuario": ferias_por_usuario,
+    })
+
+
+@app.route("/api/alocacao_semanal", methods=["POST"])
+def api_alocacao_semanal_post():
+    usuario = get_usuario_logado()
+    if not usuario or not is_admin_or_dev(usuario):
+        return jsonify({"error": "access denied"}), 403
+
+    payload = request.get_json() or {}
+    semana_str = (payload.get("week_start") or "").strip()
+    agenda_input = payload.get("agenda") or {}
+
+    if not semana_str:
+        return jsonify({"error": "missing week_start"}), 400
+    if not isinstance(agenda_input, dict):
+        return jsonify({"error": "invalid agenda format"}), 400
+
+    semana_inicio = parse_iso_date(semana_str)
+    if not semana_inicio:
+        return jsonify({"error": "invalid week_start"}), 400
+    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
+
+    dias = [(semana_inicio + timedelta(days=i)).isoformat() for i in range(7)]
+    locais = _listar_locais_alocacao()
+    locais_ids = {item["id"] for item in locais}
+    funcionarios = _listar_funcionarios_alocacao()
+    uids_validos = {u["uid"] for u in funcionarios}
+    aliases_por_uid = {u["uid"]: {u["uid"], u["doc_id"]} for u in funcionarios}
+    ferias_por_dia_cache = {}
+
+    agenda_final = {}
+    conflitos_ferias = []
+
+    for uid_raw, raw_value in agenda_input.items():
+        uid = (uid_raw or "").strip()
+        if uid not in uids_validos:
+            continue
+
+        local_id = ""
+        if isinstance(raw_value, str):
+            local_id = raw_value.strip()
+        elif isinstance(raw_value, dict):
+            # Compatibilidade com formato antigo vindo do frontend
+            for dia in dias:
+                val = (raw_value.get(dia) or "").strip()
+                if val:
+                    local_id = val
+                    break
+
+        if not local_id:
+            continue
+        if local_id not in locais_ids:
+            continue
+
+        dias_ferias = []
+        aliases = aliases_por_uid.get(uid, {uid})
+        for dia in dias:
+            if dia not in ferias_por_dia_cache:
+                dia_dt = parse_iso_date(dia)
+                ferias_por_dia_cache[dia] = _uids_em_ferias_por_data(dia_dt) if dia_dt else set()
+            if ferias_por_dia_cache[dia].intersection(aliases):
+                dias_ferias.append(dia)
+
+        if dias_ferias:
+            conflitos_ferias.append({"uid": uid, "dias": dias_ferias})
+            continue
+
+        agenda_final[uid] = local_id
+
+    if conflitos_ferias:
+        return jsonify({
+            "error": "vacation_conflict",
+            "conflicts": conflitos_ferias,
+        }), 409
+
+    ref = db.collection("alocacoes_semanais").document(semana_inicio.isoformat())
+    ref_doc = ref.get()
+    data_to_save = {
+        "week_start": semana_inicio.isoformat(),
+        "agenda": agenda_final,
+        "atualizado_por": session.get("uid", ""),
+        "atualizado_em": firestore.SERVER_TIMESTAMP,
+    }
+
+    if ref_doc.exists:
+        ref.update(data_to_save)
+        return jsonify({"ok": True, "updated": True})
+
+    data_to_save["criado_por"] = session.get("uid", "")
+    data_to_save["criado_em"] = firestore.SERVER_TIMESTAMP
+    ref.set(data_to_save)
+    return jsonify({"ok": True, "created": True})
+
+
+# =========================
+# RELATÓRIO DE PONTOS (HTML)
+# =========================
 
 
 def get_kits_by_responsavel(uid_responsavel):
@@ -1852,7 +2251,13 @@ def get_kits_by_responsavel(uid_responsavel):
 
     try:
 
-        usuario_ref = db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1).stream()
+        usuario_ref = firestore_stream(
+
+            db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1),
+
+            timeout=5
+
+        )
 
         for usuario_doc in usuario_ref:
 
@@ -1866,7 +2271,7 @@ def get_kits_by_responsavel(uid_responsavel):
 
 
 
-    for doc in db.collection("kits").stream():
+    for doc in firestore_stream(db.collection("kits"), timeout=8):
 
         data = doc.to_dict() or {}
 
@@ -1987,14 +2392,20 @@ def get_mala_by_responsavel(uid_responsavel):
 
     candidate_ids = {uid_responsavel}
     try:
-        usuario_ref = db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1).stream()
+        usuario_ref = firestore_stream(
+
+            db.collection("usuarios").where("uid", "==", uid_responsavel).limit(1),
+
+            timeout=5
+
+        )
         for usuario_doc in usuario_ref:
             candidate_ids.add(usuario_doc.id)
             break
     except Exception:
         pass
 
-    for doc in db.collection("malas").stream():
+    for doc in firestore_stream(db.collection("malas"), timeout=8):
         data = doc.to_dict() or {}
         responsavel_uid = (data.get("responsavel_uid") or "").strip()
         responsavel_doc_id = (data.get("responsavel_doc_id") or "").strip()
@@ -2509,11 +2920,19 @@ def inject_usuario():
 
         uid = session["uid"]
 
-        usuario_doc = db.collection("usuarios").document(uid).get()
+        try:
 
-        if usuario_doc.exists:
+            usuario_doc = firestore_get(db.collection("usuarios").document(uid), timeout=3)
 
-            return {"usuario": usuario_doc.to_dict()}
+            if usuario_doc.exists:
+
+                return {"usuario": usuario_doc.to_dict()}
+
+        except Exception as exc:
+
+            log_login_debug(f"inject_usuario: falha firestore {type(exc).__name__}: {exc}")
+
+            return {"usuario": {"uid": uid, "email": session.get("email", ""), "tipo": "usuario"}}
 
     return {"usuario": None}
 
@@ -2617,9 +3036,25 @@ from collections import defaultdict
 
 def horas_por_mes(uid, ano, mes):
 
-    pontos = db.collection("pontos") \
-        .where("uid", "==", uid) \
-        .stream()
+    horas_por_mes.last_error = False
+
+    try:
+
+        pontos = list(firestore_stream(
+
+            db.collection("pontos").where("uid", "==", uid),
+
+            timeout=8
+
+        ))
+
+    except Exception as exc:
+
+        log_login_debug(f"horas_por_mes: falha firestore {type(exc).__name__}: {exc}")
+
+        horas_por_mes.last_error = True
+
+        return 0
 
 
 
@@ -2665,7 +3100,27 @@ def horas_por_mes(uid, ano, mes):
 
 def ranking_mensal(ano, mes, limite=None):
 
-    pontos = db.collection("pontos").stream()
+    ranking_mensal.last_error = False
+
+    try:
+
+        pontos = list(firestore_stream(
+
+            db.collection("pontos")
+            .where("data", ">=", f"{ano:04d}-{mes:02d}-01")
+            .where("data", "<=", f"{ano:04d}-{mes:02d}-{calendar.monthrange(ano, mes)[1]:02d}"),
+
+            timeout=8
+
+        ))
+
+    except Exception as exc:
+
+        log_login_debug(f"ranking_mensal: falha firestore {type(exc).__name__}: {exc}")
+
+        ranking_mensal.last_error = True
+
+        return []
 
     ranking = defaultdict(float)
 
@@ -2731,9 +3186,25 @@ def ranking_mensal(ano, mes, limite=None):
 
 def horas_por_ano(uid, ano):
 
-    pontos = db.collection("pontos") \
-        .where("uid", "==", uid) \
-        .stream()
+    horas_por_ano.last_error = False
+
+    try:
+
+        pontos = list(firestore_stream(
+
+            db.collection("pontos").where("uid", "==", uid),
+
+            timeout=8
+
+        ))
+
+    except Exception as exc:
+
+        log_login_debug(f"horas_por_ano: falha firestore {type(exc).__name__}: {exc}")
+
+        horas_por_ano.last_error = True
+
+        return 0
 
 
 
@@ -2925,7 +3396,11 @@ def get_usuarios_map():
 
 def dashboard():
 
+    log_login_debug("dashboard: inicio")
+
     if "uid" not in session:
+
+        log_login_debug("dashboard: sem uid na sessao")
 
         return redirect("/")
 
@@ -2939,15 +3414,45 @@ def dashboard():
 
     # Usu�rio
 
-    usuario_doc = db.collection("usuarios").document(uid).get()
+    log_login_debug("dashboard: buscando usuario")
 
-    if not usuario_doc.exists:
+    firestore_warning = False
 
-        return redirect("/")
+    try:
+
+        usuario_doc = firestore_get(db.collection("usuarios").document(uid), timeout=5)
+
+    except Exception as exc:
+
+        log_login_debug(f"dashboard: falha ao buscar usuario {type(exc).__name__}: {exc}")
+
+        firestore_warning = True
+
+        usuario_doc = None
+
+    if not usuario_doc or not usuario_doc.exists:
+
+        log_login_debug("dashboard: usuario indisponivel, usando sessao")
+
+        usuario = {
+
+            "uid": uid,
+
+            "email": session.get("email", ""),
+
+            "nome": session.get("email", "Usuario").split("@")[0],
+
+            "sobrenome": "",
+
+            "tipo": "usuario",
+
+        }
 
 
 
-    usuario = usuario_doc.to_dict()
+    else:
+
+        usuario = usuario_doc.to_dict()
 
     nome_usuario = usuario.get("nome", "Usu�rio")
 
@@ -2955,7 +3460,13 @@ def dashboard():
 
     # Horas
 
+    log_login_debug("dashboard: calculando horas mes atual")
+
     horas_mes_atual = horas_por_mes(uid, hoje.year, hoje.month)
+
+    if getattr(horas_por_mes, "last_error", False):
+
+        firestore_warning = True
 
 
 
@@ -2963,20 +3474,61 @@ def dashboard():
 
     ano_anterior = hoje.year if hoje.month > 1 else hoje.year - 1
 
+    log_login_debug("dashboard: calculando horas mes anterior")
+
     horas_mes_anterior = horas_por_mes(uid, ano_anterior, mes_anterior)
 
+    if getattr(horas_por_mes, "last_error", False):
 
+        firestore_warning = True
+
+
+
+    log_login_debug("dashboard: calculando horas ano")
 
     horas_ano = horas_por_ano(uid, hoje.year)
+
+    if getattr(horas_por_ano, "last_error", False):
+
+        firestore_warning = True
 
 
 
     # Ranking mensal
 
+    log_login_debug("dashboard: calculando ranking mensal")
+
     ranking = ranking_mensal(hoje.year, hoje.month)
 
-    kits_responsabilidade = get_kits_by_responsavel(uid)
-    mala_responsabilidade = get_mala_by_responsavel(uid)
+    if getattr(ranking_mensal, "last_error", False):
+
+        firestore_warning = True
+
+    log_login_debug("dashboard: buscando kits e mala")
+
+    try:
+
+        kits_responsabilidade = get_kits_by_responsavel(uid)
+
+    except Exception as exc:
+
+        log_login_debug(f"dashboard: falha kits {type(exc).__name__}: {exc}")
+
+        firestore_warning = True
+
+        kits_responsabilidade = []
+
+    try:
+
+        mala_responsabilidade = get_mala_by_responsavel(uid)
+
+    except Exception as exc:
+
+        log_login_debug(f"dashboard: falha mala {type(exc).__name__}: {exc}")
+
+        firestore_warning = True
+
+        mala_responsabilidade = None
 
 
 
@@ -3012,6 +3564,7 @@ def dashboard():
 
         kits_responsabilidade=kits_responsabilidade,
         mala_responsabilidade=mala_responsabilidade,
+        firestore_warning=firestore_warning,
 
     )
 
@@ -3185,21 +3738,31 @@ def login():
 
     if request.method == "POST":
 
-        email = request.form.get("email")
+        email = (request.form.get("email") or "").strip()
 
         password = request.form.get("password")
 
+        log_login_debug(f"login: POST recebido para {email}")
+
         try:
 
+            log_login_debug("login: iniciando autenticacao firebase")
+
             user = auth.sign_in_with_email_and_password(email, password)
+
+            log_login_debug("login: autenticacao firebase concluida")
 
             session["uid"] = user["localId"]  # Armazena somente UID
 
             session["email"] = user.get("email", email)
 
+            log_login_debug("login: sessao criada, redirecionando dashboard")
+
             return redirect("/dashboard")
 
-        except:
+        except Exception as exc:
+
+            log_login_debug(f"login: erro autenticacao {type(exc).__name__}: {exc}")
 
             error = "Email ou senha inv�lidos"
 
@@ -3220,9 +3783,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 
 def register_usuario():
-
     error = None
-
     success = None
 
 
@@ -5239,13 +5800,9 @@ def admin_registrar_ponto():
 
 
 
-    uid_admin = session["uid"]
-
-    admin_doc = db.collection("usuarios").document(uid_admin).get()
-
-    admin_user = admin_doc.to_dict() if admin_doc.exists else {}
-
-    if not is_admin_or_dev(admin_user):
+    uid_admin = (session.get("uid") or "").strip()
+    admin_user = get_usuario_logado()
+    if not admin_user or not is_admin_or_dev(admin_user):
 
         return redirect("/dashboard")
 
@@ -5256,10 +5813,7 @@ def admin_registrar_ponto():
     for doc in db.collection("usuarios").stream():
 
         udata = doc.to_dict() or {}
-
-        if is_admin_like_tipo(udata.get("tipo")):
-
-            continue
+        uid_auth = (udata.get("uid") or "").strip() or doc.id
 
 
 
@@ -5267,7 +5821,8 @@ def admin_registrar_ponto():
 
         usuarios.append({
 
-            "uid": doc.id,
+            "uid": uid_auth,
+            "doc_id": doc.id,
 
             "nome": nome_completo or udata.get("email") or doc.id
 
@@ -5353,25 +5908,32 @@ def admin_registrar_ponto():
 
 
 
-        funcionario_doc = None
+        def _buscar_usuario_por_uid(uid_auth):
+            if not uid_auth:
+                return None, ""
+            try:
+                usuario_doc = db.collection("usuarios").document(uid_auth).get()
+                if usuario_doc.exists:
+                    return (usuario_doc.to_dict() or {}), usuario_doc.id
+            except Exception:
+                pass
+            try:
+                candidatos = db.collection("usuarios").where("uid", "==", uid_auth).limit(1).stream()
+                for cand in candidatos:
+                    return (cand.to_dict() or {}), cand.id
+            except Exception:
+                pass
+            return None, ""
 
         funcionario = {}
+        funcionario_doc_id = ""
 
         if not error:
 
-            funcionario_doc = db.collection("usuarios").document(uid_funcionario).get()
-
-            if not funcionario_doc.exists:
+            funcionario, funcionario_doc_id = _buscar_usuario_por_uid(uid_funcionario)
+            if not funcionario:
 
                 error = "Dipendente non trovato."
-
-            else:
-
-                funcionario = funcionario_doc.to_dict() or {}
-
-                if is_admin_like_tipo(funcionario.get("tipo")):
-
-                    error = "Seleziona un dipendente valido."
 
 
 
@@ -7016,6 +7578,291 @@ def excluir_local():
 
 
 # =========================
+# GERENCIAR CARROS (ADMIN)
+# =========================
+
+CARROS_COLLECTION = "carros"
+CARROS_CAMPOS_COLLECTION = "carros_campos"
+
+
+def _slugify_chave_campo(texto):
+    texto = (texto or "").strip().lower()
+    if not texto:
+        return ""
+
+    texto = unicodedata.normalize("NFKD", texto)
+    texto = "".join(ch for ch in texto if not unicodedata.combining(ch))
+
+    permitido = []
+    for ch in texto:
+        if ch.isalnum():
+            permitido.append(ch)
+        else:
+            permitido.append("_")
+
+    chave = "".join(permitido).strip("_")
+    while "__" in chave:
+        chave = chave.replace("__", "_")
+    return chave
+
+
+def _parse_opcoes_select(opcoes_raw):
+    if not opcoes_raw:
+        return []
+    partes = []
+    for p in str(opcoes_raw).split(","):
+        p = p.strip()
+        if p:
+            partes.append(p)
+    vistos = set()
+    opcoes = []
+    for p in partes:
+        if p.lower() in vistos:
+            continue
+        vistos.add(p.lower())
+        opcoes.append(p)
+    return opcoes
+
+
+def _listar_campos_carros(incluir_inativos=False):
+    campos = []
+    for doc in db.collection(CARROS_CAMPOS_COLLECTION).stream():
+        data = doc.to_dict() or {}
+        ativo = data.get("ativo", True)
+        if (not incluir_inativos) and (not ativo):
+            continue
+        campos.append(
+            {
+                "id": doc.id,
+                "nome": (data.get("nome") or "").strip(),
+                "chave": (data.get("chave") or "").strip(),
+                "tipo": (data.get("tipo") or "text").strip().lower(),
+                "opcoes": data.get("opcoes") if isinstance(data.get("opcoes"), list) else [],
+                "ordem": int(data.get("ordem") or 0),
+                "ativo": bool(ativo),
+            }
+        )
+    campos.sort(key=lambda c: (c.get("ordem", 0), c.get("nome", "").lower()))
+    return campos
+
+
+def _listar_carros():
+    carros = []
+    for doc in db.collection(CARROS_COLLECTION).stream():
+        data = doc.to_dict() or {}
+        valores = data.get("valores")
+        if not isinstance(valores, dict):
+            valores = {}
+        carros.append(
+            {
+                "id": doc.id,
+                "identificador": (data.get("identificador") or "").strip(),
+                "descricao": (data.get("descricao") or "").strip(),
+                "valores": valores,
+                "criado_em": data.get("criado_em"),
+            }
+        )
+    carros.sort(key=lambda c: (c.get("identificador") or "").lower())
+    return carros
+
+
+@app.route("/admin/carros", methods=["GET", "POST"])
+def admin_carros():
+    usuario = get_usuario_logado()
+    if not usuario or not is_admin_or_dev(usuario):
+        return redirect("/dashboard")
+
+    if request.method == "POST":
+        acao = (request.form.get("acao") or "").strip().lower()
+        agora = datetime.utcnow() + timedelta(hours=1)
+
+        if acao == "adicionar_campo":
+            nome = (request.form.get("nome") or "").strip()
+            tipo = (request.form.get("tipo") or "text").strip().lower()
+            chave = (request.form.get("chave") or "").strip()
+            opcoes_raw = (request.form.get("opcoes") or "").strip()
+
+            tipos_validos = {"text", "number", "date", "boolean", "select"}
+            if not nome:
+                flash("Informe o nome do campo.", "danger")
+                return redirect(url_for("admin_carros"))
+            if tipo not in tipos_validos:
+                flash("Tipo de campo inválido.", "danger")
+                return redirect(url_for("admin_carros"))
+
+            chave = _slugify_chave_campo(chave or nome)
+            if not chave:
+                flash("Chave do campo inválida.", "danger")
+                return redirect(url_for("admin_carros"))
+
+            opcoes = _parse_opcoes_select(opcoes_raw) if tipo == "select" else []
+            if tipo == "select" and not opcoes:
+                flash("Para 'lista', informe pelo menos uma opção (separadas por vírgula).", "danger")
+                return redirect(url_for("admin_carros"))
+
+            campos_existentes = _listar_campos_carros(incluir_inativos=True)
+            existentes_por_chave = {c.get("chave"): c for c in campos_existentes if c.get("chave")}
+
+            campo_existente = existentes_por_chave.get(chave)
+            if campo_existente and not campo_existente.get("ativo"):
+                db.collection(CARROS_CAMPOS_COLLECTION).document(campo_existente["id"]).update(
+                    {
+                        "nome": nome,
+                        "tipo": tipo,
+                        "opcoes": opcoes,
+                        "ativo": True,
+                        "atualizado_em": agora,
+                        "atualizado_por_uid": session.get("uid"),
+                    }
+                )
+                flash("Campo reativado com sucesso.", "success")
+                return redirect(url_for("admin_carros"))
+
+            chaves_ativas = {c.get("chave") for c in campos_existentes if c.get("ativo") and c.get("chave")}
+            chave_final = chave
+            if chave_final in chaves_ativas:
+                idx = 2
+                while f"{chave}_{idx}" in chaves_ativas:
+                    idx += 1
+                chave_final = f"{chave}_{idx}"
+
+            maior_ordem = 0
+            for c in campos_existentes:
+                try:
+                    maior_ordem = max(maior_ordem, int(c.get("ordem") or 0))
+                except Exception:
+                    pass
+
+            db.collection(CARROS_CAMPOS_COLLECTION).add(
+                {
+                    "nome": nome,
+                    "chave": chave_final,
+                    "tipo": tipo,
+                    "opcoes": opcoes,
+                    "ativo": True,
+                    "ordem": maior_ordem + 10,
+                    "criado_em": agora,
+                    "criado_por_uid": session.get("uid"),
+                    "atualizado_em": agora,
+                    "atualizado_por_uid": session.get("uid"),
+                }
+            )
+            flash("Campo adicionado com sucesso.", "success")
+            return redirect(url_for("admin_carros"))
+
+        if acao == "remover_campo":
+            campo_id = (request.form.get("campo_id") or "").strip()
+            if not campo_id:
+                flash("Campo inválido.", "danger")
+                return redirect(url_for("admin_carros"))
+            db.collection(CARROS_CAMPOS_COLLECTION).document(campo_id).update(
+                {"ativo": False, "atualizado_em": agora, "atualizado_por_uid": session.get("uid")}
+            )
+            flash("Campo removido da tabela.", "success")
+            return redirect(url_for("admin_carros"))
+
+        if acao == "criar_campos_padrao":
+            campos_ativos = _listar_campos_carros(incluir_inativos=False)
+            if campos_ativos:
+                flash("Já existem campos cadastrados.", "warning")
+                return redirect(url_for("admin_carros"))
+
+            padroes = [
+                {"nome": "Cor", "chave": "cor", "tipo": "text"},
+                {"nome": "Modelo", "chave": "modelo", "tipo": "text"},
+                {"nome": "Combustível", "chave": "combustivel", "tipo": "select", "opcoes": ["Gasolina", "Diesel"]},
+                {"nome": "Ano de fabricação", "chave": "ano_fabricacao", "tipo": "number"},
+                {"nome": "Telepass", "chave": "telepass", "tipo": "text"},
+                {"nome": "Cartão de gasolina", "chave": "cartao_gasolina", "tipo": "text"},
+            ]
+            ordem = 10
+            for campo in padroes:
+                db.collection(CARROS_CAMPOS_COLLECTION).add(
+                    {
+                        "nome": campo["nome"],
+                        "chave": campo["chave"],
+                        "tipo": campo["tipo"],
+                        "opcoes": campo.get("opcoes", []),
+                        "ativo": True,
+                        "ordem": ordem,
+                        "criado_em": agora,
+                        "criado_por_uid": session.get("uid"),
+                        "atualizado_em": agora,
+                        "atualizado_por_uid": session.get("uid"),
+                    }
+                )
+                ordem += 10
+            flash("Campos padrão criados.", "success")
+            return redirect(url_for("admin_carros"))
+
+        if acao == "adicionar_carro":
+            identificador = (request.form.get("identificador") or "").strip()
+            descricao = (request.form.get("descricao") or "").strip()
+            if not identificador:
+                flash("Informe a placa/identificador do carro.", "danger")
+                return redirect(url_for("admin_carros"))
+
+            campos = _listar_campos_carros(incluir_inativos=False)
+            valores = {}
+            for campo in campos:
+                chave = campo.get("chave")
+                if not chave:
+                    continue
+                tipo = (campo.get("tipo") or "text").lower()
+                form_key = f"campo__{chave}"
+
+                if tipo == "boolean":
+                    valores[chave] = bool(request.form.get(form_key))
+                    continue
+
+                raw = (request.form.get(form_key) or "").strip()
+                if raw == "":
+                    continue
+
+                if tipo == "number":
+                    try:
+                        raw_norm = raw.replace(" ", "")
+                        if "," in raw_norm and "." not in raw_norm:
+                            raw_norm = raw_norm.replace(",", ".")
+                        valores[chave] = float(raw_norm) if ("." in raw_norm) else int(raw_norm)
+                    except Exception:
+                        flash(f"Valor inválido para o campo: {campo.get('nome') or chave}", "danger")
+                        return redirect(url_for("admin_carros"))
+                else:
+                    valores[chave] = raw
+
+            db.collection(CARROS_COLLECTION).add(
+                {
+                    "identificador": identificador,
+                    "descricao": descricao,
+                    "valores": valores,
+                    "criado_em": agora,
+                    "criado_por_uid": session.get("uid"),
+                    "atualizado_em": agora,
+                    "atualizado_por_uid": session.get("uid"),
+                }
+            )
+            flash("Carro cadastrado com sucesso.", "success")
+            return redirect(url_for("admin_carros"))
+
+        if acao == "remover_carro":
+            carro_id = (request.form.get("carro_id") or "").strip()
+            if not carro_id:
+                flash("Carro inválido.", "danger")
+                return redirect(url_for("admin_carros"))
+            db.collection(CARROS_COLLECTION).document(carro_id).delete()
+            flash("Carro removido.", "success")
+            return redirect(url_for("admin_carros"))
+
+        flash("Ação inválida.", "danger")
+        return redirect(url_for("admin_carros"))
+
+    campos = _listar_campos_carros(incluir_inativos=False)
+    carros = _listar_carros()
+    return render_template("admin_carros.html", campos=campos, carros=carros)
+
+
+# =========================
 
 # ADMIN CART�ES DE RECONHECIMENTO
 
@@ -7438,6 +8285,374 @@ def decidir_pedido(id):
     return redirect(url_for("admin_pedidos"))
 
 
+
+# =========================
+
+# FERIAS - PEDIDOS E APROVACAO
+
+# =========================
+
+def parse_iso_date(value):
+
+    try:
+
+        return datetime.strptime((value or "").strip(), "%Y-%m-%d").date()
+
+    except Exception:
+
+        return None
+
+
+
+def formatar_periodo_ferias(data_inicio, data_fim):
+
+    inicio = formatar_data(data_inicio)
+
+    fim = formatar_data(data_fim)
+
+    if inicio == fim:
+
+        return inicio
+
+    return f"{inicio} - {fim}"
+
+
+
+def ferias_status_label(status):
+
+    status = (status or "pendente").lower()
+
+    labels = {
+
+        "pendente": "In sospeso",
+
+        "aprovado": "Approvato",
+
+        "recusado": "Rifiutato",
+
+    }
+
+    return labels.get(status, status)
+
+
+
+def _month_bounds(ano, mes):
+
+    ultimo_dia = calendar.monthrange(ano, mes)[1]
+
+    return date(ano, mes, 1), date(ano, mes, ultimo_dia)
+
+
+
+def _add_months(ano, mes, delta):
+
+    month_index = (ano * 12) + (mes - 1) + delta
+
+    return month_index // 12, (month_index % 12) + 1
+
+
+
+@app.route("/ferias", methods=["GET", "POST"])
+
+def ferias():
+
+    if "uid" not in session:
+
+        return redirect("/")
+
+
+
+    uid = session["uid"]
+
+    usuario_doc = db.collection("usuarios").document(uid).get()
+
+    usuario = usuario_doc.to_dict() if usuario_doc.exists else {}
+
+    ferias_ref = db.collection("ferias")
+
+
+
+    if request.method == "POST":
+
+        data_inicio = (request.form.get("data_inicio") or "").strip()
+
+        data_fim = (request.form.get("data_fim") or "").strip()
+
+        mensagem = (request.form.get("mensagem") or "").strip()
+
+        inicio_dt = parse_iso_date(data_inicio)
+
+        fim_dt = parse_iso_date(data_fim)
+
+
+
+        if not inicio_dt or not fim_dt:
+
+            flash("Seleziona date valide per la richiesta di ferie.", "danger")
+
+        elif fim_dt < inicio_dt:
+
+            flash("La data finale non puo essere precedente alla data iniziale.", "danger")
+
+        else:
+
+            ferias_ref.add({
+
+                "user_id": uid,
+
+                "nome": f"{usuario.get('nome','')} {usuario.get('sobrenome','')}".strip(),
+
+                "data_inicio": data_inicio,
+
+                "data_fim": data_fim,
+
+                "dias": (fim_dt - inicio_dt).days + 1,
+
+                "mensagem": mensagem,
+
+                "status": "pendente",
+
+                "criado_em": firestore.SERVER_TIMESTAMP,
+
+            })
+
+            flash("Richiesta ferie inviata con successo.", "success")
+
+            return redirect(url_for("ferias"))
+
+
+
+    pedidos_docs = ferias_ref.where("user_id", "==", uid).stream()
+
+    pedidos = []
+
+    for doc in pedidos_docs:
+
+        data = doc.to_dict()
+
+        data["id"] = doc.id
+
+        pedidos.append(data)
+
+    pedidos.sort(key=lambda p: str(p.get("criado_em") or p.get("data_inicio") or ""), reverse=True)
+
+
+
+    log_login_debug("dashboard: renderizando template")
+
+    return render_template(
+
+        "ferias.html",
+
+        pedidos=pedidos,
+
+        usuario=usuario,
+
+        formatar_periodo_ferias=formatar_periodo_ferias,
+
+        formatar_data_pedido=formatar_data_pedido,
+
+        ferias_status_label=ferias_status_label,
+
+    )
+
+
+
+@app.route("/admin/ferias", methods=["GET", "POST"])
+
+def admin_ferias():
+
+    usuario = get_usuario_logado()
+
+    if not usuario or not is_admin_or_dev(usuario):
+
+        return "Accesso negato!"
+
+
+
+    ferias_ref = db.collection("ferias")
+
+
+
+    if request.method == "POST":
+
+        pedido_id = (request.form.get("pedido_id") or "").strip()
+
+        acao = (request.form.get("acao") or "").strip()
+
+        if pedido_id and acao:
+
+            pedido_ref = ferias_ref.document(pedido_id)
+
+            pedido_doc = pedido_ref.get()
+
+            if pedido_doc.exists:
+
+                if acao in {"aprovado", "recusado", "pendente"}:
+
+                    pedido_ref.update({
+
+                        "status": acao,
+
+                        "decidido_em": firestore.SERVER_TIMESTAMP,
+
+                        "decidido_por": session.get("uid", ""),
+
+                    })
+
+                elif acao == "excluir":
+
+                    pedido_ref.delete()
+
+        return redirect(url_for("admin_ferias", ano=request.args.get("ano"), mes=request.args.get("mes")))
+
+
+
+    hoje = date.today()
+
+    try:
+
+        ano = int(request.args.get("ano", hoje.year))
+
+        mes = int(request.args.get("mes", hoje.month))
+
+        if mes < 1 or mes > 12:
+
+            raise ValueError
+
+    except Exception:
+
+        ano = hoje.year
+
+        mes = hoje.month
+
+    mes_inicio, mes_fim = _month_bounds(ano, mes)
+
+    prev_ano, prev_mes = _add_months(ano, mes, -1)
+
+    next_ano, next_mes = _add_months(ano, mes, 1)
+
+
+
+    pedidos = []
+
+    eventos_por_dia = {}
+
+    for doc in ferias_ref.stream():
+
+        data = doc.to_dict()
+
+        data["id"] = doc.id
+
+        inicio_dt = parse_iso_date(data.get("data_inicio"))
+
+        fim_dt = parse_iso_date(data.get("data_fim"))
+
+        data["inicio_dt"] = inicio_dt
+
+        data["fim_dt"] = fim_dt
+
+        data["periodo"] = formatar_periodo_ferias(data.get("data_inicio"), data.get("data_fim"))
+
+        pedidos.append(data)
+
+
+
+        if (data.get("status") or "").lower() != "aprovado" or not inicio_dt or not fim_dt:
+
+            continue
+
+        if fim_dt < mes_inicio or inicio_dt > mes_fim:
+
+            continue
+
+        dia_atual = max(inicio_dt, mes_inicio)
+
+        ultimo_dia = min(fim_dt, mes_fim)
+
+        for ordinal in range(dia_atual.toordinal(), ultimo_dia.toordinal() + 1):
+
+            dia = date.fromordinal(ordinal).isoformat()
+
+            eventos_por_dia.setdefault(dia, []).append({
+
+                "nome": data.get("nome") or "Utente",
+
+                "periodo": data["periodo"],
+
+            })
+
+
+
+    pedidos.sort(key=lambda p: (p.get("data_inicio") or "", p.get("nome") or ""), reverse=True)
+
+
+
+    cal = calendar.Calendar(firstweekday=0)
+
+    calendario = []
+
+    for semana in cal.monthdatescalendar(ano, mes):
+
+        calendario.append([
+
+            {
+
+                "iso": dia.isoformat(),
+
+                "numero": dia.day,
+
+                "no_mes": dia.month == mes,
+
+                "eventos": eventos_por_dia.get(dia.isoformat(), []),
+
+            }
+
+            for dia in semana
+
+        ])
+
+
+
+    nomes_meses = [
+
+        "", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+
+        "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+
+    ]
+
+
+
+    return render_template(
+
+        "admin_ferias.html",
+
+        pedidos=pedidos,
+
+        calendario=calendario,
+
+        ano=ano,
+
+        mes=mes,
+
+        nome_mes=nomes_meses[mes],
+
+        prev_ano=prev_ano,
+
+        prev_mes=prev_mes,
+
+        next_ano=next_ano,
+
+        next_mes=next_mes,
+
+        formatar_periodo_ferias=formatar_periodo_ferias,
+
+        formatar_data_pedido=formatar_data_pedido,
+
+        ferias_status_label=ferias_status_label,
+
+    )
 
 
 
@@ -8022,15 +9237,7 @@ def logout():
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
-
-
-
-
-
-
-
-
+    app.run(debug=True, use_reloader=False)
 
 
 

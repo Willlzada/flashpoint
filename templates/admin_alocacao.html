@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ tr("Assegnazione settimanale | FlashPoint") }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h4 class="text-dark"><i class="fa fa-calendar-week me-2"></i>{{ tr("Assegnazione settimanale della squadra") }}</h4>
+    {% if can_edit %}
+    <p class="mb-0">{{ tr("Imposta un luogo per dipendente per tutta la settimana. Il lunedi la squadra sapra gia dove andare.") }}</p>
+    {% else %}
+    <p class="mb-0">{{ tr("Consulta la tua assegnazione settimanale per sapere presso quale cliente devi lavorare.") }}</p>
+    {% endif %}
+</div>
+
+<hr class="my-4">
+
+<div class="card-box">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label for="semana-inicio" class="form-label">{{ tr("Inizio settimana") }}</label>
+            <input type="date" id="semana-inicio" class="form-control" value="{{ semana_inicio }}">
+            <div class="form-text">{{ tr("La data verra automaticamente regolata al lunedi.") }}</div>
+        </div>
+        <div class="col-md-8">
+            <div class="d-flex flex-wrap gap-2">
+                <button id="btn-carregar-semana" class="btn btn-outline-primary">{{ tr("Carica settimana") }}</button>
+                {% if usuario and usuario.tipo == 'developer' %}
+                <button id="btn-exportar-whatsapp" class="btn btn-outline-success">{{ tr("Esporta per WhatsApp") }}</button>
+                {% endif %}
+                {% if can_edit %}
+                <button id="btn-salvar-semana" class="btn btn-primary">{{ tr("Salva pianificazione settimanale") }}</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<div class="card-box mb-3">
+    <div id="status-alocacao" class="text-muted">{{ tr("Caricamento assegnazione settimanale...") }}</div>
+</div>
+
+<div class="card-box">
+    <div id="tabela-alocacao-semanal" class="table-responsive">
+        <p class="text-muted mb-0">{{ tr("Preparazione agenda settimanale...") }}</p>
+    </div>
+</div>
+
+<script>
+    window.ALLOC_WEEKLY_CONFIG = {
+        canEdit: {{ 1 if can_edit else 0 }},
+        initialWeekStart: "{{ semana_inicio }}",
+        currentUid: "{{ usuario_uid }}"
+    };
+    window.ALLOC_WEEKLY_I18N = {
+        // Status / error
+        status_loading_agenda: "{{ tr('Caricamento agenda settimanale...') }}",
+        status_week_loaded: "{{ tr('Settimana caricata.') }}",
+        status_saving: "{{ tr('Salvataggio pianificazione settimanale...') }}",
+        status_saved: "{{ tr('Pianificazione settimanale salvata con successo.') }}",
+        status_load_before_save: "{{ tr('Carica una settimana prima di salvare.') }}",
+        status_load_before_export: "{{ tr('Carica una settimana prima di esportare.') }}",
+        status_export_copied: "{{ tr('Testo copiato. Incollalo su WhatsApp.') }}",
+        status_export_ready: "{{ tr('Testo pronto da copiare.') }}",
+        prompt_copy: "{{ tr('Copia il testo qui sotto e incollalo su WhatsApp:') }}",
+        error_load: "{{ tr('Errore nel caricamento dell’agenda settimanale.') }}",
+        error_save: "{{ tr('Errore nel salvataggio della pianificazione settimanale.') }}",
+        error_no_data: "{{ tr('Nessun dato da esportare.') }}",
+        // Table
+        table_no_data: "{{ tr('Nessun dato da mostrare.') }}",
+        table_load_failed: "{{ tr('Impossibile caricare i dati.') }}",
+        table_no_users: "{{ tr('Nessun dipendente trovato per questa settimana.') }}",
+        col_employee: "{{ tr('Dipendente') }}",
+        col_status: "{{ tr('Stato della settimana') }}",
+        col_location: "{{ tr('Luogo per tutta la settimana') }}",
+        you_badge: "{{ tr('Tu') }}",
+        option_no_allocation: "{{ tr('Nessuna assegnazione') }}",
+        // Badges / vacation
+        badge_available: "{{ tr('Disponibile') }}",
+        badge_vacations_full: "{{ tr('Ferie (tutta la settimana)') }}",
+        badge_vacations_days_prefix: "{{ tr('Ferie') }}",
+        badge_day_unit: "{{ tr('giorno(i)') }}",
+        // Conflicts
+        vacation_conflict_fmt: "{{ tr('Conflitto: utente %uid% e in ferie (%days% giorno(i) nella settimana).') }}",
+        // Misc words
+        date_until: "{{ tr('al') }}",
+        wa_title: "{{ tr('Assegnazione settimanale') }}",
+        wa_intro: "{{ tr('Ragazzi, ecco l’assegnazione della settimana:') }}",
+        wa_no_allocation: "{{ tr('Nessuna assegnazione') }}",
+        wa_vacations_label: "{{ tr('FERIE') }}"
+    };
+</script>
+<script src="{{ url_for('static', filename='js/admin_alocacao.js') }}"></script>
+{% endblock %}
