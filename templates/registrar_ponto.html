@@ -58,26 +58,47 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_sick" name="is_sick" value="1">
-                                    <label class="form-check-label fw-semibold" for="is_sick">
-                                        {{ t("clock_in.sick_toggle_label") }}
-                                    </label>
-                                </div>
-                                <div class="form-text">
-                                    {{ t("clock_in.sick_toggle_help") }}
+                                <div class="fp-toggle-card is-sick">
+                                    <div class="form-check form-switch fp-toggle-row m-0">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="is_sick" name="is_sick" value="1">
+                                        <label class="form-check-label fp-toggle-title" for="is_sick">
+                                            <i class="fa fa-heartbeat text-danger"></i>
+                                            {{ t("clock_in.sick_toggle_label") }}
+                                        </label>
+                                    </div>
+                                    <div class="fp-toggle-help">
+                                        {{ t("clock_in.sick_toggle_help") }}
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_vacation" name="is_vacation" value="1">
-                                    <label class="form-check-label fw-semibold" for="is_vacation">
-                                        {{ t("clock_in.vacation_toggle_label") }}
-                                    </label>
+                                <div class="fp-toggle-card is-vacation">
+                                    <div class="form-check form-switch fp-toggle-row m-0">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="is_vacation" name="is_vacation" value="1">
+                                        <label class="form-check-label fp-toggle-title" for="is_vacation">
+                                            <i class="fa fa-umbrella-beach text-primary"></i>
+                                            {{ t("clock_in.vacation_toggle_label") }}
+                                        </label>
+                                    </div>
+                                    <div class="fp-toggle-help">
+                                        {{ t("clock_in.vacation_toggle_help") }}
+                                    </div>
                                 </div>
-                                <div class="form-text">
-                                    {{ t("clock_in.vacation_toggle_help") }}
+                            </div>
+
+                            <div class="col-12">
+                                <div class="fp-toggle-card is-holiday">
+                                    <div class="form-check form-switch fp-toggle-row m-0">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="is_holiday" name="is_holiday" value="1">
+                                        <label class="form-check-label fp-toggle-title" for="is_holiday">
+                                            <i class="fa fa-calendar-days text-warning"></i>
+                                            {{ t("clock_in.holiday_toggle_label") }}
+                                        </label>
+                                    </div>
+                                    <div class="fp-toggle-help">
+                                        {{ t("clock_in.holiday_toggle_help") }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -97,7 +118,7 @@
                                 <label class="form-label fw-semibold">
                                     {{ tr("Ore lavorate") }}
                                 </label>
-                                <input type="number" step="0.25" name="horas" id="horas" class="form-control" required>
+                                <input type="number" step="0.25" min="0" name="horas" id="horas" class="form-control">
                                 <div class="form-text">
                                     {{ tr("Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15") }}
                                 </div>
@@ -169,6 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const campoHoras = document.getElementById("horas");
     const campoSick = document.getElementById("is_sick");
     const campoVacation = document.getElementById("is_vacation");
+    const campoHoliday = document.getElementById("is_holiday");
     const campoData = document.getElementById("data");
     const modalEl = document.getElementById("confirmNoLocalModal");
     const confirmBtn = document.getElementById("confirm-no-local-submit");
@@ -183,20 +205,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!campoHoras || !campoLocal) return;
         const isSick = campoSick && campoSick.checked;
         const isVacation = campoVacation && campoVacation.checked;
+        const isHoliday = campoHoliday && campoHoliday.checked;
         const isAssenza = isSick || isVacation;
 
         if (isAssenza) {
             campoHoras.value = "0";
+            campoHoras.min = "0";
             campoHoras.required = false;
             campoHoras.readOnly = true;
             campoHoras.classList.add("bg-light");
             campoLocal.value = "";
             campoLocal.disabled = true;
+        } else if (isHoliday) {
+            campoHoras.min = "0";
+            campoHoras.required = false;
+            campoHoras.readOnly = false;
+            campoHoras.classList.remove("bg-light");
+            campoLocal.disabled = false;
         } else {
             if ((campoHoras.value || "").trim() === "0") {
                 campoHoras.value = "";
             }
-            campoHoras.required = true;
+            campoHoras.min = "0";
+            campoHoras.required = false;
             campoHoras.readOnly = false;
             campoHoras.classList.remove("bg-light");
             campoLocal.disabled = false;
@@ -208,6 +239,9 @@ document.addEventListener("DOMContentLoaded", function () {
             if (campoSick.checked && campoVacation) {
                 campoVacation.checked = false;
             }
+            if (campoSick.checked && campoHoliday) {
+                campoHoliday.checked = false;
+            }
             aplicarModoAssenza();
         });
     }
@@ -216,6 +250,21 @@ document.addEventListener("DOMContentLoaded", function () {
         campoVacation.addEventListener("change", function () {
             if (campoVacation.checked && campoSick) {
                 campoSick.checked = false;
+            }
+            if (campoVacation.checked && campoHoliday) {
+                campoHoliday.checked = false;
+            }
+            aplicarModoAssenza();
+        });
+    }
+
+    if (campoHoliday) {
+        campoHoliday.addEventListener("change", function () {
+            if (campoHoliday.checked && campoSick) {
+                campoSick.checked = false;
+            }
+            if (campoHoliday.checked && campoVacation) {
+                campoVacation.checked = false;
             }
             aplicarModoAssenza();
         });
@@ -230,8 +279,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const isSick = campoSick && campoSick.checked;
             const isVacation = campoVacation && campoVacation.checked;
             const isAssenza = isSick || isVacation;
+            const isHoliday = campoHoliday && campoHoliday.checked;
             const localVazio = !(campoLocal.value || "").trim();
-            if (!isAssenza && !confirmWithoutLocal && localVazio) {
+            const horasValor = parseFloat(((campoHoras && campoHoras.value) ? campoHoras.value : "").replace(",", "."));
+            const temHoras = !Number.isNaN(horasValor) && horasValor > 0;
+            const deveConfirmar = !isAssenza && !confirmWithoutLocal && localVazio && (!isHoliday || temHoras);
+            if (deveConfirmar) {
                 event.preventDefault();
                 modal.show();
             }

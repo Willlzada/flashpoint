@@ -62,6 +62,9 @@
                         <option value="ferie" {% if ponto.tipo_registro == 'ferie' %}selected{% endif %}>
                             {{ t("clock_in.vacation_status") }}
                         </option>
+                        <option value="feriado" {% if ponto.tipo_registro == 'feriado' %}selected{% endif %}>
+                            {{ t("clock_in.holiday_status") }}
+                        </option>
                     </select>
                     <div class="form-text">{{ t("edit.record_type_help") }}</div>
                 </div>
@@ -89,7 +92,7 @@
                            min="0"
                            value="{{ ponto.horas }}"
                            class="form-control"
-                           required>
+                           >
                     <div class="form-text">{{ tr("Usa valori decimali (es: 1.50 = 1h30)") }}</div>
                 </div>
 
@@ -153,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const tipo = (tipoSelect.value || "presenza").toLowerCase();
         const isAbsence = tipo === "malattia" || tipo === "ferie";
+        const isHoliday = tipo === "feriado";
 
         if (isAbsence) {
             localField.value = "-";
@@ -161,10 +165,15 @@ document.addEventListener("DOMContentLoaded", function () {
             horasField.readOnly = true;
             horasField.required = false;
             horasField.classList.add("bg-light");
+        } else if (isHoliday) {
+            localField.disabled = false;
+            horasField.readOnly = false;
+            horasField.required = false;
+            horasField.classList.remove("bg-light");
         } else {
             localField.disabled = false;
             horasField.readOnly = false;
-            horasField.required = true;
+            horasField.required = false;
             horasField.classList.remove("bg-light");
             if ((horasField.value || "").trim() === "0") {
                 horasField.value = "";
@@ -184,8 +193,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const tipo = (tipoSelect.value || "presenza").toLowerCase();
             const local = (localField.value || "").trim();
             const semLocal = !local || local === "-";
+            const horasValor = parseFloat(((horasField && horasField.value) ? horasField.value : "").replace(",", "."));
+            const temHoras = !Number.isNaN(horasValor) && horasValor > 0;
 
-            if (tipo === "presenza" && semLocal && !confirmWithoutLocal) {
+            const deveConfirmar = (tipo === "presenza" || (tipo === "feriado" && temHoras)) && semLocal && !confirmWithoutLocal;
+            if (deveConfirmar) {
                 event.preventDefault();
                 modal.show();
             }

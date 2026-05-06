@@ -126,6 +126,82 @@
                 padding-bottom: 100px; /* espaço para nav mobile */
             }
         }
+
+        /* ===== EVIDENZIA CHECK (FERIE/MALATTIA/FERIADO) ===== */
+        .fp-toggle-card {
+            background: #fff;
+            border: 2px solid #dee2e6;
+            border-radius: 14px;
+            padding: 12px 14px;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .fp-toggle-card:hover {
+            border-color: #adb5bd;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .fp-toggle-card .form-check-input {
+            width: 3.2em;
+            height: 1.7em;
+            cursor: pointer;
+        }
+
+        .fp-toggle-row.form-switch {
+            padding-left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .fp-toggle-row.form-switch .form-check-input {
+            margin-left: 0;
+            float: none;
+        }
+
+        .fp-toggle-row.form-switch .form-check-label {
+            margin-left: 0;
+            flex: 1 1 240px;
+            min-width: 0;
+        }
+
+        .fp-toggle-title {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fp-toggle-help {
+            margin-top: 6px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .fp-toggle-card.is-sick {
+            --fp-toggle-color: #dc3545;
+            background: #fff5f5;
+            border-color: #f5c2c7;
+        }
+
+        .fp-toggle-card.is-vacation {
+            --fp-toggle-color: #0d6efd;
+            background: #f3f8ff;
+            border-color: #b6d4fe;
+        }
+
+        .fp-toggle-card.is-holiday {
+            --fp-toggle-color: #ffc107;
+            background: #fff8e1;
+            border-color: #ffe69c;
+        }
+
+        .fp-toggle-card .form-check-input:checked {
+            background-color: var(--fp-toggle-color, #0d6efd);
+            border-color: var(--fp-toggle-color, #0d6efd);
+        }
     </style>
 </head>
 
@@ -211,11 +287,7 @@
             </a>
         </li>
 
-        <li>
-            <a href="{{ url_for('admin_carros') }}" class="nav-link {% if request.path.startswith('/admin/carros') %}active{% endif %}">
-                <i class="fa fa-car me-2"></i> {{ t('nav.admin_cars') }}
-            </a>
-        </li>
+
 
 
         <li>
@@ -241,11 +313,7 @@
             </a>
         </li>
 
-        <li>
-            <a href="{{ url_for('admin_estatisticas') }}" class="nav-link {% if request.path == '/admin/estatisticas' %}active{% endif %}">
-                <i class="fa fa-chart-bar me-2"></i> {{ t('nav.admin_stats') }}
-            </a>
-        </li>
+
 
         {% if usuario.tipo == 'developer' %}
 
@@ -277,6 +345,18 @@
         <li>
             <a href="{{ url_for('admin_alocacao') }}" class="nav-link {% if request.path.startswith('/admin/alocacao') %}active{% endif %}">
                 <i class="fa fa-calendar-week me-2"></i> {{ tr("Assegnazione settimanale") }}
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('admin_carros') }}" class="nav-link {% if request.path.startswith('/admin/carros') %}active{% endif %}">
+                <i class="fa fa-car me-2"></i> {{ t('nav.admin_cars') }}
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('admin_estatisticas') }}" class="nav-link {% if request.path == '/admin/estatisticas' %}active{% endif %}">
+                <i class="fa fa-chart-bar me-2"></i> {{ t('nav.admin_stats') }}
             </a>
         </li>
 

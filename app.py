@@ -54,7 +54,7 @@ from datetime import datetime
 
 # =========================
 
-# CONFIGURA��O DO FLASK
+# CONFIGURAÇÃO DO FLASK
 
 # =========================
 
@@ -68,7 +68,7 @@ app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # 3MB
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
-app.secret_key = "chave-secreta-simples"  # essencial para sess�o
+app.secret_key = "chave-secreta-simples"  # essencial para sessão
 
 LOGIN_DEBUG_LOG = os.path.join(app.root_path, "login-debug.log")
 
@@ -107,7 +107,7 @@ def firestore_stream(query, timeout=8):
 
 SUPPORTED_LANGUAGES = [
 
-    {"code": "pt-br", "label": "Portugu�s (Brasil)"},
+    {"code": "pt-br", "label": "Português (Brasil)"},
 
     {"code": "en", "label": "English"},
 
@@ -117,7 +117,7 @@ SUPPORTED_LANGUAGES = [
 
 LANGUAGE_CODES = {lang["code"] for lang in SUPPORTED_LANGUAGES}
 
-DEFAULT_LANGUAGE = "it"  # Italiano como idioma padr�o
+DEFAULT_LANGUAGE = "it"  # Italiano como idioma padrão
 
 
 
@@ -127,7 +127,7 @@ TRANSLATIONS = {
 
         "language.label": "Idioma",
 
-        "nav.home": "In�cio",
+        "nav.home": "Início",
 
         "nav.clock_in": "Registrar horas",
 
@@ -139,20 +139,20 @@ TRANSLATIONS = {
 
         "nav.profile": "Perfil",
 
-        "nav.admin": "Administra��o",
+        "nav.admin": "Administração",
         "nav.developer": "Desenvolvedor",
 
-        "nav.admin_hours": "Gest�o das horas registradas",
+        "nav.admin_hours": "Gestão das horas registradas",
 
-        "nav.admin_sites": "Gest�o de locais",
+        "nav.admin_sites": "Gestão de locais",
 
         "nav.admin_cars": "Carros da empresa",
 
-        "nav.admin_badges": "Crach�s",
+        "nav.admin_badges": "Crachás",
 
-        "nav.admin_profiles": "Perfis de usu�rios",
+        "nav.admin_profiles": "Perfis de usuários",
 
-        "nav.admin_requests": "Solicita��es dos funcion�rios",
+        "nav.admin_requests": "Solicitações dos funcionários",
 
         "nav.admin_vacations": "Ferias dos funcionarios",
 
@@ -186,11 +186,11 @@ TRANSLATIONS = {
 
         "login.submit": "Entrar",
 
-        "login.no_account": "N�o tem uma conta?",
+        "login.no_account": "Não tem uma conta?",
 
         "login.create_account": "Criar uma conta",
 
-        "login.footer": "� FlashPoint 2026 Todos os direitos reservados.",
+        "login.footer": "© FlashPoint 2026 Todos os direitos reservados.",
 
         "register.page_title": "Criar conta | FlashPoint",
 
@@ -200,7 +200,7 @@ TRANSLATIONS = {
 
         "register.last_name": "Sobrenome",
 
-        "register.email_label": "Endere�o de email",
+        "register.email_label": "Endereço de email",
 
         "register.email_placeholder": "Insira seu email",
 
@@ -210,11 +210,11 @@ TRANSLATIONS = {
 
         "register.submit": "Criar conta",
 
-        "register.have_account": "J� tem uma conta?",
+        "register.have_account": "Já tem uma conta?",
 
         "register.sign_in": "Entrar",
 
-        "register.footer": "� FlashPoint 2026 Todos os direitos reservados.",
+        "register.footer": "© FlashPoint 2026 Todos os direitos reservados.",
 
     
 
@@ -238,6 +238,14 @@ TRANSLATIONS = {
 
         "clock_in.vacation_registered_success": "Ferias registradas com sucesso.",
 
+        "clock_in.holiday_toggle_label": "E feriado neste dia",
+
+        "clock_in.holiday_toggle_help": "Marque esta opcao para registrar feriado nesta data. Se tiver trabalhado, voce pode informar as horas.",
+
+        "clock_in.holiday_status": "Feriado",
+
+        "clock_in.holiday_registered_success": "Feriado registrado com sucesso.",
+
         "clock_in.only_one_absence_type": "Selecione apenas um tipo de ausencia por dia.",
 
         "edit.record_type_label": "Tipo de registro",
@@ -246,7 +254,7 @@ TRANSLATIONS = {
 
         "Mostra": "Mostrar",
 
-        "nav.admin_stats": "Estat?sticas",},
+        "nav.admin_stats": "Estatísticas",},
 
 
     "it": {
@@ -316,7 +324,7 @@ TRANSLATIONS = {
 
         "login.create_account": "Crea un account",
 
-        "login.footer": "� FlashPoint 2026 Tutti i diritti riservati.",
+        "login.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
 
         "register.page_title": "Crea account | FlashPoint",
 
@@ -336,11 +344,11 @@ TRANSLATIONS = {
 
         "register.submit": "Crea un account",
 
-        "register.have_account": "Hai gi� un account?",
+        "register.have_account": "Hai già un account?",
 
         "register.sign_in": "Accedi",
 
-        "register.footer": "� FlashPoint 2026 Tutti i diritti riservati.",
+        "register.footer": "© FlashPoint 2026 Tutti i diritti riservati.",
 
     
 
@@ -364,6 +372,14 @@ TRANSLATIONS = {
 
         "clock_in.vacation_registered_success": "Ferie registrate con successo.",
 
+        "clock_in.holiday_toggle_label": "E un giorno festivo in questa data",
+
+        "clock_in.holiday_toggle_help": "Attiva questa opzione per registrare un giorno festivo. Se hai lavorato, puoi indicare le ore.",
+
+        "clock_in.holiday_status": "Festivo",
+
+        "clock_in.holiday_registered_success": "Festivo registrato con successo.",
+
         "clock_in.only_one_absence_type": "Seleziona un solo tipo di assenza per giorno.",
 
         "edit.record_type_label": "Tipo di registrazione",
@@ -386,21 +402,21 @@ TEXT_TRANSLATIONS = {
 
         "Admin cria e designa atividades para os colaboradores": "Admin cria e designa atividades para os colaboradores",
 
-        "Admin � Cart�es de Reconhecimento | FlashPoint": "Admin � Cart�es de Reconhecimento | FlashPoint",
+        "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Cartões de Reconhecimento | FlashPoint",
 
-        "Admin � Backup e Pulizia | FlashPoint": "Admin � Backup e Limpeza | FlashPoint",
+        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Limpeza | FlashPoint",
 
-        "Admin � Locais | FlashPoint": "Admin � Locais | FlashPoint",
+        "Admin • Locais | FlashPoint": "Admin • Locais | FlashPoint",
 
-        "Admin � Modifica Profilo | FlashPoint": "Admin � Editar Perfil | FlashPoint",
+        "Admin • Modifica Profilo | FlashPoint": "Admin • Editar Perfil | FlashPoint",
 
-        "Admin � Modifica Punto | FlashPoint": "Admin � Editar Ponto | FlashPoint",
+        "Admin • Modifica Punto | FlashPoint": "Admin • Editar Ponto | FlashPoint",
 
-        "Admin � Ordini | FlashPoint": "Admin � Pedidos | FlashPoint",
+        "Admin • Ordini | FlashPoint": "Admin • Pedidos | FlashPoint",
 
-        "Admin � Pontos | FlashPoint": "Admin � Pontos | FlashPoint",
+        "Admin • Pontos | FlashPoint": "Admin • Pontos | FlashPoint",
 
-        "Admin � Profili Utenti | FlashPoint": "Admin � Perfis de Usu�rios | FlashPoint",
+        "Admin • Profili Utenti | FlashPoint": "Admin • Perfis de Usuários | FlashPoint",
 
         "Termine di responsabilita kit": "Termo de responsabilidade do kit",
 
@@ -501,29 +517,29 @@ TEXT_TRANSLATIONS = {
 
         "Aggiungi": "Adicionar",
 
-        "Aggiungi e gestisci i luoghi disponibili": "Adicione e gerencie os locais dispon�veis",
+        "Aggiungi e gestisci i luoghi disponibili": "Adicione e gerencie os locais disponíveis",
 
         "Aggiungi nuovo locale": "Adicionar novo local",
 
-        "Aggiungi un'osservazione rilevante...": "Adicione uma observa��o relevante...",
+        "Aggiungi un'osservazione rilevante...": "Adicione uma observação relevante...",
 
         "Alta": "Alta",
 
         "Amministratore": "Administrador",
 
-        "Amministrazione e controllo delle ore": "Administra��o e controle de horas",
+        "Amministrazione e controllo delle ore": "Administração e controle de horas",
 
         "Annulla": "Cancelar",
 
         "Approvato": "Aprovado",
 
-        "Area amministratore": "�rea administrativa",
+        "Area amministratore": "Área administrativa",
 
         "Atualizar": "Atualizar",
 
-        "Azione": "A��o",
+        "Azione": "Ação",
 
-        "Azioni": "A��es",
+        "Azioni": "Ações",
 
         "Backup e pulizia": "Backup e limpeza",
 
@@ -535,9 +551,9 @@ TEXT_TRANSLATIONS = {
 
         "Cantieri": "Canteiros",
 
-        "Cart�o de Reconhecimento": "Cart�o de Reconhecimento",
+        "Cartão de Reconhecimento": "Cartão de Reconhecimento",
 
-        "Classifica mensile ore lavorate": "Classifica��o mensal de horas trabalhadas",
+        "Classifica mensile ore lavorate": "Classificação mensal de horas trabalhadas",
 
         "Cognome": "Sobrenome",
 
@@ -547,11 +563,11 @@ TEXT_TRANSLATIONS = {
 
         "Completo": "Completo",
 
-        "Configura��es": "Configura��es",
+        "Configurações": "Configurações",
 
         "Consulta e gestisci le ore registrate": "Consulte e gerencie as horas registradas",
 
-        "Consulta e modifica le informazioni del tuo profilo": "Consulte e edite as informa��es do seu perfil",
+        "Consulta e modifica le informazioni del tuo profilo": "Consulte e edite as informações do seu perfil",
 
         "Creato il": "Criado em",
 
@@ -563,31 +579,31 @@ TEXT_TRANSLATIONS = {
 
         "Data": "Data",
 
-        "Data Assunzione": "Data de admiss�o",
+        "Data Assunzione": "Data de admissão",
 
-        "Data di assunzione": "Data de admiss�o",
+        "Data di assunzione": "Data de admissão",
 
         "Data di nascita": "Data de nascimento",
 
-        "Data specifica": "Data espec�fica",
+        "Data specifica": "Data específica",
 
         "Dati del punto": "Dados do ponto",
 
         "Dati personali": "Dados pessoais",
 
-        "Descri��o": "Descri��o",
+        "Descrição": "Descrição",
 
         "Deseja excluir esta tarefa?": "Deseja excluir esta tarefa?",
 
-        "Designar para (pode selecionar v�rios)": "Designar para (pode selecionar v�rios)",
+        "Designar para (pode selecionar vários)": "Designar para (pode selecionar vários)",
 
         "Detalhes da tarefa": "Detalhes da tarefa",
 
-        "Dipendente": "Funcion�rio",
+        "Dipendente": "Funcionário",
 
         "Distaccato Presso": "Destacado em",
 
-        "Done": "Conclu�do",
+        "Done": "Concluído",
 
         "Elimina": "Excluir",
 
@@ -595,21 +611,21 @@ TEXT_TRANSLATIONS = {
 
         "Esporta PDF": "Exportar PDF",
 
-        "Esporta rapporto in PDF": "Exportar relat�rio em PDF",
+        "Esporta rapporto in PDF": "Exportar relatório em PDF",
 
         "Evaso": "Atendido",
 
-        "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15": "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15",
+        "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15": "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15",
 
         "Ex.: Brasile": "Ex.: Brasil",
 
         "Ex.: Elettricista": "Ex.: Eletricista",
 
-        "Ex.: Joao": "Ex.: Jo�o",
+        "Ex.: Joao": "Ex.: João",
 
-        "Ex.: Jo�o": "Ex.: Jo�o",
+        "Ex.: João": "Ex.: João",
 
-        "Ex.: Silva": "Ex.: Silva",
+        "Ex.: Salva": "Ex.: Salva",
 
         "Excluir": "Excluir",
 
@@ -621,23 +637,23 @@ TEXT_TRANSLATIONS = {
 
         "Foto do perfil": "Foto do perfil",
 
-        "Genera tessera": "Gerar crach�",
+        "Genera tessera": "Gerar crachá",
 
-        "Genera tesserino": "Gerar crach�",
+        "Genera tesserino": "Gerar crachá",
 
-        "Generazione e gestione dei cartellini": "Gera��o e gest�o dos cart�es",
+        "Generazione e gestione dei cartellini": "Geração e gestão dos cartões",
 
-        "Gestione dei cantieri": "Gest�o dos canteiros",
+        "Gestione dei cantieri": "Gestão dos canteiros",
 
-        "Gestione dei locali": "Gest�o dos locais",
+        "Gestione dei locali": "Gestão dos locais",
 
-        "Gestione delle ore registrate": "Gest�o das horas registradas",
+        "Gestione delle ore registrate": "Gestão das horas registradas",
 
-        "Gestione delle presenze": "Gest�o das presen�as",
+        "Gestione delle presenze": "Gestão das presenças",
 
-        "Gestione profili utenti": "Gest�o de perfis de usu�rios",
+        "Gestione profili utenti": "Gestão de perfis de usuários",
 
-        "Gestione richieste e ordini": "Gest�o de solicita��es e pedidos",
+        "Gestione richieste e ordini": "Gestão de solicitações e pedidos",
 
         "Assegnazione settimanale | FlashPoint": "Alocacao semanal | FlashPoint",
         "Assegnazione settimanale della squadra": "Alocacao semanal da equipe",
@@ -749,7 +765,7 @@ TEXT_TRANSLATIONS = {
 
         "I dati non sono temporaneamente disponibili per limite di quota Firestore. Riprova piu tardi.": "Os dados nao estao temporariamente disponiveis por limite de quota do Firestore. Tente novamente mais tarde.",
 
-        "Il backup viene salvato sul tuo PC, non sul server.": "O backup � salvo no seu PC, n�o no servidor.",
+        "Il backup viene salvato sul tuo PC, non sul server.": "O backup é salvo no seu PC, não no servidor.",
 
         "In Progress": "Em andamento",
 
@@ -761,17 +777,17 @@ TEXT_TRANSLATIONS = {
 
         "Invia ordine": "Enviar pedido",
 
-        "Invia una nuova richiesta": "Envie uma nova solicita��o",
+        "Invia una nuova richiesta": "Envie uma nova solicitação",
 
-        "Le mie presenze": "Minhas presen�as",
+        "Le mie presenze": "Minhas presenças",
 
         "Locale": "Local",
 
-        "Mese": "M�s",
+        "Mese": "Mês",
 
-        "Mese finale": "M�s final",
+        "Mese finale": "Mês final",
 
-        "Mese iniziale": "M�s inicial",
+        "Mese iniziale": "Mês inicial",
 
         "Messaggio": "Mensagem",
 
@@ -783,17 +799,17 @@ TEXT_TRANSLATIONS = {
 
         "Modifica Profilo": "Editar Perfil",
 
-        "Modifica le informazioni del tuo profilo": "Edite as informa��es do seu perfil",
+        "Modifica le informazioni del tuo profilo": "Edite as informações do seu perfil",
 
         "Modifica ore": "Editar horas",
 
         "Modifica profilo": "Editar perfil",
 
-        "Modifica profilo utente": "Editar perfil do usu�rio",
+        "Modifica profilo utente": "Editar perfil do usuário",
 
-        "Modificabile se necessario.": "Edit�vel se necess�rio.",
+        "Modificabile se necessario.": "Editável se necessário.",
 
-        "M�dia": "M�dia",
+        "Média": "Média",
 
         "Nato": "Nascido",
 
@@ -807,51 +823,51 @@ TEXT_TRANSLATIONS = {
 
         "Nessuno": "Nenhum",
 
-        "Nessun utente registrato.": "Nenhum usu�rio registrado.",
+        "Nessun utente registrato.": "Nenhum usuário registrado.",
 
         "Nessuna nota inserita.": "Nenhuma nota inserida.",
 
-        "Nessuna presenza registrata con questi filtri.": "Nenhuma presen�a registrada com esses filtros.",
+        "Nessuna presenza registrata con questi filtri.": "Nenhuma presença registrada com esses filtros.",
 
-        "Nessuna presenza trovata con questi filtri.": "Nenhuma presen�a encontrada com esses filtros.",
+        "Nessuna presenza trovata con questi filtri.": "Nenhuma presença encontrada com esses filtros.",
 
         "Nome": "Nome",
 
         "Nome del locale": "Nome do local",
 
-        "Non": "N�o",
+        "Non": "Não",
 
-        "Non hai ancora effettuato alcun ordine.": "Voc� ainda n�o fez nenhum pedido.",
+        "Non hai ancora effettuato alcun ordine.": "Você ainda não fez nenhum pedido.",
 
         "Note": "Notas",
 
         "Nova tarefa": "Nova tarefa",
 
-        "Nuova richiesta": "Nova solicita��o",
+        "Nuova richiesta": "Nova solicitação",
 
-        "Nuova richiesta | FlashPoint": "Nova solicita��o | FlashPoint",
+        "Nuova richiesta | FlashPoint": "Nova solicitação | FlashPoint",
 
-        "Ordini degli utenti": "Pedidos dos usu�rios",
+        "Ordini degli utenti": "Pedidos dos usuários",
 
         "Ore": "Horas",
 
         "Ore lavorate": "Horas trabalhadas",
 
-        "Ore lavorate nel mese precedente": "Horas trabalhadas no m�s anterior",
+        "Ore lavorate nel mese precedente": "Horas trabalhadas no mês anterior",
 
-        "Ore lavorate questo mese": "Horas trabalhadas neste m�s",
+        "Ore lavorate questo mese": "Horas trabalhadas neste mês",
 
-        "Osservazioni": "Observa��es",
+        "Osservazioni": "Observações",
 
-        "Osservazioni aggiuntive...": "Observa��es adicionais...",
+        "Osservazioni aggiuntive...": "Observações adicionais...",
 
-        "PNG, JPG ou WEBP. M�x 3MB.": "PNG, JPG ou WEBP. M�x 3MB.",
+        "PNG, JPG ou WEBP. Máx 3MB.": "PNG, JPG ou WEBP. Máx 3MB.",
 
-        "Paese di origine": "Pa�s de origem",
+        "Paese di origine": "País de origem",
 
         "Perfil | FlashPoint": "Perfil | FlashPoint",
 
-        "Posizione in classifica": "Posi��o no ranking",
+        "Posizione in classifica": "Posição no ranking",
 
         "Prazo": "Prazo",
 
@@ -869,23 +885,23 @@ TEXT_TRANSLATIONS = {
 
         "Registrar Ponto | FlashPoint": "Registrar Ponto | FlashPoint",
 
-        "Registrare la presenza": "Registrar presen�a",
+        "Registrare la presenza": "Registrar presença",
 
-        "Respons�vel": "Respons�vel",
+        "Responsável": "Responsável",
 
-        "Richeste": "Solicita��es",
+        "Richeste": "Solicitações",
 
-        "Richeste degli utenti": "Solicita��es dos usu�rios",
+        "Richeste degli utenti": "Solicitações dos usuários",
 
-        "Riepilogo della tua attivit�": "Resumo da sua atividade",
+        "Riepilogo della tua attività": "Resumo da sua atividade",
 
         "Rifiutato": "Recusado",
 
         "Ruolo": "Cargo",
 
-        "Ruolo / Mansione": "Cargo / Fun��o",
+        "Ruolo / Mansione": "Cargo / Função",
 
-        "Salva modifiche": "Salvar altera��es",
+        "Salva modifiche": "Salvar alterações",
 
         "Scarica + elimina": "Baixar + excluir",
 
@@ -893,9 +909,9 @@ TEXT_TRANSLATIONS = {
 
         "Seleziona il luogo": "Selecione o local",
 
-        "Seleziona il luogo in cui si � svolta l'attivit�.": "Selecione o local onde a atividade foi realizada.",
+        "Seleziona il luogo in cui si è svolta l'attività.": "Selecione o local onde a atividade foi realizada.",
 
-        "Si": "Sim",
+        "Sì": "Sim",
 
         "Solo amministratori possono aggiornare i profili": "Somente administradores podem atualizar os perfis",
 
@@ -909,13 +925,13 @@ TEXT_TRANSLATIONS = {
 
         "Status": "Status",
 
-        "Tarefas atribu�das": "Tarefas atribu�das",
+        "Tarefas atribuídas": "Tarefas atribuídas",
 
         "Tarefas de toda a equipa": "Tarefas de toda a equipe",
 
-        "Tesserini": "Crach�s",
+        "Tesserini": "Crachás",
 
-        "Tesserini di riconoscimento": "Crach�s de reconhecimento",
+        "Tesserini di riconoscimento": "Crachás de reconhecimento",
 
         "Tipo": "Tipo",
 
@@ -927,13 +943,13 @@ TEXT_TRANSLATIONS = {
 
         "Tornare": "Voltar",
 
-        "Totale delle ore lavorate quest�anno": "Total de horas trabalhadas neste ano",
+        "Totale delle ore lavorate quest'anno": "Total de horas trabalhadas neste ano",
 
         "Totale ore registrate": "Total de horas registradas",
 
         "Tutti": "Todos",
 
-        "T�tulo": "T�tulo",
+        "Título": "Título",
 
         "UID": "UID",
 
@@ -941,11 +957,11 @@ TEXT_TRANSLATIONS = {
 
         "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.",
 
-        "Utente": "Usu�rio",
+        "Utente": "Usuário",
 
-        "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Um backup ser� baixado e depois as presen�as ser�o removidas do servidor. Continuar?",
+        "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Um backup será baixado e depois as presenças serão removidas do servidor. Continuar?",
 
-        "Visualiza��o das tarefas que foram designadas para voc�": "Visualiza��o das tarefas que foram designadas para voc�",
+        "Visualização das tarefas que foram designadas para você": "Visualização das tarefas que foram designadas para você",
 
         "Visualizza e gestisci i tuoi ordini": "Visualize e gerencie seus pedidos",
 
@@ -955,11 +971,11 @@ TEXT_TRANSLATIONS = {
 
         "Vuoi eliminare questo punto?": "Deseja excluir este ponto?",
 
-        "Work Management": "Gest�o de tarefas",
+        "Work Management": "Gestão de tarefas",
 
         "a": "em",
 
-        "email non disponibile": "email n�o dispon�vel",
+        "email non disponibile": "email não disponível",
 
         "opzionale": "opcional",
 
@@ -971,27 +987,27 @@ TEXT_TRANSLATIONS = {
 
         "Telefone": "Telefone",
 
-        "Telefone de emerg�ncia": "Telefone de emerg�ncia",
+        "Telefone de emergência": "Telefone de emergência",
 
-        "Ragione Sociale": "Raz?o social",
+        "Ragione Sociale": "Razão social",
 
-        "Responsabile tecnico": "Respons?vel t?cnico",
+        "Responsabile tecnico": "Responsável técnico",
 
-        "Indirizzo": "Endere?o",
+        "Indirizzo": "Endereço",
 
         "P.IVA": "P.IVA",
 
         "Datore di Lavoro": "Empregador",
 
-        "Intestazione azienda": "T?tulo da empresa",
+        "Intestazione azienda": "Título da empresa",
 
-        "Admin ? Statistiche | FlashPoint": "Admin ? Estat?sticas | FlashPoint",
+        "Admin ? Statistiche | FlashPoint": "Admin ? Estatísticas | FlashPoint",
 
-        "Statistiche amministrative": "Estat?sticas administrativas",
+        "Statistiche amministrative": "Estatísticas administrativas",
 
-        "Analisi ore per periodo e localit?": "An?lise de horas por per?odo e localidade",
+        "Analisi ore per periodo e localit?": "Análise de horas por período e localidade",
 
-        "Periodo": "Per?odo",
+        "Periodo": "Período",
 
         "Trimestre": "Trimestre",
 
@@ -1001,7 +1017,7 @@ TEXT_TRANSLATIONS = {
 
         "Applica filtro": "Aplicar filtro",
 
-        "Ore del periodo": "Horas do per?odo",
+        "Ore del periodo": "Horas do período",
 
         "Ore dell'anno": "Horas do ano",
 
@@ -1009,34 +1025,34 @@ TEXT_TRANSLATIONS = {
 
         "Ore per localit?": "Horas por localidade",
 
-        "Ore per mese": "Horas por m?s",
+        "Ore per mese": "Horas por mês",
 
-        "Esporta statistiche in PDF": "Exportar estat?sticas em PDF",
+        "Esporta statistiche in PDF": "Exportar estatísticas em PDF",
 
-        "Seleziona un dipendente per esportare.": "Selecione um funcion?rio para exportar.",},
+        "Seleziona un dipendente per esportare.": "Selecione um funcionário para exportar.",},
 
 
     "it": {
 
         "Admin": "Admin",
 
-        "Admin cria e designa atividades para os colaboradores": "L'amministratore crea e assegna le attivit� ai collaboratori",
+        "Admin cria e designa atividades para os colaboradores": "L'amministratore crea e assegna le attività ai collaboratori",
 
-        "Admin � Cart�es de Reconhecimento | FlashPoint": "Admin � Tesserini di riconoscimento | FlashPoint",
+        "Admin • Cartões de Reconhecimento | FlashPoint": "Admin • Tesserini di riconoscimento | FlashPoint",
 
-        "Admin � Backup e Pulizia | FlashPoint": "Admin � Backup e Pulizia | FlashPoint",
+        "Admin • Backup e Pulizia | FlashPoint": "Admin • Backup e Pulizia | FlashPoint",
 
-        "Admin � Locais | FlashPoint": "Admin � Locali | FlashPoint",
+        "Admin • Locais | FlashPoint": "Admin • Locali | FlashPoint",
 
-        "Admin � Modifica Profilo | FlashPoint": "Admin � Modifica profilo | FlashPoint",
+        "Admin • Modifica Profilo | FlashPoint": "Admin • Modifica profilo | FlashPoint",
 
-        "Admin � Modifica Punto | FlashPoint": "Admin � Modifica punto | FlashPoint",
+        "Admin • Modifica Punto | FlashPoint": "Admin • Modifica punto | FlashPoint",
 
-        "Admin � Ordini | FlashPoint": "Admin � Ordini | FlashPoint",
+        "Admin • Ordini | FlashPoint": "Admin • Ordini | FlashPoint",
 
-        "Admin � Pontos | FlashPoint": "Admin � Presenze | FlashPoint",
+        "Admin • Pontos | FlashPoint": "Admin • Presenze | FlashPoint",
 
-        "Admin � Profili Utenti | FlashPoint": "Admin � Profili utenti | FlashPoint",
+        "Admin • Profili Utenti | FlashPoint": "Admin • Profili utenti | FlashPoint",
 
         "Aggiungi": "Aggiungi",
 
@@ -1074,7 +1090,7 @@ TEXT_TRANSLATIONS = {
 
         "Cantieri": "Cantieri",
 
-        "Cart�o de Reconhecimento": "Tesserino di riconoscimento",
+        "Cartão de Reconhecimento": "Tesserino di riconoscimento",
 
         "Classifica mensile ore lavorate": "Classifica mensile ore lavorate",
 
@@ -1086,7 +1102,7 @@ TEXT_TRANSLATIONS = {
 
         "Completo": "Completo",
 
-        "Configura��es": "Impostazioni",
+        "Configurações": "Impostazioni",
 
         "Consulta e gestisci le ore registrate": "Consulta e gestisci le ore registrate",
 
@@ -1096,7 +1112,7 @@ TEXT_TRANSLATIONS = {
 
         "Criado por": "Creato da",
 
-        "Criar e designar tarefa": "Crea e assegna attivit�",
+        "Criar e designar tarefa": "Crea e assegna attività",
 
         "Dashboard | FlashPoint": "Dashboard | FlashPoint",
 
@@ -1114,13 +1130,13 @@ TEXT_TRANSLATIONS = {
 
         "Dati personali": "Dati personali",
 
-        "Descri��o": "Descrizione",
+        "Descrição": "Descrizione",
 
-        "Deseja excluir esta tarefa?": "Vuoi eliminare questa attivit�?",
+        "Deseja excluir esta tarefa?": "Vuoi eliminare questa attività?",
 
-        "Designar para (pode selecionar v�rios)": "Assegna a (puoi selezionare pi� persone)",
+        "Designar para (pode selecionar vários)": "Assegna a (puoi selezionare più persone)",
 
-        "Detalhes da tarefa": "Dettagli dell'attivit�",
+        "Detalhes da tarefa": "Dettagli dell'attività",
 
         "Dipendente": "Dipendente",
 
@@ -1138,17 +1154,17 @@ TEXT_TRANSLATIONS = {
 
         "Evaso": "Evaso",
 
-        "Ex.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15": "Es.: 0.25 = 15min � 1.50 = 1h30 � 5.25 = 5h15",
+        "Ex.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15": "Es.: 0.25 = 15min · 1.50 = 1h30 · 5.25 = 5h15",
 
         "Ex.: Brasile": "Es.: Brasile",
 
         "Ex.: Elettricista": "Es.: Elettricista",
 
-        "Ex.: Joao": "Es.: Jo�o",
+        "Ex.: Joao": "Es.: João",
 
-        "Ex.: Jo�o": "Es.: Jo�o",
+        "Ex.: João": "Es.: João",
 
-        "Ex.: Silva": "Es.: Silva",
+        "Ex.: Salva": "Es.: Salva",
 
         "Excluir": "Elimina",
 
@@ -1210,7 +1226,7 @@ TEXT_TRANSLATIONS = {
 
         "Meus Pontos | FlashPoint": "Le mie presenze | FlashPoint",
 
-        "Minhas Atividades": "Le mie attivit�",
+        "Minhas Atividades": "Le mie attività",
 
         "Modifica": "Modifica",
 
@@ -1226,11 +1242,11 @@ TEXT_TRANSLATIONS = {
 
         "Modificabile se necessario.": "Modificabile se necessario.",
 
-        "M�dia": "Media",
+        "Média": "Media",
 
         "Nato": "Nato",
 
-        "Nenhuma tarefa encontrada para o filtro selecionado.": "Nessuna attivit� trovata per il filtro selezionato.",
+        "Nenhuma tarefa encontrada para o filtro selecionado.": "Nessuna attività trovata per il filtro selezionato.",
 
         "Nessun locale registrato.": "Nessun locale registrato.",
 
@@ -1258,7 +1274,7 @@ TEXT_TRANSLATIONS = {
 
         "Note": "Note",
 
-        "Nova tarefa": "Nuova attivit�",
+        "Nova tarefa": "Nuova attività",
 
         "Nuova richiesta": "Nuova richiesta",
 
@@ -1278,7 +1294,7 @@ TEXT_TRANSLATIONS = {
 
         "Osservazioni aggiuntive...": "Osservazioni aggiuntive...",
 
-        "PNG, JPG ou WEBP. M�x 3MB.": "PNG, JPG o WEBP. Max 3MB.",
+        "PNG, JPG ou WEBP. Máx 3MB.": "PNG, JPG o WEBP. Max 3MB.",
 
         "Paese di origine": "Paese di origine",
 
@@ -1288,7 +1304,7 @@ TEXT_TRANSLATIONS = {
 
         "Prazo": "Scadenza",
 
-        "Prioridade": "Priorit�",
+        "Prioridade": "Priorità",
 
         "Profilo": "Profilo",
 
@@ -1304,13 +1320,13 @@ TEXT_TRANSLATIONS = {
 
         "Registrare la presenza": "Registrare la presenza",
 
-        "Respons�vel": "Responsabile",
+        "Responsável": "Responsabile",
 
         "Richeste": "Richieste",
 
         "Richeste degli utenti": "Richieste degli utenti",
 
-        "Riepilogo della tua attivit�": "Riepilogo della tua attivit�",
+        "Riepilogo della tua attività": "Riepilogo della tua attività",
 
         "Rifiutato": "Rifiutato",
 
@@ -1326,9 +1342,9 @@ TEXT_TRANSLATIONS = {
 
         "Seleziona il luogo": "Seleziona il luogo",
 
-        "Seleziona il luogo in cui si � svolta l'attivit�.": "Seleziona il luogo in cui si � svolta l'attivit�.",
+        "Seleziona il luogo in cui si è svolta l'attività.": "Seleziona il luogo in cui si è svolta l'attività.",
 
-        "Si": "S�",
+        "Sì": "Sì",
 
         "Solo amministratori possono aggiornare i profili": "Solo amministratori possono aggiornare i profili",
 
@@ -1342,9 +1358,9 @@ TEXT_TRANSLATIONS = {
 
         "Status": "Status",
 
-        "Tarefas atribu�das": "Attivit� assegnate",
+        "Tarefas atribuídas": "Attività assegnate",
 
-        "Tarefas de toda a equipa": "Attivit� di tutto il team",
+        "Tarefas de toda a equipa": "Attività di tutto il team",
 
         "Tesserini": "Tesserini",
 
@@ -1360,25 +1376,25 @@ TEXT_TRANSLATIONS = {
 
         "Tornare": "Torna indietro",
 
-        "Totale delle ore lavorate quest�anno": "Totale delle ore lavorate quest�anno",
+        "Totale delle ore lavorate quest'anno": "Totale delle ore lavorate quest'anno",
 
         "Totale ore registrate": "Totale ore registrate",
 
         "Tutti": "Tutti",
 
-        "T�tulo": "Titolo",
+        "Título": "Titolo",
 
         "UID": "UID",
 
         "Usa valori decimali (es: 1.50 = 1h30)": "Usa valori decimali (es: 1.50 = 1h30)",
 
-        "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Usa Ctrl/Cmd + clic per selezionare pi� persone.",
+        "Use Ctrl/Cmd + clique para selecionar mais de uma pessoa.": "Usa Ctrl/Cmd + clic per selezionare più persone.",
 
         "Utente": "Utente",
 
-        "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Verr� scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?",
+        "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?": "Verrà scaricato un backup e poi le presenze saranno eliminate dal server. Continuare?",
 
-        "Visualiza��o das tarefas que foram designadas para voc�": "Visualizzazione delle attivit� assegnate a te",
+        "Visualização das tarefas que foram designadas para você": "Visualizzazione delle attività assegnate a te",
 
         "Visualizza e gestisci i tuoi ordini": "Visualizza e gestisci i tuoi ordini",
 
@@ -1388,7 +1404,7 @@ TEXT_TRANSLATIONS = {
 
         "Vuoi eliminare questo punto?": "Vuoi eliminare questo punto?",
 
-        "Work Management": "Gestione attivit�",
+        "Work Management": "Gestione attività",
 
         "a": "a",
 
@@ -1404,7 +1420,7 @@ TEXT_TRANSLATIONS = {
 
         "Telefone": "Telefono",
 
-        "Telefone de emerg�ncia": "Telefono di emergenza",
+        "Telefone de emergência": "Telefono di emergenza",
 
         "Ragione Sociale": "Ragione sociale",
 
@@ -1454,7 +1470,7 @@ TEXT_TRANSLATIONS = {
 
 # =========================
 
-# CONFIGURA��O DO FIREBASE (pyrebase)
+# CONFIGURAÇÃO DO FIREBASE (pyrebase)
 
 # =========================
 
@@ -1488,21 +1504,21 @@ auth = firebase.auth()
 
 # =========================
 
-# CONFIGURA��O DO FIREBASE ADMIN (Firestore)
+# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore)
 
 # =========================
 
 
 
-firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da vari�vel bate com a do Render
+firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
 
 if not firebase_json:
 
-    raise Exception("Vari�vel de ambiente FIREBASE_CREDENTIALS n�o encontrada!")
+    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
 
 
 
-cred_dict = json.loads(firebase_json)  # Converte JSON da vari�vel em dicion�rio
+cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
 
 cred = credentials.Certificate(cred_dict)
 
@@ -1516,7 +1532,7 @@ db = firestore.client()
 
 # =========================
 
-# CONFIGURA��O DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
+# CONFIGURAÇÃO DO FIREBASE ADMIN (Firestore) (TESTE LOCAL)
 
 # =========================
 
@@ -1540,7 +1556,7 @@ db = firestore.client()
 
 # =========================
 
-# FUN��ES AUXILIARES
+# FUNÇÕES AUXILIARES
 
 # =========================
 
@@ -1574,7 +1590,7 @@ def _fix_mojibake_text(text):
 
 
 
-    # Tenta 2 passadas para cobrir casos de dupla convers?o.
+    # Tenta 2 passadas para cobrir casos de dupla conversão.
 
     for _ in range(2):
 
@@ -1886,7 +1902,7 @@ def formatar_data_pedido(timestamp):
 
 
 
-# Fun��o para verificar se o usu�rio � ADM
+# Função para verificar se o usuário é ADM
 
 def is_admin():
 
@@ -1908,7 +1924,7 @@ def is_admin():
 
 def get_usuario_logado():
 
-    """Retorna o dicion�rio do usu�rio logado pelo UID da sess�o"""
+    """Retorna o dicionário do usuário logado pelo UID da sessão"""
 
     uid = session.get('uid')
 
@@ -2946,7 +2962,7 @@ def formatar_data_pedido(data_str):
 
     Converte string do Firestore como:
 
-    "19 de janeiro de 2026 �s 21:35:39 UTC+1"
+    "19 de janeiro de 2026 às 21:35:39 UTC+1"
 
     para "19/01/2026 21:35"
 
@@ -2956,9 +2972,9 @@ def formatar_data_pedido(data_str):
 
         # separar data e hora
 
-        if " �s " in data_str:
+        if " às " in data_str:
 
-            data_part, hora_part = data_str.split(" �s ")
+            data_part, hora_part = data_str.split(" às ")
 
             hora_part = hora_part.split(" ")[0]  # remove UTC+1
 
@@ -2970,7 +2986,7 @@ def formatar_data_pedido(data_str):
 
 
 
-        # mapear meses em portugu�s para n�mero
+        # mapear meses em português para número
 
         meses = {
 
@@ -2978,7 +2994,7 @@ def formatar_data_pedido(data_str):
 
             "fevereiro": "02",
 
-            "mar�o": "03",
+            "março": "03",
 
             "abril": "04",
 
@@ -3002,7 +3018,7 @@ def formatar_data_pedido(data_str):
 
 
 
-        # separar dia, m�s por extenso e ano
+        # separar dia, mês por extenso e ano
 
         partes = data_part.strip().split(" de ")
 
@@ -3154,7 +3170,7 @@ def ranking_mensal(ano, mes, limite=None):
 
             ranking[d["uid"]] += float(d["horas"])
 
-            nomes[d["uid"]] = d.get("nome", "Usu�rio")
+            nomes[d["uid"]] = d.get("nome", "Usuário")
 
 
 
@@ -3170,7 +3186,7 @@ def ranking_mensal(ano, mes, limite=None):
 
         resultado.append({
 
-            "nome": nomes.get(uid, "Usu�rio"),
+            "nome": nomes.get(uid, "Usuário"),
 
             "horas": horas,
 
@@ -3252,7 +3268,7 @@ def horas_por_ano(uid, ano):
 
 def parse_work_due_date(due_date):
 
-    """Converte yyyy-mm-dd para datetime para ordena��o."""
+    """Converte yyyy-mm-dd para datetime para ordenação."""
 
     if not due_date:
 
@@ -3412,7 +3428,7 @@ def dashboard():
 
 
 
-    # Usu�rio
+    # Usuário
 
     log_login_debug("dashboard: buscando usuario")
 
@@ -3454,7 +3470,7 @@ def dashboard():
 
         usuario = usuario_doc.to_dict()
 
-    nome_usuario = usuario.get("nome", "Usu�rio")
+    nome_usuario = usuario.get("nome", "Usuário")
 
 
 
@@ -3532,7 +3548,7 @@ def dashboard():
 
 
 
-    # Posi��o do usu�rio no ranking (CORRIGIDO)
+    # Posição do usuário no ranking (CORRIGIDO)
 
     posicao = "-"
 
@@ -3764,7 +3780,7 @@ def login():
 
             log_login_debug(f"login: erro autenticacao {type(exc).__name__}: {exc}")
 
-            error = "Email ou senha inv�lidos"
+            error = "Email ou senha inválidos"
 
     return render_template("login.html", error=error)
 
@@ -3842,7 +3858,7 @@ def register_usuario():
 
             if "EMAIL_EXISTS" in erro_str:
 
-                error = "Questo email � gi� registrato. Prova ad effettuare il login."
+                error = "Questo email è già registrato. Prova ad effettuare il login."
 
             elif "WEAK_PASSWORD" in erro_str:
 
@@ -3854,7 +3870,7 @@ def register_usuario():
 
             else:
 
-                error = "Errore durante la registrazione. Riprova pi� tardi."
+                error = "Errore durante la registrazione. Riprova più tardi."
 
 
 
@@ -3865,7 +3881,7 @@ def register_usuario():
 
 # =========================
 
-# PERFIL USU�RIO
+# PERFIL USUÁRIO
 
 # =========================
 
@@ -4319,7 +4335,7 @@ def admin_estatisticas():
 
 # =========================
 
-# ADMIN - PERFIS USU�RIOS
+# ADMIN - PERFIS USUÁRIOS
 
 # =========================
 
@@ -5870,11 +5886,13 @@ def admin_registrar_ponto():
 
         is_vacation = (request.form.get("is_vacation") or "").lower() in {"1", "on", "true", "yes"}
 
+        is_holiday = (request.form.get("is_holiday") or "").lower() in {"1", "on", "true", "yes"}
+
         tipo_registro = "presenza"
 
 
 
-        if is_sick and is_vacation:
+        if sum(1 for v in (is_sick, is_vacation, is_holiday) if v) > 1:
 
             error = translate("clock_in.only_one_absence_type")
 
@@ -5887,6 +5905,10 @@ def admin_registrar_ponto():
         elif is_vacation:
 
             tipo_registro = "ferie"
+
+        elif is_holiday:
+
+            tipo_registro = "feriado"
 
 
 
@@ -5947,19 +5969,38 @@ def admin_registrar_ponto():
 
                 local_selecionado = "-"
 
+            elif tipo_registro == "feriado":
+
+                if (horas_input or "").strip() == "":
+
+                    horas = 0.0
+
+                else:
+
+                    try:
+
+                        horas = float(horas_input)
+
+                        if horas < 0:
+
+                            raise ValueError()
+
+                    except Exception:
+                        horas = 0.0
+
             else:
 
                 try:
 
                     horas = float(horas_input)
 
-                    if horas <= 0:
+                    if horas < 0:
 
                         raise ValueError()
 
                 except Exception:
 
-                    error = "Inserisci un numero valido di ore!"
+                    horas = 0.0
 
 
 
@@ -5986,7 +6027,7 @@ def admin_registrar_ponto():
 
             if any(pontos_existentes):
 
-                error = f"Il dipendente ha gi� una presenza registrata per {data_ponto}."
+                error = f"Il dipendente ha già una presenza registrata per {data_ponto}."
 
 
 
@@ -6028,6 +6069,10 @@ def admin_registrar_ponto():
 
                 mensagem = translate("clock_in.vacation_registered_success")
 
+            elif tipo_registro == "feriado":
+
+                mensagem = translate("clock_in.holiday_registered_success")
+
             else:
 
                 mensagem = "Presenza registrata con successo."
@@ -6068,7 +6113,7 @@ def registrar_ponto_usuario():
 
 
 
-    # Hor�rio It�lia (UTC+1, fixo)
+    # Horário Itália (UTC+1, fixo)
 
     agora = datetime.utcnow() + timedelta(hours=1)
 
@@ -6078,7 +6123,7 @@ def registrar_ponto_usuario():
 
     locais_docs = db.collection("locais").stream()
 
-    locais = []  # op��o padr�o
+    locais = []  # opção padrão
 
     for doc in locais_docs:
 
@@ -6112,11 +6157,13 @@ def registrar_ponto_usuario():
 
         is_vacation = (request.form.get("is_vacation") or "").lower() in {"1", "on", "true", "yes"}
 
+        is_holiday = (request.form.get("is_holiday") or "").lower() in {"1", "on", "true", "yes"}
+
         tipo_registro = "presenza"
 
 
 
-        if is_sick and is_vacation:
+        if sum(1 for v in (is_sick, is_vacation, is_holiday) if v) > 1:
 
             error = translate("clock_in.only_one_absence_type")
 
@@ -6129,6 +6176,10 @@ def registrar_ponto_usuario():
         elif is_vacation:
 
             tipo_registro = "ferie"
+
+        elif is_holiday:
+
+            tipo_registro = "feriado"
 
 
 
@@ -6144,23 +6195,40 @@ def registrar_ponto_usuario():
 
             local_selecionado = "-"
 
+        elif tipo_registro == "feriado":
+
+            if (horas_input or "").strip() == "":
+
+                horas = 0.0
+
+            else:
+
+                try:
+
+                    horas = float(str(horas_input).strip().replace(",", "."))
+
+                    if horas < 0:
+
+                        raise ValueError()
+
+                except Exception:
+                    horas = 0.0
+
         else:
 
             # Validar horas
 
             try:
 
-                horas = float(horas_input)
+                horas = float(str(horas_input).strip().replace(",", "."))
 
-                if horas <= 0:
+                if horas < 0:
 
                     raise ValueError()
 
-            except:
+            except Exception:
 
-                error = "Inserisci un numero valido di ore!"
-
-                horas = 0
+                horas = 0.0
 
 
 
@@ -6175,7 +6243,7 @@ def registrar_ponto_usuario():
 
         if any(pontos_existentes):
 
-            error = f"Hai gi� registrato una presenza per {data_ponto}!"
+            error = f"Hai già registrato una presenza per {data_ponto}!"
 
         
 
@@ -6197,7 +6265,7 @@ def registrar_ponto_usuario():
 
                 "tipo_registro": tipo_registro,
 
-                "criado_em": agora  # salva com fuso It�lia (UTC+1)
+                "criado_em": agora  # salva com fuso Itália (UTC+1)
 
             }
 
@@ -6210,6 +6278,10 @@ def registrar_ponto_usuario():
             elif tipo_registro == "ferie":
 
                 mensagem = translate("clock_in.vacation_registered_success")
+
+            elif tipo_registro == "feriado":
+
+                mensagem = translate("clock_in.holiday_registered_success")
 
             else:
 
@@ -6263,9 +6335,9 @@ def meus_pontos():
 
 
 
-    # Fuso hor�rio It�lia: UTC+1 (considerando hor�rio padr�o)
+    # Fuso horário Itália: UTC+1 (considerando horário padrão)
 
-    # OBS: N�o calcula hor�rio de ver�o automaticamente
+    # OBS: Não calcula horário de verão automaticamente
 
     def agora_italia():
 
@@ -6343,7 +6415,7 @@ def meus_pontos():
 
 
 
-        # Converte string para datetime (fuso fixo It�lia)
+        # Converte string para datetime (fuso fixo Itália)
 
         data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
 
@@ -6473,7 +6545,7 @@ def admin_pontos():
 
 
 
-    # Usu?rio logado
+    # Usuário logado
 
     usuario_doc = db.collection("usuarios").document(uid).get()
 
@@ -6607,7 +6679,7 @@ def admin_pontos():
 
 
 
-        # Filtro usu?rio
+        # Filtro usuário
 
         if filtro_usuario and filtro_usuario != "__none__" and p.get("uid") != filtro_usuario:
 
@@ -6615,7 +6687,7 @@ def admin_pontos():
 
 
 
-        # Filtro m?s (YYYY-MM)
+        # Filtro mês (YYYY-MM)
 
         if filtro_mes:
 
@@ -6659,7 +6731,7 @@ def admin_pontos():
 
             data_obj = datetime.strptime(data_raw, "%Y-%m-%d")
 
-            p["data_ordem"] = data_obj              # usada s? para ordena??o
+            p["data_ordem"] = data_obj              # usada s? para ordenação
 
             dia_semana = dias_semana.get(data_obj.weekday(), "")
 
@@ -6679,7 +6751,7 @@ def admin_pontos():
 
 
 
-        # Nome usu?rio
+        # Nome usuário
 
         usuario_p = db.collection("usuarios").document(p["uid"]).get()
 
@@ -7090,7 +7162,7 @@ def editar_ponto_admin(id):
 
 
 
-    # Busca usu?rio logado
+    # Busca usuário logado
 
     usuario_doc = db.collection("usuarios").document(uid).get()
 
@@ -7114,7 +7186,7 @@ def editar_ponto_admin(id):
 
     if not ponto_doc.exists:
 
-        return "Ponto n?o encontrado"
+        return "Ponto não encontrado"
 
 
 
@@ -7122,7 +7194,7 @@ def editar_ponto_admin(id):
 
 
 
-    # Seguran?a: se n?o for admin, s? pode editar ponto pr?prio
+    # Segurança: se não for admin, s? pode editar ponto próprio
 
     if not is_admin_or_dev(usuario) and ponto.get("uid") != uid:
 
@@ -7130,7 +7202,7 @@ def editar_ponto_admin(id):
 
 
 
-    tipos_validos = {"presenza", "malattia", "ferie"}
+    tipos_validos = {"presenza", "malattia", "ferie", "feriado"}
 
     ponto["tipo_registro"] = (ponto.get("tipo_registro") or "presenza").lower()
 
@@ -7174,7 +7246,7 @@ def editar_ponto_admin(id):
 
 
 
-    # POST -> salva edi??o
+    # POST -> salva edição
 
     if request.method == "POST":
 
@@ -7202,7 +7274,7 @@ def editar_ponto_admin(id):
 
 
 
-        # Evita duplicidade da mesma data para o mesmo usu?rio
+        # Evita duplicidade da mesma data para o mesmo usuário
 
         if not error:
 
@@ -7215,7 +7287,7 @@ def editar_ponto_admin(id):
 
                 if d.id != id:
 
-                    error = f"Hai gi? una presenza/assenza registrata per {data_nova}."
+                    error = f"Hai già una presenza/assenza registrata per {data_nova}."
 
                     break
 
@@ -7231,13 +7303,32 @@ def editar_ponto_admin(id):
 
                     horas_novas = float(horas_input)
 
-                    if horas_novas <= 0:
+                    if horas_novas < 0:
 
                         raise ValueError()
 
                 except Exception:
 
-                    error = "Inserisci un numero valido di ore!"
+                    horas_novas = 0.0
+
+            elif tipo_novo == "feriado":
+
+                if (horas_input or "").strip() == "":
+
+                    horas_novas = 0.0
+
+                else:
+
+                    try:
+
+                        horas_novas = float(horas_input)
+
+                        if horas_novas < 0:
+
+                            raise ValueError()
+
+                    except Exception:
+                        horas_novas = 0.0
 
             else:
 
@@ -7331,7 +7422,7 @@ def excluir_ponto(id):
 
 
 
-    # Verifica se � admin
+    # Verifica se é admin
 
     uid = session["uid"]
 
@@ -7864,7 +7955,7 @@ def admin_carros():
 
 # =========================
 
-# ADMIN CART�ES DE RECONHECIMENTO
+# ADMIN CARTÕES DE RECONHECIMENTO
 
 # =========================
 
@@ -7892,7 +7983,7 @@ def admin_cartoes():
 
 # =========================
 
-# GERAR CART�O (ADMIN)
+# GERAR CARTÃO (ADMIN)
 
 # =========================
 
@@ -7954,7 +8045,7 @@ def gerar_cartao(uid):
 
 # =========================
 
-# GERAR CART�O (USU�RIO)
+# GERAR CARTÃO (USUÁRIO)
 
 # =========================
 
@@ -8010,7 +8101,7 @@ def gerar_cartao_perfil():
 
 # =========================
 
-# PEDIDO NOVO E LISTAGEM DE PEDIDOS DO USU�RIO
+# PEDIDO NOVO E LISTAGEM DE PEDIDOS DO USUÁRIO
 
 # =========================
 
@@ -8036,7 +8127,7 @@ def novo_pedido():
 
 
 
-    # ?? Busca o usu�rio no Firestore
+    # ?? Busca o usuário no Firestore
 
     usuario_doc = db.collection("usuarios").document(uid).get()
 
@@ -8076,7 +8167,7 @@ def novo_pedido():
 
 
 
-    # ?? Busca todos os pedidos do usu�rio atual
+    # ?? Busca todos os pedidos do usuário atual
 
     pedidos_docs = pedidos_ref.where("user_id", "==", uid).order_by("criado_em", direction=firestore.Query.DESCENDING).stream()
 
@@ -8112,7 +8203,7 @@ def novo_pedido():
 
 # =========================
 
-# ADMIN PEDIDOS - LISTAGEM E A��ES
+# ADMIN PEDIDOS - LISTAGEM E AÇÕES
 
 # =========================
 
@@ -8134,7 +8225,7 @@ def admin_pedidos():
 
     
 
-    # Atualiza��o via POST
+    # Atualização via POST
 
     if request.method == "POST":
 
@@ -8168,7 +8259,7 @@ def admin_pedidos():
 
                     pedido_ref.delete()
 
-        # ap�s a a��o, recarrega os pedidos
+        # após a ação, recarrega os pedidos
 
         return redirect(url_for("admin_pedidos"))
 
@@ -8660,7 +8751,7 @@ def admin_ferias():
 
 # =========================
 
-# RELAT�RIO DE PONTOS (HTML)
+# RELATÓRIO DE PONTOS (HTML)
 
 # =========================
 
@@ -8686,7 +8777,7 @@ def exportar_relatorio():
 
     # =========================
 
-    # USU�RIO
+    # USUÁRIO
 
     # =========================
 
@@ -8748,7 +8839,7 @@ def exportar_relatorio():
 
 
 
-        # Converte data (fuso It�lia fixo)
+        # Converte data (fuso Itália fixo)
 
         data_obj = datetime.strptime(p["data"], "%Y-%m-%d") + timedelta(hours=1)
 
@@ -8762,7 +8853,7 @@ def exportar_relatorio():
 
 
 
-        # ?? filtro por m�s
+        # ?? filtro por mês
 
         if filtro_mes:
 
@@ -9238,6 +9329,5 @@ def logout():
 if __name__ == "__main__":
 
     app.run(debug=True, use_reloader=False)
-
 
 

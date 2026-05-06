@@ -272,6 +272,18 @@
             <strong class="text-primary">
                 <i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}
             </strong>
+            {% elif p.tipo_registro == "feriado" %}
+            {% if (p.horas or 0) > 0 %}
+            <span>{{ tr("Ore lavorate") }}</span>
+            <strong>
+                <i class="fa fa-calendar-days me-1 text-warning"></i>{{ p.horas_formatadas }}
+            </strong>
+            {% else %}
+            <span>{{ tr("Tipo") }}</span>
+            <strong class="text-warning">
+                <i class="fa fa-calendar-days me-1"></i>{{ t("clock_in.holiday_status") }}
+            </strong>
+            {% endif %}
             {% else %}
             <span>{{ tr("Ore lavorate") }}</span>
             <strong>
@@ -327,6 +339,12 @@
                     <span class="text-danger"><i class="fa fa-heartbeat me-1"></i>{{ t("clock_in.sick_status") }}</span>
                     {% elif p.tipo_registro == "ferie" %}
                     <span class="text-primary"><i class="fa fa-umbrella-beach me-1"></i>{{ t("clock_in.vacation_status") }}</span>
+                    {% elif p.tipo_registro == "feriado" %}
+                    {% if (p.horas or 0) > 0 %}
+                    <span><i class="fa fa-calendar-days me-1 text-warning"></i>{{ p.horas_formatadas }}</span>
+                    {% else %}
+                    <span class="text-warning"><i class="fa fa-calendar-days me-1"></i>{{ t("clock_in.holiday_status") }}</span>
+                    {% endif %}
                     {% else %}
                     {{ p.horas_formatadas }}
                     {% endif %}
