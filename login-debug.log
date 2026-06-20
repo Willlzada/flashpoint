@@ -317,3 +317,34 @@
 [2026-05-06 21:44:20] dashboard: calculando horas ano
 [2026-05-06 21:44:20] dashboard: calculando ranking mensal
 [2026-05-06 21:44:20] dashboard: buscando kits e mala
+[2026-05-17 10:29:04] login: POST recebido para finalrios@icloud.com
+[2026-05-17 10:29:04] login: iniciando autenticacao firebase
+[2026-05-17 10:29:05] login: autenticacao firebase concluida
+[2026-05-17 10:29:05] login: sessao criada, redirecionando dashboard
+[2026-05-17 10:29:05] dashboard: inicio
+[2026-05-17 10:29:05] dashboard: buscando usuario
+[2026-05-17 10:29:06] dashboard: calculando horas mes atual
+[2026-05-17 10:29:06] dashboard: calculando horas mes anterior
+[2026-05-17 10:29:06] dashboard: calculando horas ano
+[2026-05-17 10:29:06] dashboard: calculando ranking mensal
+[2026-05-17 10:29:06] dashboard: buscando kits e mala
+[2026-05-17 10:32:28] dashboard: renderizando template
+[2026-05-17 10:32:38] dashboard: renderizando template
+[2026-06-20 20:32:00] login: POST recebido para finalrios@icloud.com
+[2026-06-20 20:32:00] login: iniciando autenticacao firebase
+[2026-06-20 20:32:00] login: autenticacao firebase concluida
+[2026-06-20 20:32:00] login: sessao criada, redirecionando dashboard
+[2026-06-20 20:32:01] dashboard: inicio
+[2026-06-20 20:32:01] dashboard: buscando usuario
+[2026-06-20 20:32:02] dashboard: calculando horas mes atual
+[2026-06-20 20:32:02] dashboard: calculando horas mes anterior
+[2026-06-20 20:32:02] dashboard: calculando horas ano
+[2026-06-20 20:32:02] dashboard: calculando ranking mensal
+[2026-06-20 20:32:02] dashboard: buscando kits e mala
+[2026-06-20 21:12:40] dashboard: inicio
+[2026-06-20 21:12:40] dashboard: buscando usuario
+[2026-06-20 21:12:40] dashboard: calculando horas mes atual
+[2026-06-20 21:12:40] dashboard: calculando horas mes anterior
+[2026-06-20 21:12:40] dashboard: calculando horas ano
+[2026-06-20 21:12:40] dashboard: calculando ranking mensal
+[2026-06-20 21:12:40] dashboard: buscando kits e mala

@@ -163,6 +163,20 @@
                 {% endif %}
             </div>
 
+            {% if ferias_ativas and (ferias_ativas|length) > 0 %}
+            <div class="alert alert-warning py-2 mt-3 mb-0">
+                <i class="fa fa-umbrella-beach me-2"></i>
+                <strong>{{ t("clock_in.vacation_status") }}</strong>:
+                {{ ferias_ativas[0].periodo }}
+            </div>
+            {% elif proxima_ferias %}
+            <div class="alert alert-light border py-2 mt-3 mb-0">
+                <i class="fa fa-calendar-days me-2"></i>
+                <strong>{{ t("clock_in.vacation_status") }}</strong>:
+                {{ proxima_ferias.periodo }}
+            </div>
+            {% endif %}
+
             <div class="mt-3 small text-muted">
                 <div>
                     <i class="fa fa-phone me-2"></i>{{ tr("Telefone") }}:

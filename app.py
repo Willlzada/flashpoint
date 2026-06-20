@@ -399,6 +399,14 @@ TEXT_TRANSLATIONS = {
     "pt-br": {
 
         "Admin": "Admin",
+        "Inserisci ferie": "Adicionar férias",
+        "Aggiunge ferie approvate direttamente": "Adiciona férias aprovadas diretamente",
+        "Seleziona": "Selecione",
+        "Inizio": "Início",
+        "Fine": "Fim",
+        "Note": "Notas",
+        "Opzionale": "Opcional",
+        "Aggiungi": "Adicionar",
 
         "Admin cria e designa atividades para os colaboradores": "Admin cria e designa atividades para os colaboradores",
 
@@ -1510,21 +1518,21 @@ auth = firebase.auth()
 
 
 
-firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
+#firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
 
-if not firebase_json:
+#if not firebase_json:
 
-    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
+#    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
 
 
 
-cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
+#cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
 
-cred = credentials.Certificate(cred_dict)
+#cred = credentials.Certificate(cred_dict)
 
-firebase_admin.initialize_app(cred)
+#firebase_admin.initialize_app(cred)
 
-db = firestore.client()
+#db = firestore.client()
 
 
 
@@ -1537,20 +1545,19 @@ db = firestore.client()
 # =========================
 
 
+cred = credentials.Certificate("JSON/flashpoint-V0.0.json")
 
-#cred = credentials.Certificate("JSON/flashpoint-V0.0.json")
+_bucket_name = firebase_config.get("storageBucket")
 
-#_bucket_name = firebase_config.get("storageBucket")
+if _bucket_name:
 
-#if _bucket_name:
+   firebase_admin.initialize_app(cred, {"storageBucket": _bucket_name})
 
-#   firebase_admin.initialize_app(cred, {"storageBucket": _bucket_name})
+else:
 
-#else:
+    firebase_admin.initialize_app(cred)
 
-#    firebase_admin.initialize_app(cred)
-
-#db = firestore.client()
+db = firestore.client()
 
 
 
@@ -1957,6 +1964,35 @@ def get_usuario_logado():
     return None
 
 
+# Busca um usuário pelo UID informado (tanto doc id quanto campo "uid").
+def _get_usuario_por_uid(uid):
+    uid = (uid or "").strip()
+    if not uid:
+        return None
+
+    try:
+        doc = db.collection("usuarios").document(uid).get()
+        if doc.exists:
+            data = doc.to_dict() or {}
+            data.setdefault("uid", (data.get("uid") or "").strip() or doc.id)
+            data.setdefault("doc_id", doc.id)
+            return data
+    except Exception:
+        pass
+
+    try:
+        usuarios_ref = db.collection("usuarios").where("uid", "==", uid).limit(1).stream()
+        for u in usuarios_ref:
+            data = u.to_dict() or {}
+            data.setdefault("uid", (data.get("uid") or "").strip() or u.id)
+            data.setdefault("doc_id", u.id)
+            return data
+    except Exception:
+        pass
+
+    return None
+
+
 # Funcao is_admin_or_dev
 def is_admin_or_dev(usuario):
     return bool(usuario) and (usuario.get("tipo") or "").lower() in ("admin", "developer")
@@ -2009,6 +2045,22 @@ def get_non_admin_users():
 
     usuarios.sort(key=lambda item: item["nome"].lower())
 
+    return usuarios
+
+
+def get_all_users_for_select():
+    usuarios = []
+    for u in db.collection("usuarios").stream():
+        data = u.to_dict() or {}
+        uid_auth = (data.get("uid") or "").strip() or u.id
+        nome = f"{data.get('nome', '')} {data.get('sobrenome', '')}".strip()
+        usuarios.append({
+            "uid": uid_auth,
+            "uid_doc": u.id,
+            "nome": nome or data.get("email") or u.id,
+            "tipo": (data.get("tipo") or "").strip().lower(),
+        })
+    usuarios.sort(key=lambda item: (item.get("nome") or "").lower())
     return usuarios
 
 
@@ -3891,34 +3943,56 @@ def register_usuario():
 
 def perfil_usuario():
 
-    if "uid" not in session:
-
+    usuario = get_usuario_logado()
+    if not usuario:
         return redirect("/")
 
-
-
-    uid = session["uid"]
-
-    usuario = db.collection("usuarios").document(uid).get().to_dict()
-
-
+    uid = (session.get("uid") or "").strip()
 
     ano_atual = datetime.now().year
+    total_horas_ano = formatar_horas_hhmm(horas_por_ano(uid, ano_atual)) if uid else "00:00"
 
-    total_horas_ano = formatar_horas_hhmm(horas_por_ano(uid, ano_atual))
+    hoje = date.today()
+    candidate_ids = {uid, (usuario.get("uid") or "").strip(), (usuario.get("doc_id") or "").strip()}
+    ferias_ativas = []
+    ferias_futuras = []
+    vistos = set()
 
+    ferias_ref = db.collection("ferias")
+    for cid in [c for c in candidate_ids if c]:
+        try:
+            for doc in ferias_ref.where("user_id", "==", cid).stream():
+                if doc.id in vistos:
+                    continue
+                vistos.add(doc.id)
+                data = doc.to_dict() or {}
+                if (data.get("status") or "").lower() != "aprovado":
+                    continue
+                inicio_dt = parse_iso_date(data.get("data_inicio"))
+                fim_dt = parse_iso_date(data.get("data_fim"))
+                if not inicio_dt or not fim_dt:
+                    continue
+                data["inicio_dt"] = inicio_dt
+                data["fim_dt"] = fim_dt
+                data["periodo"] = formatar_periodo_ferias(data.get("data_inicio"), data.get("data_fim"))
+                if inicio_dt <= hoje <= fim_dt:
+                    ferias_ativas.append(data)
+                elif inicio_dt > hoje:
+                    ferias_futuras.append(data)
+        except Exception:
+            continue
 
+    ferias_ativas.sort(key=lambda f: (f.get("inicio_dt") or hoje, f.get("fim_dt") or hoje))
+    ferias_futuras.sort(key=lambda f: (f.get("inicio_dt") or hoje, f.get("fim_dt") or hoje))
+    proxima_ferias = ferias_futuras[0] if ferias_futuras else None
 
     return render_template(
-
         "perfil.html",
-
         usuario=usuario,
-
         total_horas_ano=total_horas_ano,
-
-        ano_atual=ano_atual
-
+        ano_atual=ano_atual,
+        ferias_ativas=ferias_ativas,
+        proxima_ferias=proxima_ferias,
     )
 
 
@@ -6846,6 +6920,15 @@ def admin_pontos_exportar_pdf():
 
     pontos_list = []
     total_horas = 0.0
+    dias_semana = {
+        0: "LUN",
+        1: "MAR",
+        2: "MER",
+        3: "GIO",
+        4: "VEN",
+        5: "SAB",
+        6: "DOM",
+    }
 
     for doc in pontos_docs:
         p = doc.to_dict()
@@ -6878,9 +6961,16 @@ def admin_pontos_exportar_pdf():
                 nome_ponto_usuario = "-"
             usuarios_cache[ponto_uid] = nome_ponto_usuario
 
+        try:
+            data_obj = datetime.strptime(data_str, "%Y-%m-%d")
+            dia_semana = dias_semana.get(data_obj.weekday(), "")
+            data_formatada = f"{data_obj.strftime('%d/%m/%Y')} - {dia_semana}"
+        except Exception:
+            data_formatada = formatar_data(data_str)
+
         pontos_list.append({
             "data_raw": data_str,
-            "data": formatar_data(data_str),
+            "data": data_formatada,
             "local": p.get("local", "-"),
             "horas": formatar_horas_hhmm(horas_val),
             "notas": p.get("notas", "") or "-",
@@ -8567,32 +8657,54 @@ def admin_ferias():
 
     if request.method == "POST":
 
+        acao = (request.form.get("acao") or "").strip().lower()
+
+        if acao == "criar":
+            user_id = (request.form.get("user_id") or "").strip()
+            data_inicio = (request.form.get("data_inicio") or "").strip()
+            data_fim = (request.form.get("data_fim") or "").strip()
+            mensagem = (request.form.get("mensagem") or "").strip()
+
+            inicio_dt = parse_iso_date(data_inicio)
+            fim_dt = parse_iso_date(data_fim)
+
+            if not user_id or not inicio_dt or not fim_dt:
+                flash("Seleziona un utente e date valide.", "danger")
+            elif fim_dt < inicio_dt:
+                flash("La data finale non puo essere precedente alla data iniziale.", "danger")
+            else:
+                user = _get_usuario_por_uid(user_id) or {}
+                nome = f"{user.get('nome','')} {user.get('sobrenome','')}".strip() or user.get("email") or user_id
+                ferias_ref.add({
+                    "user_id": (user.get("uid") or user_id).strip(),
+                    "nome": nome,
+                    "data_inicio": data_inicio,
+                    "data_fim": data_fim,
+                    "dias": (fim_dt - inicio_dt).days + 1,
+                    "mensagem": mensagem,
+                    "status": "aprovado",
+                    "origem": "admin",
+                    "criado_por": session.get("uid", ""),
+                    "criado_em": firestore.SERVER_TIMESTAMP,
+                    "decidido_por": session.get("uid", ""),
+                    "decidido_em": firestore.SERVER_TIMESTAMP,
+                })
+                flash("Ferie registrate con successo.", "success")
+
+            return redirect(url_for("admin_ferias", ano=request.args.get("ano"), mes=request.args.get("mes")))
+
         pedido_id = (request.form.get("pedido_id") or "").strip()
-
-        acao = (request.form.get("acao") or "").strip()
-
         if pedido_id and acao:
-
             pedido_ref = ferias_ref.document(pedido_id)
-
             pedido_doc = pedido_ref.get()
-
             if pedido_doc.exists:
-
                 if acao in {"aprovado", "recusado", "pendente"}:
-
                     pedido_ref.update({
-
                         "status": acao,
-
                         "decidido_em": firestore.SERVER_TIMESTAMP,
-
                         "decidido_por": session.get("uid", ""),
-
                     })
-
                 elif acao == "excluir":
-
                     pedido_ref.delete()
 
         return redirect(url_for("admin_ferias", ano=request.args.get("ano"), mes=request.args.get("mes")))
@@ -8720,6 +8832,7 @@ def admin_ferias():
         "admin_ferias.html",
 
         pedidos=pedidos,
+        funcionarios=get_all_users_for_select(),
 
         calendario=calendario,
 
@@ -9329,5 +9442,3 @@ def logout():
 if __name__ == "__main__":
 
     app.run(debug=True, use_reloader=False)
-
-
