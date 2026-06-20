@@ -343,12 +343,6 @@
         </li>
 
         <li>
-            <a href="{{ url_for('admin_alocacao') }}" class="nav-link {% if request.path.startswith('/admin/alocacao') %}active{% endif %}">
-                <i class="fa fa-calendar-week me-2"></i> {{ tr("Assegnazione settimanale") }}
-            </a>
-        </li>
-
-        <li>
             <a href="{{ url_for('admin_carros') }}" class="nav-link {% if request.path.startswith('/admin/carros') %}active{% endif %}">
                 <i class="fa fa-car me-2"></i> {{ t('nav.admin_cars') }}
             </a>

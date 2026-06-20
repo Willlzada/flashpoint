@@ -663,46 +663,8 @@ TEXT_TRANSLATIONS = {
 
         "Gestione richieste e ordini": "Gestão de solicitações e pedidos",
 
-        "Assegnazione settimanale | FlashPoint": "Alocacao semanal | FlashPoint",
-        "Assegnazione settimanale della squadra": "Alocacao semanal da equipe",
-        "Imposta un luogo per dipendente per tutta la settimana. Il lunedi la squadra sapra gia dove andare.": "Defina um local por funcionario para a semana inteira. Na segunda-feira a equipe ja sabe onde deve ir.",
-        "Consulta la tua assegnazione settimanale per sapere presso quale cliente devi lavorare.": "Consulte sua alocacao da semana para saber em qual cliente voce deve trabalhar.",
-        "Inizio settimana": "Inicio da semana",
-        "La data verra automaticamente regolata al lunedi.": "A data sera ajustada automaticamente para segunda-feira.",
-        "Carica settimana": "Carregar semana",
-        "Esporta per WhatsApp": "Exportar para WhatsApp",
-        "Salva pianificazione settimanale": "Salvar planejamento da semana",
-        "Caricamento assegnazione settimanale...": "Carregando alocacao da semana...",
-        "Preparazione agenda settimanale...": "Preparando agenda semanal...",
-        "Caricamento agenda settimanale...": "Carregando agenda semanal...",
-        "Settimana caricata.": "Semana carregada.",
-        "Salvataggio pianificazione settimanale...": "Salvando planejamento semanal...",
-        "Pianificazione settimanale salvata con successo.": "Planejamento semanal salvo com sucesso.",
-        "Carica una settimana prima di salvare.": "Carregue uma semana antes de salvar.",
-        "Carica una settimana prima di esportare.": "Carregue uma semana antes de exportar.",
-        "Testo copiato. Incollalo su WhatsApp.": "Texto copiado. Cole no WhatsApp.",
-        "Testo pronto da copiare.": "Texto pronto para copiar.",
-        "Errore nel caricamento dell'agenda settimanale.": "Erro ao carregar agenda semanal.",
-        "Errore nel caricamento dell’agenda settimanale.": "Erro ao carregar agenda semanal.",
-        "Errore nel salvataggio della pianificazione settimanale.": "Erro ao salvar planejamento semanal.",
-        "Nessun dato da esportare.": "Nao ha dados para exportar.",
-        "Nessun dato da mostrare.": "Sem dados para mostrar.",
-        "Impossibile caricare i dati.": "Nao foi possivel carregar os dados.",
-        "Nessun dipendente trovato per questa settimana.": "Nenhum funcionario encontrado para esta semana.",
-        "Stato della settimana": "Status na semana",
-        "Luogo per tutta la settimana": "Local da semana inteira",
-        "Tu": "Voce",
-        "Nessuna assegnazione": "Sem alocacao",
-        "Disponibile": "Disponivel",
-        "Ferie (tutta la settimana)": "Ferias (semana toda)",
         "Ferie": "Ferias",
-        "giorno(i)": "dia(s)",
-        "Conflitto: utente %uid% e in ferie (%days% giorno(i) nella settimana).": "Conflito: usuario %uid% esta de ferias (%days% dia(s) na semana).",
         "al": "ate",
-        "Assegnazione settimanale": "Alocacao semanal",
-        "Ragazzi, ecco l'assegnazione della settimana:": "Pessoal, segue a alocacao da semana:",
-        "Ragazzi, ecco l’assegnazione della settimana:": "Pessoal, segue a alocacao da semana:",
-        "Copia il testo qui sotto e incollalo su WhatsApp:": "Copie o texto abaixo e cole no WhatsApp:",
         "Accesso rapido": "Acesso rapido",
 
         "Admin - Ferie | FlashPoint": "Admin - Ferias | FlashPoint",
@@ -1518,21 +1480,21 @@ auth = firebase.auth()
 
 
 
-#firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
+firebase_json = os.environ.get("FIREBASE_CREDENTIALS")  # Certifique-se que o nome da variável bate com a do Render
 
-#if not firebase_json:
+if not firebase_json:
 
-#    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!")
+    raise Exception("Variável de ambiente FIREBASE_CREDENTIALS não encontrada!!")
 
 
 
-#cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
+cred_dict = json.loads(firebase_json)  # Converte JSON da variável em dicionário
 
-#cred = credentials.Certificate(cred_dict)
+cred = credentials.Certificate(cred_dict)
 
-#firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred)
 
-#db = firestore.client()
+db = firestore.client()
 
 
 
@@ -1545,19 +1507,19 @@ auth = firebase.auth()
 # =========================
 
 
-cred = credentials.Certificate("JSON/flashpoint-V0.0.json")
+#cred = credentials.Certificate("JSON/flashpoint-V0.0.json")
 
-_bucket_name = firebase_config.get("storageBucket")
+#_bucket_name = firebase_config.get("storageBucket")
 
-if _bucket_name:
+#if _bucket_name:
 
-   firebase_admin.initialize_app(cred, {"storageBucket": _bucket_name})
+#   firebase_admin.initialize_app(cred, {"storageBucket": _bucket_name})
 
-else:
+#else:
 
-    firebase_admin.initialize_app(cred)
+#    firebase_admin.initialize_app(cred)
 
-db = firestore.client()
+#db = firestore.client()
 
 
 
@@ -2075,229 +2037,6 @@ def _uids_em_ferias_por_data(data_dt):
         if inicio <= data_dt <= fim and ferias_item.get("user_id"):
             uids_em_ferias.add(ferias_item.get("user_id"))
     return uids_em_ferias
-
-
-@app.route("/admin/alocacao", methods=["GET"])
-def admin_alocacao():
-    usuario = get_usuario_logado()
-    if not usuario:
-        return redirect("/")
-
-    semana = request.args.get("semana")
-    semana_inicio = parse_iso_date(semana) if semana else date.today()
-    if not semana_inicio:
-        semana_inicio = date.today()
-    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
-
-    return render_template(
-        "admin_alocacao.html",
-        can_edit=is_admin_or_dev(usuario),
-        semana_inicio=semana_inicio.isoformat(),
-        usuario_uid=(session.get("uid") or "").strip(),
-    )
-
-
-@app.route("/alocacao-semanal", methods=["GET"])
-def alocacao_semanal():
-    return admin_alocacao()
-
-
-def _listar_locais_alocacao():
-    locais = []
-    for doc in db.collection("locais").stream():
-        data = doc.to_dict() or {}
-        locais.append({
-            "id": doc.id,
-            "nome": data.get("ragione_sociale") or data.get("nome") or doc.id,
-        })
-    locais.sort(key=lambda item: (item.get("nome") or "").lower())
-    return locais
-
-
-def _listar_funcionarios_alocacao():
-    usuarios = []
-    for doc in db.collection("usuarios").stream():
-        data = doc.to_dict() or {}
-        uid_auth = (data.get("uid") or "").strip() or doc.id
-        nome = f"{data.get('nome','')} {data.get('sobrenome','')}".strip()
-        usuarios.append({
-            "uid": uid_auth,
-            "doc_id": doc.id,
-            "nome": nome or data.get("email") or uid_auth,
-            "tipo": (data.get("tipo") or "").strip().lower(),
-        })
-    usuarios.sort(key=lambda item: (item.get("nome") or "").lower())
-    return usuarios
-
-
-@app.route("/api/alocacao_semanal", methods=["GET"])
-def api_alocacao_semanal_get():
-    usuario = get_usuario_logado()
-    if not usuario:
-        return jsonify({"error": "access denied"}), 403
-
-    semana_str = (request.args.get("week_start") or "").strip()
-    semana_inicio = parse_iso_date(semana_str) if semana_str else date.today()
-    if not semana_inicio:
-        return jsonify({"error": "invalid week_start"}), 400
-    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
-
-    dias = [(semana_inicio + timedelta(days=i)).isoformat() for i in range(7)]
-    can_edit = is_admin_or_dev(usuario)
-    current_uid = (session.get("uid") or "").strip()
-
-    locais = _listar_locais_alocacao()
-    locais_ids = {item["id"] for item in locais}
-    funcionarios = _listar_funcionarios_alocacao()
-
-    # Todos visualizam a equipe completa; apenas admin/developer editam.
-    usuarios_visiveis = [{"uid": u["uid"], "nome": u["nome"]} for u in funcionarios]
-    aliases_por_uid = {u["uid"]: {u["uid"], u["doc_id"]} for u in funcionarios}
-
-    doc_ref = db.collection("alocacoes_semanais").document(semana_inicio.isoformat()).get()
-    agenda_raw = {}
-    if doc_ref.exists:
-        agenda_raw = (doc_ref.to_dict() or {}).get("agenda") or {}
-
-    ferias_por_usuario = {}
-    for user in usuarios_visiveis:
-        uid = user["uid"]
-        aliases = aliases_por_uid.get(uid, {uid})
-        dias_ferias = []
-        for dia in dias:
-            dia_dt = parse_iso_date(dia)
-            uids_ferias = _uids_em_ferias_por_data(dia_dt) if dia_dt else set()
-            if uids_ferias.intersection(aliases):
-                dias_ferias.append(dia)
-        ferias_por_usuario[uid] = {
-            "em_ferias": len(dias_ferias) > 0,
-            "dias_count": len(dias_ferias),
-            "dias": dias_ferias,
-        }
-
-    agenda = {}
-    for user in usuarios_visiveis:
-        uid = user["uid"]
-        local_id = ""
-        raw_val = agenda_raw.get(uid) if isinstance(agenda_raw, dict) else None
-
-        # Compatibilidade com formato antigo: {uid: {dia: local_id}}
-        if isinstance(raw_val, dict):
-            for dia in dias:
-                val = (raw_val.get(dia) or "").strip()
-                if val and val in locais_ids:
-                    local_id = val
-                    break
-        else:
-            val = (raw_val or "").strip() if isinstance(raw_val, str) else ""
-            if val in locais_ids:
-                local_id = val
-
-        agenda[uid] = local_id
-
-    return jsonify({
-        "ok": True,
-        "week_start": semana_inicio.isoformat(),
-        "days": dias,
-        "can_edit": can_edit,
-        "current_uid": current_uid,
-        "usuarios": usuarios_visiveis,
-        "locais": locais,
-        "agenda": agenda,
-        "ferias_por_usuario": ferias_por_usuario,
-    })
-
-
-@app.route("/api/alocacao_semanal", methods=["POST"])
-def api_alocacao_semanal_post():
-    usuario = get_usuario_logado()
-    if not usuario or not is_admin_or_dev(usuario):
-        return jsonify({"error": "access denied"}), 403
-
-    payload = request.get_json() or {}
-    semana_str = (payload.get("week_start") or "").strip()
-    agenda_input = payload.get("agenda") or {}
-
-    if not semana_str:
-        return jsonify({"error": "missing week_start"}), 400
-    if not isinstance(agenda_input, dict):
-        return jsonify({"error": "invalid agenda format"}), 400
-
-    semana_inicio = parse_iso_date(semana_str)
-    if not semana_inicio:
-        return jsonify({"error": "invalid week_start"}), 400
-    semana_inicio = semana_inicio - timedelta(days=semana_inicio.weekday())
-
-    dias = [(semana_inicio + timedelta(days=i)).isoformat() for i in range(7)]
-    locais = _listar_locais_alocacao()
-    locais_ids = {item["id"] for item in locais}
-    funcionarios = _listar_funcionarios_alocacao()
-    uids_validos = {u["uid"] for u in funcionarios}
-    aliases_por_uid = {u["uid"]: {u["uid"], u["doc_id"]} for u in funcionarios}
-    ferias_por_dia_cache = {}
-
-    agenda_final = {}
-    conflitos_ferias = []
-
-    for uid_raw, raw_value in agenda_input.items():
-        uid = (uid_raw or "").strip()
-        if uid not in uids_validos:
-            continue
-
-        local_id = ""
-        if isinstance(raw_value, str):
-            local_id = raw_value.strip()
-        elif isinstance(raw_value, dict):
-            # Compatibilidade com formato antigo vindo do frontend
-            for dia in dias:
-                val = (raw_value.get(dia) or "").strip()
-                if val:
-                    local_id = val
-                    break
-
-        if not local_id:
-            continue
-        if local_id not in locais_ids:
-            continue
-
-        dias_ferias = []
-        aliases = aliases_por_uid.get(uid, {uid})
-        for dia in dias:
-            if dia not in ferias_por_dia_cache:
-                dia_dt = parse_iso_date(dia)
-                ferias_por_dia_cache[dia] = _uids_em_ferias_por_data(dia_dt) if dia_dt else set()
-            if ferias_por_dia_cache[dia].intersection(aliases):
-                dias_ferias.append(dia)
-
-        if dias_ferias:
-            conflitos_ferias.append({"uid": uid, "dias": dias_ferias})
-            continue
-
-        agenda_final[uid] = local_id
-
-    if conflitos_ferias:
-        return jsonify({
-            "error": "vacation_conflict",
-            "conflicts": conflitos_ferias,
-        }), 409
-
-    ref = db.collection("alocacoes_semanais").document(semana_inicio.isoformat())
-    ref_doc = ref.get()
-    data_to_save = {
-        "week_start": semana_inicio.isoformat(),
-        "agenda": agenda_final,
-        "atualizado_por": session.get("uid", ""),
-        "atualizado_em": firestore.SERVER_TIMESTAMP,
-    }
-
-    if ref_doc.exists:
-        ref.update(data_to_save)
-        return jsonify({"ok": True, "updated": True})
-
-    data_to_save["criado_por"] = session.get("uid", "")
-    data_to_save["criado_em"] = firestore.SERVER_TIMESTAMP
-    ref.set(data_to_save)
-    return jsonify({"ok": True, "created": True})
 
 
 # =========================
